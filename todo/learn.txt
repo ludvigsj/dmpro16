@@ -5,3 +5,4 @@ Do we need SRAM, and if so, how big?
 Is it even possible to have an eInk screen?
 Where do we want to do preprocessing?
 Accuracy in BNN - Do we need 99.99% accuracy?
+Figure out which FPGA we needto use
