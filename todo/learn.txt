@@ -1,0 +1,7 @@
+Bus - UART/IC32(?)
+Seriess vs USB
+GPIO? What does this do and how expedient is it?
+Do we need SRAM, and if so, how big?
+Is it even possible to have an eInk screen?
+Where do we want to do preprocessing?
+Accuracy in BNN - Do we need 99.99% accuracy?
