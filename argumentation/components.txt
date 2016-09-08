@@ -1,0 +1,25 @@
+======
+Camera
+======
+http://www.digikey.com/product-search/en?keywords=1613-1078-nd
+
+==============
+SD-card reader
+==============
+
+
+
+============
+E-ink screen 
+============
+
+SHARP Memory Display Breakout - 1.3" 96x96 Silver Monochrome
+https://www.adafruit.com/product/1393
+
+Serial connection
+LEDs
+EFM32 microcontroller
+FPGA
+Battery
+SRAM
+Buttons
