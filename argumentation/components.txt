@@ -24,11 +24,27 @@ https://github.com/JCSHoosier/STM32_SHARP_MEM_Display_Driver
 https://github.com/adafruit/Adafruit-GFX-Library
 
 ============
+FPGA
+============
+
+Xilinx Artix-35T FPGA
+
+https://www.xilinx.com/products/boards-and-kits/arty.html#overview
+http://www.xilinx.com/support/documentation/data_sheets/ds180_7Series_Overview.pdf
+https://www.xilinx.com/support/documentation/selection-guides/artix7-product-table.pdf
+https://reference.digilentinc.com/_media/reference/programmable-logic/arty/arty_rm.pdf
+
+============
+Microcontroller
+============
+EFM32 Giant Gecko 32-bit Microcontroller
+
+https://www.silabs.com/Support%20Documents/TechnicalDocs/EFM32GG-RM.pdf
+
+============
 
 Serial connection
 LEDs
-EFM32 microcontroller
-FPGA
 Battery
 SRAM
 Buttons
