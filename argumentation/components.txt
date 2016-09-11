@@ -3,6 +3,8 @@ Camera
 ======
 http://www.digikey.com/product-search/en?keywords=1613-1078-nd
 
+https://github.com/dgtlmoon/uCamII
+
 ==============
 SD-card reader
 ==============
@@ -15,6 +17,13 @@ E-ink screen
 
 SHARP Memory Display Breakout - 1.3" 96x96 Silver Monochrome
 https://www.adafruit.com/product/1393
+
+https://github.com/TannerElectronics/SHARP_memory_display
+https://github.com/adafruit/Adafruit_SHARP_Memory_Display
+https://github.com/JCSHoosier/STM32_SHARP_MEM_Display_Driver
+https://github.com/adafruit/Adafruit-GFX-Library
+
+============
 
 Serial connection
 LEDs
