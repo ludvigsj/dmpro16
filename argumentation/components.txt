@@ -1,13 +1,15 @@
-======
+============
 Camera
-======
-http://www.digikey.com/product-search/en?keywords=1613-1078-nd
+============
 
+4D Systems Pty Ltd UCAM-II
+
+http://www.digikey.com/product-search/en?keywords=1613-1078-nd
 https://github.com/dgtlmoon/uCamII
 
-==============
+============
 SD-card reader
-==============
+============
 
 
 
@@ -16,8 +18,8 @@ E-ink screen
 ============
 
 SHARP Memory Display Breakout - 1.3" 96x96 Silver Monochrome
-https://www.adafruit.com/product/1393
 
+https://www.adafruit.com/product/1393
 https://github.com/TannerElectronics/SHARP_memory_display
 https://github.com/adafruit/Adafruit_SHARP_Memory_Display
 https://github.com/JCSHoosier/STM32_SHARP_MEM_Display_Driver
@@ -27,7 +29,7 @@ https://github.com/adafruit/Adafruit-GFX-Library
 FPGA
 ============
 
-Xilinx Artix-35T FPGA
+Xilinx Artix7-35T FPGA
 
 https://www.xilinx.com/products/boards-and-kits/arty.html#overview
 http://www.xilinx.com/support/documentation/data_sheets/ds180_7Series_Overview.pdf
@@ -37,15 +39,42 @@ https://reference.digilentinc.com/_media/reference/programmable-logic/arty/arty_
 ============
 Microcontroller
 ============
+
 EFM32 Giant Gecko 32-bit Microcontroller
 
 https://www.silabs.com/Support%20Documents/TechnicalDocs/EFM32GG-RM.pdf
 http://www.silabs.com/support/pages/document-library.aspx?p=MCUs--32-bit&f=Giant%20Gecko&pn=EFM32GG990F512-BGA112
 
+
+============
+Serial connection
 ============
 
-Serial connection
+FTDI FT232R USB-UART interface
+
+http://www.ftdichip.com/Products/ICs/FT232R.htm
+http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232R.pdf
+
+============
 LEDs
+============
+
+
+
+============
 Battery
+============
+
+
+
+============
 SRAM
+============
+
+
+
+============
 Buttons
+============
+
+
