@@ -40,6 +40,7 @@ Microcontroller
 EFM32 Giant Gecko 32-bit Microcontroller
 
 https://www.silabs.com/Support%20Documents/TechnicalDocs/EFM32GG-RM.pdf
+http://www.silabs.com/support/pages/document-library.aspx?p=MCUs--32-bit&f=Giant%20Gecko&pn=EFM32GG990F512-BGA112
 
 ============
 
