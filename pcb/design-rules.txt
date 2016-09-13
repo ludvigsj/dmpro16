@@ -1,0 +1,9 @@
+=== Design rule specifications ===
+
+Electrical clearance: 0.254mm
+
+Trace width
+- Power traces: minimum 0.508mm
+- Signal traces: minimum 0.254mm
+
+Mask clearance: 0.127mm
