@@ -1,0 +1,9 @@
+We chose to do image processing on EFM32, the microcontroller. There are       
+several reasons for this. 
+1. We believe that this is more energy-efficient than doing this on the FPGA.
+2. Making it work is more important than doing it efficient. Recognizing the 
+sudoku board is, from our point of view, easier to implement on the EFM32. 
+Several group members have experience with micro-controller programming. 
+3. It seems that there are more libraries available for the EFM32 than the
+FPGA, like for example OpenCV.
+
