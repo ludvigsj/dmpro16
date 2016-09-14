@@ -1,0 +1,27 @@
+Tasks
+===========
+
+ - PCB - Design of PCB, connections between components etc.
+
+ - FPGA - Implementation of BNN on the FPGA and associated connections/data
+
+ - Pre-processing - Design system (primarily on the EFM32) for going from raw
+   camera data to 81 images suitable for the BNN
+
+ - Post-processing - Design system (on the EFM32) for going from 81 numbers
+   from the BNN through checking the sudoku solution and displaying this
+   in some form to the user
+
+ - Flow&R - Managing the program and data flow (interupts, state diagram ++)
+   and doing research (figuring out which potential solution to a problem is
+   the most energy effective for instance)
+
+
+Assignment:
+-------------
+
+ - PCB:             Magne
+ - FPGA:            Olav, Ilse
+ - Pre-processing:  Edgar, Ludvig
+ - Post-processing: Katrine, Eirik
+ - Flow&R:          Arne
