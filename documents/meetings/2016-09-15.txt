@@ -1,0 +1,14 @@
+Meeting 2016-09-15
+===================
+
+Requirements for camera image:
+ - Everything but sudoku board square is black
+ - The camera is angled orthogonally towards the board (but may be rotated
+   along this axis).
+
+Camera image will be stored in 4-bit grayscale (converted on the fly on the
+FPGA) on the EFM32.
+
+The preprocessing will happen on the EFM32
+
+

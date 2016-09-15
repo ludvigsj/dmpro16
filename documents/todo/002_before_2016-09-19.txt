@@ -1,0 +1,28 @@
+1. Finne format til innleveringer (PDF, LaTeX)
+2. Gjøre lifetime-figur (pluss liste.txt) digital
+3. Oppdatere forrige figur (fjerne SRAM, oppdatere ledninger, argumenter)
+   Argumentere hver eneste ledning
+4. Energi-tabell (selv om skjerm og kamera ikke er _helt_ spikret, men 
+   vi kan ha ca.-tall. Vi har spikret MCU og FPGA)
+5. Researche kamera (buss)
+6. Finne spikre-kandidater (cam, screen)
+7. Tenke på ny fordeling
+
+ - Olav: Innleverings-bajs, mappe på git ("Innleveringer"), mappe per
+innlevering. Olav schmecker inn i LaTeX.
+
+ - Arne: Lage lifetime-figur
+
+ - Eirik: Energi-tabell
+
+ - Ludvig: Fikse argumentasjon for endret tegning.
+
+ - Ilse: Oppdatere forrige figur.
+
+ - Alle: Tenke på ny fordeling (hva man selv vil gjøre)
+
+ - Alle: Gjøre research, spikrekandidater
+
+     - Katrine: Undersøke Application Note-skjermer
+
+

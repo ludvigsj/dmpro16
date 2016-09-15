@@ -1,0 +1,15 @@
+Image processing lifetime
+============================
+
+(Legend for lifetime-drawing on Draw.io)
+
+1. Kamera -> FPGA
+2. Lagres i 4k grayscale i FPGA BRAM
+3. EFM32 spiser så mye av bildet i FPGA som den trenger for å finne en
+   matrise
+4. Matriseparametere flyttes tilbake til FPGA
+5. Transformasjon kjøres på FPGA, resultat lagres i BRAM
+6. BNN
+7. Resultat av BNN til EFM32
+8. Sjekker sudoku
+9. EFM snakker skjerm
