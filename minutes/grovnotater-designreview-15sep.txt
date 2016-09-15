@@ -1,0 +1,8 @@
+- Ny versjon av systemarkitektur som begrunner for hvert grensesnitt begrunner hvorfor ting er som det er.
+- Det er lov å ha redundans, men da må vi tro at det er nyttig. Prioritering. Hva er viktig og ikke viktig?
+- Levetidsanalyse, fra start til slutt. Prosesseringsskritt. Bilde fra kamera, sendes et sted, gjøres noe med osv.
+- Tabell med idle strømforbruk og active strømforbruk for de viktigste komponentene: mikro, fpga, kamera, skjerm, sram.
+- Om vi er skikkelig pro, finn ut hvor mye energi som brukes for hvert prosessert bilde.
+- Se på oppgavefordeling en gang til, etter punktene over.
+- Det er vesentlig mer arbeid å implementere på fpga enn på microcontroller.
+- Finne ut om vi trenger SRAM
