@@ -1,0 +1,15 @@
+These general components are needed for this project:
+- Resistor
+- Capacitor (non-polarized)
+- Capacitor (polarized)
+- FPGA
+- Microcontroller (MCU)
+- Pin headers
+- Button
+- Display
+- USB-to-UART chip
+- SDCard slot/reader
+
+
+
+These specific components are needed for this project:
