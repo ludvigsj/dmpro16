@@ -1,0 +1,7 @@
+Name,Store,Res.,Bus,Power supply,Power req.,Ekstra:,Output
+,,,,,,,
+Omnivision 7690,Digikey,640x480,SCCB,Analog:2.6-3.0V I/O: 1.7-3.0V,Active: 100mW. standby: TBD,R20A eller RYYA,RAW RGB + ymse
+uCAM II,Digikey,640x480,,,,,JPEG
+Omnivision 2640,AliExpress,1600x1200,SCCB,Analog: 2.5 ~ 3.3 Core: 1.2VDC ±5% I/O: 1.7 ~ 3.3V,125mW 15 fps UXGA YUV. Standby: 600 µA,,RAW RGB + ymse
+Omnivision 7670,AliExpress,640x480,SCCB,Analog: 2.45 ~ 3V Core: 1.8VDC ±10% I/O: 1.7 ~ 3V,Active: TBD. standby: <20µA,,RAW RGB + ymse
+Omnivision 9650,AliExpress,1300x1028,SCCB,Analog: 2.45 ~ 2.8V Core: 1.8VDC ±10% I/O: 2.5V,50mW 15fps no I/O. Standby: 30µW,,RAW RGB + ymse
