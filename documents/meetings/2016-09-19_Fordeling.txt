@@ -1,0 +1,28 @@
+Fordeling:
+
+Oppgaver:
+1. PCB
+2. Kamera -> 160K BRAM
+3. Finne matrise
+4. Gjøre matrisetranformasjon -> 8K BRAM
+5. BNN
+6. Sudoku
+7. Skjerm
+
+Grupper:
+1:     Magne + Arne
+2+4:   Edgar + Ludvig
+5:     Olav + Ilse
+3+6+7: Katrine + Eirik
+
+Møtetider:
+ - Tirsdager klokken 1400
+ - Fredager klokken 1400
+(gjelder fra fredag)
+
+Arne har litt kontroll (over innleveringer etc.)
+
+Kamera må bestemmes av Edg+Lud ASAP
+Skjerm må bestemmes av Kat+Eir ASAP
+
+PCB har ansvar for at man finner buss mellom FPGA og MCU
