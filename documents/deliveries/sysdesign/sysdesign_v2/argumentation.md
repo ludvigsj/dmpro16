@@ -31,13 +31,13 @@ Camera (and SD-card) connected to the FPGA
 -------------------------------------------------
 
 - We want to be able to use an image where about half the pixels are relevant
-  data. We need 9*9 times 28x28 pixels of relevant image data, which makes the
-  required image size 9*9*28*28*2 pixels, aka 127008. The smallest standard
-  resolution accomodating this is HVGA, 480*320=153600 pixels. If we use 4 bit
-  grayscale to store the images this works out to 153600*4=614400 bits or
+  data. We need 9x9 times 28x28 pixels of relevant image data, which makes the
+  required image size 9x9x28x28x2 pixels, aka 127008. The smallest standard
+  resolution accomodating this is HVGA, 480x320=153600 pixels. If we use 4 bit
+  grayscale to store the images this works out to 153600x4=614400 bits or
   ~77kB of memory required. However the HVGA resolution seems to be uncommonly
   supported by camera hardware, and we might only have access to a VGA-
-  resolution (640*480) image, requiring twice the storage, ~154kB, for 4-bit
+  resolution (640x480) image, requiring twice the storage, ~154kB, for 4-bit
   grayscale. We do have more memory available on the FPGA (BRAM) than on the
   EFM32 (which isn't even able to store the image if it is VGA sized, and will
   have very constrained space if it needs to store even an HVGA-sized image).
