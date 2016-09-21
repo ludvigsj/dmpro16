@@ -54,12 +54,12 @@ matrix maps 0,0 to 0,0.
 
 We then need to find a matrix mapping 252,0 to x2,y2. This is also easy:
 ```
-A*[x2,y2] = [a*x2-b*y2, b*x2+a*y2]
-a*x2-b*y2 = 252
-b*x2+a*y2 = 0
+A*[252,0] = [a*252-b*0, b*252+a*0]
+a*252 = x2
+b*252 = y2
 
-a =  252x2/(x2^2 + y2^2)
-b = -252y2/(x2^2 + y2^2)
+a = x2/252
+b = y2/252
 ```
 
 (Notice that we map FROM BNN-friendly coordinates TO coordinates in the input
