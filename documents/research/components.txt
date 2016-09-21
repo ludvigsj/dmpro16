@@ -31,6 +31,7 @@ FPGA
 
 Xilinx Artix7-35T FPGA
 
+http://www.xilinx.com/support/documentation/data_sheets/ds181_Artix_7_Data_Sheet.pdf
 https://www.xilinx.com/products/boards-and-kits/arty.html#overview
 http://www.xilinx.com/support/documentation/data_sheets/ds180_7Series_Overview.pdf
 https://www.xilinx.com/support/documentation/selection-guides/artix7-product-table.pdf
