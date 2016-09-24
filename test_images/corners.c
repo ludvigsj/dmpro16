@@ -3,14 +3,13 @@
 int main()
 {
 	int first = 0;
-	int lastline = 0;
-	int curline = 0;
-	int fpx = -1;
-	int lpx = -1;
-	int lfpx = -1;
+
+	int fpxx, fpxy, lpxx, lpxy;
+	fpxx = 9999;
+	lpxx = -1;
 
 	char buf[640];
-	FILE *fp = fopen("sudoku2_right_40deg8bit.gray", "r");
+	FILE *fp = fopen("sudoku2_middle_75%_-25deg8bit.gray", "r");
 
 	int i;
 	for (i = 0; i < 480; i++)
@@ -23,38 +22,31 @@ int main()
 			{
 				if (buf[j] != 0)
 				{
-					printf("First corner: %d, %d\n", i, j);
+					printf("First corner: %d, %d\n", j, i);
 					first = 1;
 					break;
 				}
 			}
 			else
 			{
-				if (buf[j] != 0)
+				if (buf[j] != 0 && j < fpxx)
 				{
-					if (fpx == -1)
-						fpx = j;
-					else
-						lpx = j;
+					fpxx = j;
+					fpxy = i;
+				}
+				else if (buf[j] != 0 && j > lpxx)
+				{
+					lpxx = j;
+					lpxy = i;
 				}
 			}
 		}
-		if (first == 1)
-		{
-			lastline = curline;
-			curline = lpx - fpx;
-			if (curline == lastline && lastline > 0)
-			{
-				if (lfpx < fpx)
-					printf("Second corner: %d, %d\n", i-1, lfpx);
-				else
-					printf("Second corner: %d, %d\n", i-1, lpx);
-				break;
-			}
-			lfpx = fpx;
-			fpx = lpx = -1;
-		}
 	}
+
+	if (fpxy < lpxy)
+		printf("Second corner: left: %d, %d\n", fpxx, fpxy);
+	else
+		printf("Second corner: right: %d, %d\n", lpxx, lpxy);
 
 	fclose(fp);
 }
