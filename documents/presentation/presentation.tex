@@ -1,0 +1,175 @@
+\documentclass[10pt]{beamer}
+\usetheme[
+%%% option passed to the outer theme
+%    progressstyle=fixedCircCnt,   % fixedCircCnt, movingCircCnt (moving is deault)
+  ]{Feather}
+  
+% If you want to change the colors of the various elements in the theme, edit and uncomment the following lines
+
+% Change the bar colors:
+%\setbeamercolor{Feather}{fg=red!20,bg=red}
+
+% Change the color of the structural elements:
+%\setbeamercolor{structure}{fg=red}
+
+% Change the frame title text color:
+%\setbeamercolor{frametitle}{fg=blue}
+
+% Change the normal text color background:
+%\setbeamercolor{normal text}{fg=black,bg=gray!10}
+
+%-------------------------------------------------------
+% INCLUDE PACKAGES
+%-------------------------------------------------------
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+
+%-------------------------------------------------------
+% DEFFINING AND REDEFINING COMMANDS
+%-------------------------------------------------------
+% colored hyperlinks
+\newcommand{\chref}[2]{
+  \href{#1}{{\usebeamercolor[bg]{Feather}#2}}
+}
+%-------------------------------------------------------
+% INFORMATION IN THE TITLE PAGE
+%-------------------------------------------------------
+
+\title[] % [] is optional - is placed on the bottom of the sidebar on every slide
+{ % is placed on the title page
+      \textbf{Sudo-ku}
+}
+
+\subtitle[DM Pro 2016]
+{
+%      \textbf{v. 1.0.0}
+}
+
+\author[Energieffektivitetsgruppen]
+{      Energieffektivgruppen \\
+ %     {\ttfamily dmpro16@samfundet.no}
+}
+
+\institute[]
+{
+%      Faculty of Mathematics, Informatics and Information Technologies\\
+%      Plovdiv University ``Paisii Hilendarski''\\
+  
+  %there must be an empty line above this line - otherwise some unwanted space is added between the university and the country (I do not know why;( )
+}
+
+\date{\today}
+
+%-------------------------------------------------------
+% THE BODY OF THE PRESENTATION
+%-------------------------------------------------------
+
+\begin{document}
+
+%-------------------------------------------------------
+% THE TITLEPAGE
+%-------------------------------------------------------
+
+{\1% % this is the name of the PDF file for the background
+\begin{frame}[plain,noframenumbering] % the plain option removes the header from the title page, noframenumbering removes the numbering of this frame only
+  \titlepage % call the title page information from above
+\end{frame}}
+
+
+\begin{frame}{Content}{}
+\tableofcontents
+\end{frame}
+
+%-------------------------------------------------------
+\section{Planned Operation}
+%-------------------------------------------------------
+\begin{frame}{Planned operation of sudo-ku}
+\begin{itemize}
+\item Point camera at an image of a solved sudoku-board
+\item Push button
+\item Camera image is stored in FPGA BRAM
+\item MCU-program figures out the transform required to make a 289 by 289 image from the input image
+\item FPGA performs transform, cutting it into pieces, trimming edges of the squares to avoid sending outlines into the BNN etc.
+\item BNN (on FPGA) detects digits
+\item Digits sent to MCU, where the sudoku is checked and result (and potentially other relevant info, incorrect rows etc.) is output to the user
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Planned operation of sudo-ku}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/lifetime.pdf}
+}
+\end{frame}
+
+\begin{frame}{Planned operation of sudo-ku}{Picture requirements}
+\begin{itemize}
+\item All but the board itself should be black, the board itself white
+\item The camera must be pointed roughly orthogonally to the board; we do not do any perspective transformations
+\item The camera can be rotated along the camera-pointing axis by 45 degree either way. This requirement might go away if we find a simple way to figure out the orientation without it.
+\end{itemize}
+\end{frame}
+
+%-------------------------------------------------------
+\section{Design Overview}
+%-------------------------------------------------------
+\begin{frame}{Design Overview}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/tegning.pdf}
+}
+\end{frame}
+
+
+%-------------------------------------------------------
+\section{Argumentation}
+%-------------------------------------------------------
+\begin{frame}{Argumentation}{Camera (and SD-card) connected to the FPGA}
+\begin{itemize}
+\item We need 9x9 times 28x28 pixels of relevant image data. Results in 9x9x28x28x2 = 127008 pixels.
+\item Smallest standard accommodating this is HVGA(480x320=153600 pixels). But is uncommonly supported. Hence we use VGA(640x480=307200 pixels).
+\item We use 4 bit grayscale to store the images. Equals 307200x4=1228800 bits.
+\item Image from the the camera is in a different format than our 4-bit grayscale. This needs conversion on the fly, either on FPGA or MCU.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Argumentation}{Image transformation on FPGA}
+\begin{itemize}
+\item The process of doing an affine transformation on the camera input data is a simple, arithmetical operation, easy to implement elegantly on an FPGA, given six matrix elements.
+\item The resulting, transformed image/images are only needed on the FPGA
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Argumentation}{Matrix computation on MCU}
+\begin{itemize}
+\item An algorithm for figuring out where the board is located in the image is typically a task which is much more elegant (and less error-prone) implemented in software than in hardware. It will also be possible to compute with only a subset of the input pixels, thus not needing all of the pixels to be transferred even though we do the computation on the MCU and the image is stored on the FPGA.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Argumentation}{User I/O on MCU}
+\begin{itemize}
+\item This is a no-brainer
+\item Output, which includes communicating with a display, is a lot more difficult implementing in hardware, with no real benefit.
+\item The MCU is used to control the operation flow of \textit{sudo-ku}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Argumentation}{Sudoku-checking on MCU}
+\begin{itemize}
+\item Super easy to do on MCU.
+\item Have already made a first draft of about 50 lines of code checking a sudoku.
+\item Lots of eye-candy can be implemented when everything works
+\item Only ~700 ways to solve a sudoku. The entire board can be transferred from the FPGA to the MCU in 10 bits. Data transferred is negligible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Argumentation}{Having an SD-card}
+\begin{itemize}
+\item In case the camera processing does not work, we will still have a way to demo the working BNN by loading pre-formatted, square image data, skipping the transformation steps.
+\end{itemize}
+\end{frame}
+
+
+
+\end{document}
