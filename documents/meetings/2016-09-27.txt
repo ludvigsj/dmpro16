@@ -1,0 +1,13 @@
+TODO:
+
+- PCB:
+-- Hvilke frekvenser trenger FPGA? En rask og en treig? (Eirik)
+-- Finne ut hvordan FPGA kan programmeres (Ilse + Olav)
+-- SPI mellom FPGA og MCU, IPcore, pinner (Arne)
+-- Spre ting ut på flere IO-banker på FPGAen (MH)
+-- Sette riktig spenning på hver bank (Olav + Ilse)
+-- UART-til-USB, dongle (MH)
+-- Sette på oscillator (MH)
+-- Finne ut hvilke(t) kamera(er) vi skal bruke og interface (Edgar)
+--- OV7690 og SCCB, SCCB = I2C
+-- Battery powered (MH)
