@@ -1,0 +1,74 @@
+JTAG pins can be found in bank 0
+
+**7A35T**
+Minimum config flash mem size: 32
+JTAG IDCODE[31:0]: X362D093
+IDCODE Revision: 0 or later
+JTAG instruction length: 6 bits
+
+
+The recommended power-on sequence is VCCINT, VCCBRAM, VCCAUX, and 
+VCCO to achieve minimum current draw and ensure that the I/Os are 
+3-stated at power-on. The recommended power-off sequence is the 
+reverse of the power-on sequence. If VCCINT and VCCBRAM have the 
+same recommended voltage levelsthen both can be powered by the 
+same supply and ramped simultaneously. If VCCAUX and VCCO have 
+the same recommended voltage levels then both can be powered by 
+the same supply and ramped simultaneously.
+
+**Pins JTAG uses:**
+CFGBVS: High when we use 2.5V or 3.3V (connected to VCCO_0)
+
+M[2:0]:
+Input pins M[2:0]. The M2, M1, and M0 mode pins should be set at a 
+constant DC voltage level, either through pull-up or pull-down 
+resistors (≤ 1kΩ), or tied directly to ground or VCCO_0. 
+The mode pins should not be toggled during and after configuration. 
+
+TCK: Test clock
+TMS: Test mode select
+TDI: Test data input
+TDO: Test data output
+
+JTAG to FPGA:
+data_out -> TDI
+mode_select -> TMS
+clock -> TCK
+data_in -> TDO
+
+PROGRAM_B: 
+Active-Low reset to configuration logic. When 
+PROGRAM_B is pulsed Low, the FPGA configuration is 
+cleared and a new configuration sequence is initiated. 
+Configuration reset initiated upon falling edge, and 
+configuration (i.e. programming) sequence begins upon 
+the following rising edge. 
+Connect PROGRAM_B to an external ≤ 4.7 kΩ pull-up resistor 
+to VCCO_0 to ensure a stable High input, and recommend 
+push-button to GND to enable manual configuration reset.
+
+INIT_B: 
+Active-Low FPGA initialization pin or configuration error signal.
+The FPGA drives this pin Low when the FPGA is in a configuration 
+resetstate, when the FPGA is initializing (clearing) its
+configuration memory, or when the FPGA has detected a configuration
+error. Upon completing the FPGA initialization process, INIT_B is 
+released to high-impedance at which time an external resistor 
+is expected to pull INIT_B High. INIT_B can externally be held Low
+during power-up to stall the power-on configuration sequence at the
+end of the initialization process. When a High is detected at the
+INIT_B input after the initialization process, the FPGA proceeds
+with the remainder of the configuration sequence dictated by the
+[2:0] pin settings.Connect INIT_B to a ≤ 4.7 kΩ pull-up resistor to
+VCCO_0 to ensure clean Low-to-High transitions.
+
+DONE: 
+A High signal on the DONE pin indicates completion of 
+the configuration sequence. The DONE output is an 
+open-drain output by default.
+
+PUDC_B:
+Probably connected to ground?
+
+
+
