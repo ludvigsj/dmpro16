@@ -1,0 +1,36 @@
+2 layers, 1024-128 neurons:
+# Fully connected
+(784, 1024) b # synapses for each neuron
+(1024,)     b # bias, ignore
+
+# Batch normalization
+(1024,)     n # beta
+(1024,)		n # gamma
+(1024,)     n # mean
+(1024,)     bn # inv_stddev
+
+# Fully connected
+(1024, 128) b # synapses for each neuron
+(128,)      b # bias, ignore
+
+# Batch normalization
+(128,)      n # beta
+(128,)      n # gamma
+(128,)      n # mean
+(128,)      bn # inv_stddev
+
+# Fully connected
+(128, 10)   b # synapses for each neuron
+(10,)       b # bias, ignore
+
+# Batch normalization
+(10,)       n # beta
+(10,)       n # gamma
+(10,)       n # mean
+(10,)       bn # inv_stddev
+
+
+Plot the output of the neuron versus the value of b_weight * b_synapses.
+batchnorm(x) = gamma * (x - mean) * inv_stddev + beta
+neuron_output = sign( batchnorm(binary weights * binary synapses) )
+
