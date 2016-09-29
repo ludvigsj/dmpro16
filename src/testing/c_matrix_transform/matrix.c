@@ -24,6 +24,23 @@ int argPoints(int argc, char *argv[]){
         return 1;
 }
 
+/* Does:
+ * 
+ * [x', y'] = A*[x, y] + [x1, y1]
+ *
+ * where 
+ *
+ * [x', y'] = dstPt
+ *   [x, y] = srcPt 
+ *
+ *        A = | a -b |
+ *            | b  a |
+ *
+ * where
+ *
+ * a = (x2 - x1)/DST_W
+ * b = (y2 - y1)/DST_H
+ */
 int transform(int *dstPt, int *srcPt){
         int x_diff = points[2]-points[0];
         int y_diff = points[3]-points[1];
