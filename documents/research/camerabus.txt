@@ -1,0 +1,18 @@
+Camera bus thing:
+
+Cam Dir FPGA Signal   
+A1  <-- ?    PWDN   Power down
+B1  <-> ?    SDA    \SSCB/I2C
+B2  <-> ?    SCL    /
+B3  --> ?    DATA0  
+B4  --> ?    DATA1
+C1  --> ?    HREF
+C2  --> ?    VSYNC
+C4  --> ?    DATA2
+D1  --> ?    PCLK   Pixel clock
+D2  <-- ?    XVCLK  System clock (Muligens rett på klokkekilde?)
+D3  --> ?    DATA5
+D4  --> ?    DATA3
+E1  --> ?    DATA7
+E2  --> ?    DATA6
+E3  --> ?    DATA4
