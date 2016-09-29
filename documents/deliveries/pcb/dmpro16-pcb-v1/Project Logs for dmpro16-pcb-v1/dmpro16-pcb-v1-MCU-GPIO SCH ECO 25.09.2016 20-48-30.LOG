@@ -1,0 +1,3 @@
+Replace Part C52 cap_unpol_1608_1uF in C:\Users\magnehh\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-MCU-GPIO.SchDoc with cap_unpol_1608_1uF from capacitors.SchLib
+Replace Part J? con_head_2x05pin in C:\Users\magnehh\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-MCU-GPIO.SchDoc with con_head_2x05pin from connectors.SchLib
+Replace Part U2 EFM32GG990F1024-BGA112 in C:\Users\magnehh\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-MCU-GPIO.SchDoc with EFM32GG990F1024-BGA112 from Silicon Labs Energy Micro EFM32.IntLib
