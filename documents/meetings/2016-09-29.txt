@@ -1,0 +1,57 @@
+!Design review 2016-09-29
+
+Comments on the delivered slides:
+* Text on slide 2 is not consistent with figure on slide 3.
+    - The figure is correct. Old text
+* The structure can be improved.
+* Still missing expected energy consumption
+    - How much power does one sudoku need?
+    - Nice to compare with in the presentation at the end
+
+PCB:
+
+* Camera:
+    - Thermal baking. DIfferent baking profiles. Think about it.
+        # Think about it as making a frozen grandiosa and a homemade
+          pizza in the same oven at the same time
+    - RPi camera is bad, but let's keep for backup
+    - The protocol for the camera
+        # This may be complex
+            & Should the camera be moved to the MCU?
+            & Probably fine to just route it via the FPGA to the MCU
+                ¤ Should add more lines between FPGA and MCU
+* How do we measure the power consumption?
+* Use money, make it simple
+* Alternate power
+* Screen
+    - Is bankers, but pins on the MCU end needs changing. See irclogs
+* Unused pins
+    - Route a bunch to testpoints
+        # Enough to be flexible
+        # Not too many, routing will be a hassle
+* Bus between FPGA and MCU
+    - Should we add another bus+
+        # We don't need to use it
+        # Nice backup, so we don't put all our eggs in the SPI-basket
+* Does the MCU have j-tag?
+    - Doesn't seem like it
+    - Send an epost to Yaman and ask.
+* Oscilator for the MCU
+    - It's possible to use the internal oscilator
+        # But it will probably be pain
+            & 'In worst case, use the internal oscilator'
+        # Can we use the same oscilator as the FPGA?
+* Gunnar
+    - Talk with Gunnar today
+* Flashing the FPGA
+    - Should probably add a flash so the FPGA can be flashed
+* Wiring
+    - This should probably wire nice
+    - Be prepared for manual routing
+* Delivery of the PCB
+    ll:
+    - Send it to Gunnar
+    - He will note what's bad
+    - We will fix
+    - GOTO: ll
+    - When all is good, zip'it and upload to itslearning
