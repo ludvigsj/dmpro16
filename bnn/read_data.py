@@ -1,6 +1,30 @@
 import numpy as np
-ap2 = np.load("2-layer.npz")
-# ap2 = np.load("3-layer.npz")
+import operator
+
+#ap2 = np.load("2-layer.npz")
+ap2 = np.load("3-layer.npz")
+
+sorted_list = []
+d = {}
+for l in ap2.keys():
+    k = ""
+    hijack = l[4:]
+    print "Here is hijack", hijack
+    if len(hijack) < 2:
+        k = "arr_"+"0"+hijack
+        print "Here is k",k
+    else:
+        k = str(l)
+
+    d[k] = ap2[l]
+    sorted_list.append((k, ap2[l]))
+
+sorted_list = sorted(sorted_list, key=operator.itemgetter(0))
+
+for t in sorted_list:
+    print t[0], t[1]
+
+
 
 for key in ap2.keys():
     shape = ap2[key].shape
