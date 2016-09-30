@@ -11,7 +11,7 @@ OpenOutputs=1
 ArchiveProject=0
 TimestampOutput=0
 SeparateFolders=0
-TemplateLocationPath=
+TemplateLocationPath=C:\Users\magnehh\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\schematic_A4_template.SchDot\
 PinSwapBy_Netlabel=1
 PinSwapBy_Pin=1
 AllowPortNetNames=0
@@ -632,6 +632,22 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MGFHISJY
+
+[Parameter1]
+Name=Version
+Value=1.0
+
+[Parameter2]
+Name=Subject
+Value=TDT4295 Computer Project
+
+[Parameter3]
+Name=Groupname
+Value=Energy
+
+[Parameter4]
+Name=BoardName
+Value=sudo -ku
 
 [Configuration1]
 Name=Default Configuration
