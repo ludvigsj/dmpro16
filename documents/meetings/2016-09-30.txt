@@ -2,6 +2,7 @@ PCB:
 * Thermal baking
 	Noone knows what this is, and apparently the camera and FPGA has
 	different thermal profiles.
+	LUDVIG FIX
 
 FPGA:
 * Flash
