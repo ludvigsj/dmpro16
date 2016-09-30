@@ -1,8 +1,7 @@
 PCB:
 * Thermal baking
 	Noone knows what this is, and apparently the camera and FPGA has
-	different thermal profiles.
-	LUDVIG FIX
+	different thermal profiles. Ludvig looks at this.
 
 FPGA:
 * Flash
@@ -13,7 +12,7 @@ FPGA:
 
 * Bus
 	We need some reserve signals between MCU and FPGA. In addition to
-	SPI bus. A 16-bit wide bus between FPGA and MCU would be nice.
+	SPI bus. A 16-bit wide bus between FPGA and MCU would be nice. Arne
 
 * Image
 	Do we really need to operate on 4-bit grayscale? BNN and corner
@@ -32,6 +31,19 @@ Camera:
 MCU:
 * JTAG
 	We still don't know how to program the MCU. We need a way to flash
-	the MCU, possibly JTAG. Send a mail to Yaman.
+	the MCU, possibly JTAG. Send a mail to Yaman. Katrine looks at how
+	one programs the MCU.
 
+Bacup Power:
+* Non-battery
+	We need a power supply to use during debugging and general
+	development. This will be looked at a later time. Power regulators
+	are such an important and integral part of the PCB that we cannot
+	have redundancy in everything.
 
+Complexity
+We have added a buttload of complexity the last few days or so.
+2 cameras, flash, a lot of lines(16?) between FPGA and MCU
+	We just removed r-pi camera. This is because we don't want to
+	implement a new camera if the old camera doesn't work. Our backup
+	solution is to go straight to the SD-card.
