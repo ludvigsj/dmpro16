@@ -69,7 +69,7 @@ for test_image in range(total_images):
     # update results
     output_from_nn = np.argmax(out_layer_output)
     correct_output = test_set[1][test_image]
-    if output_from_nn == output_from_nn:
+    if output_from_nn == correct_output:
         correct_images += 1
     print("{}/{} correct images".format(correct_images, test_image+1))
 
