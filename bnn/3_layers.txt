@@ -1,0 +1,40 @@
+# fully connected
+arr_0	(784, 256)	TRUE 	TRUE 
+arr_1	(256,)		TRUE 	TRUE 
+
+# batchnorm
+arr_2	(256,)		FALSE	FALSE
+arr_3	(256,)		TRUE 	FALSE
+arr_4	(256,)		FALSE	FALSE
+arr_5	(256,)		TRUE 	TRUE 
+
+arr_6	(256, 256)	TRUE 	TRUE 
+arr_7	(256,)		TRUE 	TRUE 
+
+
+
+arr_8	(256,)		FALSE	FALSE
+arr_9	(256,)		TRUE 	FALSE
+arr_10	(256,)		FALSE	FALSE
+arr_11	(256,)		TRUE 	TRUE 
+
+
+
+arr_12	(256, 256)	TRUE 	TRUE 
+arr_13	(256,)		TRUE 	TRUE 
+
+
+arr_14	(256,)		FALSE	FALSE
+arr_15	(256,)		TRUE 	FALSE
+arr_16	(256,)		FALSE	FALSE
+arr_17	(256,)		TRUE 	TRUE 
+
+
+arr_18	(256, 10)	TRUE 	TRUE 
+arr_19	(10,)		TRUE 	TRUE 
+
+
+arr_20	(10,)		FALSE	TRUE 
+arr_21	(10,)		TRUE 	FALSE
+arr_22	(10,)		FALSE	FALSE
+arr_23	(10,)		TRUE 	TRUE 
