@@ -11,6 +11,13 @@ def sigmoid(x):
 
 # load ANN data
 nn_data = np.load("2-layer.npz")
+# Make synapses binary
+nn_first_synapses = np.sign(nn_data["arr_0"]).astype(int)
+print(nn_first_synapses)
+nn_second_synapses = np.sign(nn_data["arr_6"]).astype(int)
+print(nn_second_synapses)
+nn_out_synapses = np.sign(nn_data["arr_12"]).astype(int)
+print(nn_out_synapses)
 
 # load image
 # original dataset is 0-255, this one uses floats
@@ -25,15 +32,15 @@ for test_image in range(total_images):
     image_vector = test_set[0][test_image]
     for i in range(784):
         if image_vector[i] > 0.6: # colors are not linear
-            image_vector[i] = 255
+            image_vector[i] = 1
         else:
-            image_vector[i] = 0
+            image_vector[i] = -1
     
     # compute first hidden layer (1024)
     l1_size = 1024
     
     first_layer_output = np.empty(l1_size)
-    first_layer_in = np.dot(image_vector, nn_data["arr_0"])
+    first_layer_in = np.dot(image_vector, nn_first_synapses)
     
     beta = nn_data["arr_2"]
     gamma = nn_data["arr_3"]
@@ -47,7 +54,7 @@ for test_image in range(total_images):
     
     # compute second hidden layer (128)
     l2_size = 128
-    input_second_layer = np.dot(first_layer_output, nn_data["arr_6"])
+    input_second_layer = np.dot(first_layer_output, nn_second_synapses)
     second_layer_output = np.empty(l2_size)
     
     beta = nn_data["arr_8"]
@@ -69,7 +76,7 @@ for test_image in range(total_images):
     for neuron in range(out_size):
         current_input = 0
         for synapse_used in range(l2_size):
-            current_input += second_layer_output[synapse_used] * nn_data["arr_12"][synapse_used][neuron]
+            current_input += second_layer_output[synapse_used] * nn_out_synapses[synapse_used][neuron]
     
     # apply batchnorm
         beta = nn_data["arr_14"][neuron]
