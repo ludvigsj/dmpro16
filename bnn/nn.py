@@ -39,7 +39,6 @@ for test_image in range(total_images):
     # compute first hidden layer (1024)
     l1_size = 1024
     
-    first_layer_output = np.empty(l1_size)
     first_layer_in = np.dot(image_vector, nn_first_synapses)
     
     beta = nn_data["arr_2"]
@@ -49,13 +48,12 @@ for test_image in range(total_images):
     
     x_with_mean = first_layer_in - mean
     first_layer_output = (gamma * x_with_mean * inv_stddev) + beta
-    # tanh or sigmoid
-    first_layer_output = np.tanh(first_layer_output)
+    #first_layer_output = np.tanh(first_layer_output)
+    first_layer_output = np.sign(first_layer_output).astype(int)
     
     # compute second hidden layer (128)
     l2_size = 128
     input_second_layer = np.dot(first_layer_output, nn_second_synapses)
-    second_layer_output = np.empty(l2_size)
     
     beta = nn_data["arr_8"]
     gamma = nn_data["arr_9"]
@@ -64,10 +62,8 @@ for test_image in range(total_images):
     
     x_with_mean = input_second_layer - mean
     second_layer_output = (gamma * x_with_mean * inv_stddev) + beta
-    # some activation function?
-    #second_layer_output = softmax(second_layer_output)
-    #second_layer_output = sigmoid(second_layer_output)
-    second_layer_output = np.tanh(second_layer_output)
+    second_layer_output = np.sign(second_layer_output).astype(int)
+    #second_layer_output = np.tanh(second_layer_output)
 
     # compute output layer (10)
     out_size = 10
