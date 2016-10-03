@@ -2,52 +2,59 @@ import cPickle
 import gzip
 import numpy as np
 
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    return np.exp(x) / np.sum(np.exp(x), axis=0)
+def binsign(x):
+    return 1 if x>0 else 0
+binsign = np.vectorize(binsign, otypes=[np.int])
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+def xnor(a,b):
+    return np.logical_not(np.logical_xor(a,b))
+
+def xnorsum(v,w):
+    result = np.empty(w.shape[0])
+    for i in range(w.shape[0]):
+        result[i] = np.sum(xnor(v,w[i]))
+    return result
 
 # load ANN data
 nn_data = np.load("2-layer.npz")
-# Make synapses binary
-nn_first_synapses = np.sign(nn_data["arr_0"]).astype(int)
-print(nn_first_synapses)
-nn_second_synapses = np.sign(nn_data["arr_6"]).astype(int)
-print(nn_second_synapses)
-nn_out_synapses = np.sign(nn_data["arr_12"]).astype(int)
-print(nn_out_synapses)
 
-# load image
+# Make synapses binary
+nn_first_synapses = binsign(nn_data["arr_0"]).astype(int)
+nn_second_synapses = binsign(nn_data["arr_6"]).astype(int)
+nn_out_synapses = binsign(nn_data["arr_12"]).astype(int)
+# and easier to work with
+nn_first_synapses = np.swapaxes(nn_first_synapses,0,1)
+nn_second_synapses = np.swapaxes(nn_second_synapses,0,1)
+nn_out_synapses = np.swapaxes(nn_out_synapses,0,1)
+
 # original dataset is 0-255, this one uses floats
 with gzip.open('mnist.pkl.gz', 'rb') as f:
   _, _, test_set = cPickle.load(f)
 # test_set[0] is the image vector
 # test_set[1] is the expected output
-# test_set contains 10000 images
-total_images = 10000
+total_images = 10000 # test_set contains 10000 images
 correct_images = 0
 
 def compute_layer(previous_activation, weights, beta, gamma, mean, inv_stddev):
-    activation = np.dot(previous_activation, weights)
-    
-    activation_with_mean = activation - mean
-    first_layer_output = np.sign((gamma * activation_with_mean * inv_stddev) +
+    #activation = np.dot(previous_activation, weights)
+    activation = xnorsum(previous_activation, weights)
+    activation_with_mean = (activation*2)-previous_activation.shape[0] - mean
+    #current_layer_output = np.sign((gamma * activation_with_mean * inv_stddev) +
+    #        beta).astype(int)
+    current_layer_output = binsign((gamma * activation_with_mean * inv_stddev) +
             beta).astype(int)
 
-    return first_layer_output
+    return current_layer_output
 
 for test_image in range(total_images):
-    image_vector = test_set[0][test_image]
+    image_vector = np.empty(784, dtype=int)
     for i in range(784):
-        if image_vector[i] > 0.6: # colors are not linear
+        if test_set[0][test_image][i] > 0.6: # colors are not linear
             image_vector[i] = 1
         else:
-            image_vector[i] = -1
+            image_vector[i] = 0
     
-    # compute first hidden layer (1024)
-    
+    # compute first hidden layer (1024) 
     layer_1 = compute_layer(image_vector,
             nn_first_synapses,
             nn_data["arr_2"],
@@ -75,4 +82,6 @@ for test_image in range(total_images):
     correct_output = test_set[1][test_image]
     if output_from_nn == correct_output:
         correct_images += 1
+    if (test_image%100 == 99):
         print("{}/{} correct images".format(correct_images, test_image+1))
+
