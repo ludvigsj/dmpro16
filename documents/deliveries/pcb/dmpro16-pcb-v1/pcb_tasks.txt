@@ -1,0 +1,6 @@
+﻿Small tasks that need to be done in order to start drawing PCB:
+* Verify that all component footprints are available and correct.
+* Find which MCU pin on EFM32GG990 that can accept a clock signal.
+* Draw camera schematic symbol.
+* Connect camera schematic symbol.
+* Connect pins FPGA Config section.
