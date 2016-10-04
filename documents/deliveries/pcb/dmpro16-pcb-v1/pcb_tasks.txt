@@ -4,7 +4,7 @@ Small tasks that need to be done in order to start drawing PCB:
     - We can use PB14 (PB14 is high frequence, PB8 is low frequence)
 * Draw camera schematic symbol.
 * Connect camera schematic symbol.
-* Connect pins FPGA Config section.
+X Connect pins FPGA Config section.
     - Take this dirrectly from the other group, they have done it right
 * Draw FPGA Config Flash schematic symbol.
     - Take from the other group, they have done this
