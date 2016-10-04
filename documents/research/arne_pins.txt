@@ -1,22 +1,22 @@
 FPGA <-> MCU
 
 FPGA    MCU     Signal
-D9      PB4     data0
-A13     PB5     data1
-A14     PB6     data2
-C14     PB7     data3
-B14     PB8     data4
-B15     PB9     data5
-A15     PB10    data6
-C16     PB11    data7
-B16     PB12    data8
-C11     PB13    data9
-C12     PB14    attn1
-D13     PB15    attn2
-C13     PD1     mosi
 E12     PD0     miso
+C13     PD1     mosi
 E13     PD2     sck
 E11     PD3     cs
+D9      PD4     data0
+A13     PD5     data1
+A14     PD6     data2
+C14     PD7     data3
+B14     PD8     data4
+B15     PD9     data5
+A15     PD10    data6
+C16     PD11    data7
+B16     PD12    data8
+C11     PD13    data9
+C12     PD14    attn1
+D13     PD15    attn2
 
 
 Camera <-> FPGA
