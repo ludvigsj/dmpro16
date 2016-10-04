@@ -60,7 +60,7 @@ def xnorsum(v,w):
     return result
 
 def do_batchnorm(xnorsum, batchnorm):
-    if xnorsum > batchnorm:
+    if xnorsum >= batchnorm:
         return 1
     else:
         return 0
@@ -83,7 +83,7 @@ def compute_layer(previous_activation, weights, beta, gamma, mean, inv_stddev):
 for test_image in range(total_images):
     image_vector = np.empty(784, dtype=int)
     for i in range(784):
-        if test_set[0][test_image][i] > 0.6: # colors are not linear
+        if test_set[0][test_image][i] >= 0.6: # colors are not linear
             image_vector[i] = 1
         else:
             image_vector[i] = 0
@@ -91,30 +91,6 @@ for test_image in range(total_images):
     layer_1 = alt_compute_layer(image_vector, nn_first_synapses, batchnorm1, g1)
     layer_2 = alt_compute_layer(layer_1, nn_second_synapses, batchnorm2, g2)
     layer_3 = alt_compute_layer(layer_2, nn_out_synapses, batchnorm3, g3)
-
-    # compute first hidden layer (1024) 
-    #layer_1 = compute_layer(image_vector,
-    #        nn_first_synapses,
-    #        nn_data["arr_2"],
-    #        nn_data["arr_3"],
-    #        nn_data["arr_4"],
-    #        nn_data["arr_5"])
-
-    # compute second hidden layer (128)
-    #layer_2 = compute_layer(layer_1,
-    #        nn_second_synapses,
-    #        nn_data["arr_8"],
-    #        nn_data["arr_9"],
-    #        nn_data["arr_10"],
-    #        nn_data["arr_11"])
-
-    # compute output layer (10)
-    #layer_3 = compute_layer(layer_2,
-    #        nn_out_synapses,
-    #        nn_data["arr_14"],
-    #        nn_data["arr_15"],
-    #        nn_data["arr_16"],
-    #        nn_data["arr_17"])
 
     output_from_nn = np.argmax(layer_3)
     correct_output = test_set[1][test_image]
