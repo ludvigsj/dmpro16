@@ -5,6 +5,7 @@
 * Draw camera schematic symbol.
 * Connect camera schematic symbol.
 * Connect pins FPGA Config section.
+    - Take this dirrectly from the other group, they have done it right
 * Draw FPGA Config Flash schematic symbol.
 * Draw FPGA JTAG header schematic symbol.
 * Figure out way of measuring current comsumption on each voltage rail.
