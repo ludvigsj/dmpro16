@@ -1,0 +1,32 @@
+PCB
+-------
+
+Må lage footprints. Har laget:
+ - FPGA
+ - MCU
+ - Capacitors
+ - Resistors
+ - SDcard
+ - Oscillator-sak
+
+Mangler:
+ - Kamera
+ - Andre headere
+
+Hente kamera fra i fjor
+
+Må rute
+
+LED på "Done!"-pinne
+
+Levering på mandag:
+---------------------
+ - Eirik fikser
+ - Går og maser på folk om å legge inn shit
+
+BNN har ikke gjort arkitektur
+Kamera ny protokoll; må sees på
+Hjørneting funker
+Ludvig har matte
+
+HUSK: Silkscreen, sudo -ku, navn på alle
