@@ -1,0 +1,6 @@
+sette header på DONE-signalet på FPGAen, veldig nyttig å ha!
+legge til low frequency oscillator til mcu
+trigger button på interrupt pin
+flytte fpgabus til PD0-15
+sjekke opp power dissipation i voltage regulators
+pcb-presentasjonen er riktig mtp. design rules!

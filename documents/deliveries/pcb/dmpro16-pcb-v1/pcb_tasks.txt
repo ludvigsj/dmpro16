@@ -1,0 +1,14 @@
+Small tasks that need to be done in order to start drawing PCB:
+* Verify that all component footprints are available and correct.
+X Find which MCU pin on EFM32GG990 that can accept a clock signal.
+    - We can use PB14 (PB14 is high frequence, PB8 is low frequence)
+* Draw camera schematic symbol.
+* Connect camera schematic symbol.
+X Connect pins FPGA Config section.
+    - Take this dirrectly from the other group, they have done it right
+* Draw FPGA Config Flash schematic symbol.
+    - Take from the other group, they have done this
+X Draw FPGA JTAG header schematic symbol.
+    - Take from the other group, they have done this
+X Figure out way of measuring current comsumption on each voltage rail.
+    - We use INA19x current sense amplifiers.

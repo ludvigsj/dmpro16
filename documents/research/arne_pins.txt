@@ -1,0 +1,54 @@
+FPGA <-> MCU
+
+FPGA    MCU     Signal
+E12     PD0     miso
+C13     PD1     mosi
+E13     PD2     sck
+E11     PD3     cs
+D9      PD4     data0
+A13     PD5     data1
+A14     PD6     data2
+C14     PD7     data3
+B14     PD8     data4
+B15     PD9     data5
+A15     PD10    data6
+C16     PD11    data7
+B16     PD12    data8
+C11     PD13    data9
+C12     PD14    attn1
+D13     PD15    attn2
+
+
+Camera <-> FPGA
+
+Cam Dir FPGA Signal   
+A1  <-- B5    PWDN   Power down
+B1  <-> A5    SDA    \SSCB/I2C
+B2  <-> A4    SCL    /
+B3  --> B4    DATA0  
+B4  --> A3    DATA1
+C1  --> C7    HREF
+C2  --> C6    VSYNC
+C4  --> D6    DATA2
+D1  --> D5    PCLK
+D2  <-- C3    XVCLK
+D3  --> C2    DATA5
+D4  --> B2    DATA3
+E1  --> A2    DATA7
+E2  --> C1    DATA6
+E3  --> B1    DATA4
+
+MCU <-> Screen
+
+MCU     Screen
+PE10    MOSI
+PE12    SCK
+PE13    CS
+
+FPGA <-> microSD
+
+FPGA    microSD
+G5      nCS
+G4      DI
+G2      CLK
+G1      DO

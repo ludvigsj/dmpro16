@@ -1,0 +1,49 @@
+PCB:
+* Thermal baking
+	Noone knows what this is, and apparently the camera and FPGA has
+	different thermal profiles. Ludvig looks at this.
+
+FPGA:
+* Flash
+	We need a flash to program the fpga each time it is turned on.
+	Moving the file from flash to fpga takes a long time, but we don't
+	want to have a 32 bit wide bus for this either. A 4 bit bus wouldn't
+	be too slow. Edgar finds and Arne researches flash.
+
+* Bus
+	We need some reserve signals between MCU and FPGA. In addition to
+	SPI bus. A 16-bit wide bus between FPGA and MCU would be nice. Arne
+
+* Image
+	Do we really need to operate on 4-bit grayscale? BNN and corner
+	recognition operates on 1-bit. Katrine looks at pictures and
+	number of bits needed.
+
+Camera:
+* Clock
+	The camera needs a 24MHz clock.
+	This is incidentally exactly half of the MCU clock.
+
+* Protocol
+	The camera should _not_ be moved to the MCU. In the extreme case we
+	can control the camera from MCU through the FPGA.
+
+MCU:
+* JTAG
+	We still don't know how to program the MCU. We need a way to flash
+	the MCU, possibly JTAG. Send a mail to Yaman. Katrine looks at how
+	one programs the MCU.
+
+Bacup Power:
+* Non-battery
+	We need a power supply to use during debugging and general
+	development. This will be looked at a later time. Power regulators
+	are such an important and integral part of the PCB that we cannot
+	have redundancy in everything.
+
+Complexity
+We have added a buttload of complexity the last few days or so.
+2 cameras, flash, a lot of lines(16?) between FPGA and MCU
+	We just removed r-pi camera. This is because we don't want to
+	implement a new camera if the old camera doesn't work. Our backup
+	solution is to go straight to the SD-card.
