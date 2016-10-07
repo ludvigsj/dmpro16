@@ -1,0 +1,15 @@
+Replace Part D? disp_led in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with disp_led from displays.SchLib
+Replace Part J? con_head_2x07pin in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with con_head_2x07pin from connectors.SchLib
+Replace Part J? con_head_2x03pin in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with con_head_2x03pin from connectors.SchLib
+Replace Part J? con_head_2x03pin in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with con_head_2x03pin from connectors.SchLib
+Replace Part R2 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R3 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R4 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R5 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R6 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R7 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R8 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R9 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R10 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part R? res_1608_150ohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with res_1608_150ohm from resistors.SchLib
+Replace Part U1 XC7A35T-2FTG256C in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Config.SchDoc with XC7A35T-2FTG256C from Xilinx Artix-7.IntLib

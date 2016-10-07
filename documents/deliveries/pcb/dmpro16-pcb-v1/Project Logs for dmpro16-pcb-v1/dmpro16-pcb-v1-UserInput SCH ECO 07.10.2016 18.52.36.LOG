@@ -1,0 +1,3 @@
+Replace Part C71 cap_unpol_1608_0.1uF in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-UserInput.SchDoc with cap_unpol_1608_0.1uF from capacitors.SchLib
+Replace Part R1 res_1608_10kohm in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-UserInput.SchDoc with res_1608_10kohm from resistors.SchLib
+Replace Part SW1 mech_button_spst in C:\Users\medlem\Documents\GitHub\dmpro16\documents\deliveries\pcb\dmpro16-pcb-v1\dmpro16-pcb-v1-UserInput.SchDoc with mech_button_spst from mechanical.SchLib
