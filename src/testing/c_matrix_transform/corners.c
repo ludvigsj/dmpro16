@@ -3,13 +3,14 @@
 int main()
 {
 	int first = 0;
+	int second = 0;
 
-	int fpxx, fpxy, lpxx, lpxy;
+	int ltx, lty, rtx, rty, fpxx, fpxy, lpxx, lpxy;
 	fpxx = 9999;
 	lpxx = -1;
 
 	char buf[640];
-	FILE *fp = fopen("sudoku2_middle_75%_-25deg8bit.gray", "r");
+	FILE *fp = fopen("../../../test_images/foto7.gray", "r");
 
 	int i;
 	for (i = 0; i < 480; i++)
@@ -18,23 +19,32 @@ int main()
 		int j;
 		for (j = 0; j < 640; j++)
 		{
-			if (first == 0)
+			if (first == 0 || second == 0)
 			{
-				if (buf[j] != 0)
+				if ((unsigned) buf[j] >= 128 && (
+						((unsigned) buf[j+1] <= 128) &&
+						((unsigned) buf[j+2] <= 128) &&
+						((unsigned) buf[j+3] <= 128)))
 				{
-					printf("First corner: %d, %d\n", j, i);
+					rtx = j;
+					rty = i;
 					first = 1;
-					break;
+				}
+				if ((unsigned) buf[j] >= 128 && second == 0)
+				{
+					ltx = j;
+					lty = i;
+					second = 1;
 				}
 			}
 			else
 			{
-				if (buf[j] != 0 && j < fpxx)
+				if (((unsigned) buf[j] ) >= 128 && j < fpxx)
 				{
 					fpxx = j;
 					fpxy = i;
 				}
-				else if (buf[j] != 0 && j > lpxx)
+				else if (((unsigned) buf[j] ) >= 128 && j > lpxx)
 				{
 					lpxx = j;
 					lpxy = i;
@@ -44,9 +54,9 @@ int main()
 	}
 
 	if (fpxy < lpxy)
-		printf("Second corner: left: %d, %d\n", fpxx, fpxy);
+		printf("First corner: right: %d, %d\nSecond corner: left: %d, %d\n", rtx, rty, fpxx, fpxy);
 	else
-		printf("Second corner: right: %d, %d\n", lpxx, lpxy);
+		printf("First corner: left: %d, %d\nSecond corner: right: %d, %d\n", ltx, lty, lpxx, lpxy);
 
 	fclose(fp);
 }
