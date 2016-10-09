@@ -171,5 +171,62 @@
 \end{frame}
 
 
+%-------------------------------------------------------
+\section{Binarizing the neural network}
+%-------------------------------------------------------
+\begin{frame}{Binarizing the neural network}{Changing to -1 and 1}
+\begin{itemize}
+	\item We can represent most of the neural network as -1 or 1 without much accuracy loss
+	\item The input 0-255 can be -1 if $\leq$ 127 else 1
+	\item New weights become sign(old weights)
+	\item The activation function tanh(x) can also be replaced by sign(x)
+	\item Now only the batch normalization is not represented by -1 and 1 yet
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Binarizing the neural network}{From multiplication to XNOR}
+	\begin{columns}[T] % align columns
+		\begin{column}{.48\textwidth}
+		
+			\begin{tabular}{r|c|c|}
+				  & -1 & 1 \\ \hline
+				1 & -1 & 1 \\ \hline
+			   -1 &  1 & -1 \\
+				\hline
+			\end{tabular}
+
+			Multiplication
+		\end{column}%
+		\hfill%
+		\begin{column}{.48\textwidth}
+			\begin{tabular}{r|c|c|}
+				  & 0 & 1 \\ \hline
+				1 & 0 & 1 \\ \hline
+			    0 & 1 & 0 \\ \hline
+			\end{tabular}
+
+			XNOR
+		\end{column}%
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Binarizing the neural network}{Finding the batch normalization threshold}
+\begin{itemize}
+	\item $y = \gamma \sigma^{-1}(x-\bar{x})+\beta$
+	\item $y = \gamma \sigma^{-1}(2x-\bar{x}-prev)+\beta$
+	\item Find where the output is 0, so we can use only one value
+	\item $x = 0.5(\bar{x}-\frac{\beta}{\gamma \sigma^{-1}}+prev) $
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Binarizing the neural network}{The binarized result}
+\begin{itemize}
+	\item $\sum w \otimes out$
+	\item 0 if the sum is below the batchnorm threshold
+	\item 1 otherwise
+\end{itemize}
+\end{frame}
+
+
 
 \end{document}
