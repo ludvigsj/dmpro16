@@ -3,7 +3,7 @@
 %%% option passed to the outer theme
 %    progressstyle=fixedCircCnt,   % fixedCircCnt, movingCircCnt (moving is deault)
   ]{Feather}
-  
+
 % If you want to change the colors of the various elements in the theme, edit and uncomment the following lines
 
 % Change the bar colors:
@@ -57,7 +57,7 @@
 {
 %      Faculty of Mathematics, Informatics and Information Technologies\\
 %      Plovdiv University ``Paisii Hilendarski''\\
-  
+
   %there must be an empty line above this line - otherwise some unwanted space is added between the university and the country (I do not know why;( )
 }
 
@@ -91,7 +91,7 @@
 \item Point camera at an image of a solved sudoku-board
 \item Push button
 \item Camera image is stored in FPGA BRAM
-\item MCU-program figures out the transform required to make a 289 by 289 image from the input image
+\item FPGA figures out the transform required to make a 289 by 289 image from the input image
 \item FPGA performs transform, cutting it into pieces, trimming edges of the squares to avoid sending outlines into the BNN etc.
 \item BNN (on FPGA) detects digits
 \item Digits sent to MCU, where the sudoku is checked and result (and potentially other relevant info, incorrect rows etc.) is output to the user
@@ -125,31 +125,26 @@
 %-------------------------------------------------------
 \section{Argumentation}
 %-------------------------------------------------------
-\begin{frame}{Argumentation}{Camera (and SD-card) connected to the FPGA}
+\begin{frame}{Argumentation}{Camera (and SD-card) connected to FPGA}
 \begin{itemize}
 \item We need 9x9 times 28x28 pixels of relevant image data. Results in 9x9x28x28x2 = 127008 pixels.
 \item Smallest standard accommodating this is HVGA(480x320=153600 pixels). But is uncommonly supported. Hence we use VGA(640x480=307200 pixels).
 \item We use 4 bit grayscale to store the images. Equals 307200x4=1228800 bits.
 \item Image from the the camera is in a different format than our 4-bit grayscale. This needs conversion on the fly, either on FPGA or MCU.
+\item Considering the size of the image, it is possible to do keep the image in the memory of the FPGA without the use of an external SRAM
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Argumentation}{Image transformation on FPGA}
 \begin{itemize}
+\item With the restrictions we put on the picture we can find the corners with a somewhat naive algorithm that should be possible to implement on the FPGA
 \item The process of doing an affine transformation on the camera input data is a simple, arithmetical operation, easy to implement elegantly on an FPGA, given six matrix elements.
 \item The resulting, transformed image/images are only needed on the FPGA
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Argumentation}{Matrix computation on MCU}
-\begin{itemize}
-\item An algorithm for figuring out where the board is located in the image is typically a task which is much more elegant (and less error-prone) implemented in software than in hardware. It will also be possible to compute with only a subset of the input pixels, thus not needing all of the pixels to be transferred even though we do the computation on the MCU and the image is stored on the FPGA.
-\end{itemize}
-\end{frame}
-
 \begin{frame}{Argumentation}{User I/O on MCU}
 \begin{itemize}
-\item This is a no-brainer
 \item Output, which includes communicating with a display, is a lot more difficult implementing in hardware, with no real benefit.
 \item The MCU is used to control the operation flow of \textit{sudo-ku}.
 \end{itemize}
@@ -164,7 +159,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Argumentation}{Having an SD-card}
+\begin{frame}{Argumentation}{Why we need SD-card}
 \begin{itemize}
 \item In case the camera processing does not work, we will still have a way to demo the working BNN by loading pre-formatted, square image data, skipping the transformation steps.
 \end{itemize}
@@ -187,7 +182,7 @@
 \begin{frame}{Binarizing the neural network}{From multiplication to XNOR}
 	\begin{columns}[T] % align columns
 		\begin{column}{.48\textwidth}
-		
+
 			\begin{tabular}{r|c|c|}
 				  & -1 & 1 \\ \hline
 				1 & -1 & 1 \\ \hline
