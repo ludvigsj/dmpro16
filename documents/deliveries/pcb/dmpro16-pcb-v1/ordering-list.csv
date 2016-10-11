@@ -1,4 +1,4 @@
-"Manufacturer","Mfg. part no.","Supplier","Supp. part no.","Quantity","Description"
+﻿"Manufacturer","Mfg. part no.","Supplier","Supp. part no.","Quantity","Description"
 "FTDI","FT232RL-REEL","Digikey","768-1007-1-ND","5","USB-to-UART gateway"
 "Adafruit Industries LLC","1393","Digikey","1528-1183-ND","3","eINK display"
 "OmniVision Technologies Inc","OVM7690-RYAA","Digikey","884-1029-1-ND","3","Camera"
@@ -9,12 +9,4 @@
 "ST Microelectronics","LDK130M10R","Farnell","​2460797","5","Voltage regulator 1.0V"
 "Molex","503182-1853","Farnell","2334075","5","microSD card holder"
 "Panasonic Electronic Components","EVPASBC1A","Farnell","2425611","5","Tactile switch"
-"Epson","Q33310F700025 SG-310SCF","Farnell","1278070”,”10”,”Crystal oscillator"
-“AMP from TE Connectivity”,”826942-3”,”Farnell”,”1248159”,”10”,”2x3 2.54mm header”
-“AMP from TE Connectivity”,”826632-5”,”Farnell”,”3418510”,20”,”2x5 2.54mm header”
-“AMP from TE Connectivity”,”1-826925-0”,”Farnell”,”1580053”,”10”,”2x10 2.54mm header”
-“Molex”,”87832-5622”,”Farnell”,”2614891”,”10”,”2x7 2mm header”
-“OSRAM”,“LSR976”,”Farnell”,”1226392”,”25”,”Red LED”
-“Panasonic Electronic Components”,”ERA6AEB103V”,”Farnell”,”1577673”,”150”,”10 kilo-ohm resistor”
-“Texas Instruments”,”INA198AIDBVT”,”Farnell”,”1180146”,”10”,”Current sense amplifier”
-“Abracon”,”ASFLK-32.768KHZ-LJT”,”Farnell”,”2101317”,”5”,”Low frequency oscillator”
+"Epson","Q33310F700025 SG-310SCF","Farnell","1278070","5","Crystal oscillator"

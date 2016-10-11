@@ -650,6 +650,23 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
+[Document37]
+DocumentPath=Libraries\LabLib.PcbLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=QVMMFWKU
+
 [GeneratedDocument1]
 DocumentPath=Project Outputs for dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Power.BOM
 DItemRevisionGUID=
@@ -659,20 +676,20 @@ DocumentPath=Project Outputs for dmpro16-pcb-v1\dmpro16-pcb-v1-FPGA-Power.CSV
 DItemRevisionGUID=
 
 [Parameter1]
-Name=Version
-Value=1.0
+Name=BoardName
+Value=sudo -ku
 
 [Parameter2]
-Name=Subject
-Value=TDT4295 Computer Project
-
-[Parameter3]
 Name=Groupname
 Value=Energy
 
+[Parameter3]
+Name=Subject
+Value=TDT4295 Computer Project
+
 [Parameter4]
-Name=BoardName
-Value=sudo -ku
+Name=Version
+Value=1.0
 
 [Configuration1]
 Name=Default Configuration
@@ -975,6 +992,12 @@ OutputDocumentPath19=
 OutputVariantName19=
 OutputDefault19=0
 PageOptions19=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
+OutputType20=Logic Analyser Print
+OutputName20=Logic Analyser Prints
+OutputDocumentPath20=
+OutputVariantName20=
+OutputDefault20=0
+PageOptions20=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9
 
 [OutputGroup4]
 Name=Assembly Outputs
@@ -1073,7 +1096,7 @@ OutputDefault12=0
 [OutputGroup6]
 Name=Report Outputs
 Description=
-TargetPrinter=\\followprint.win.ntnu.no\ntnuprint-xerox
+TargetPrinter=Microsoft Print to PDF
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=1
 OutputType1=Script
 OutputName1=Script Output
