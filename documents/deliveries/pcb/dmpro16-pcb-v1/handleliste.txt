@@ -1,0 +1,16 @@
+http://no.farnell.com/wurth-elektronik/686115148922/connector-fpc-receptacle-15pos/dp/2470725
+http://no.farnell.com/amphenol-commercial-products/114-00841-68/memory-card-connector-microsd/dp/2293708
+http://no.farnell.com/multicomp/mc0805f474z250ct/cap-mlcc-y5v-470nf-25v-0805/dp/1759175
+http://no.farnell.com/tdk/c2012x5r1a476m125ac/cap-mlcc-x5r-47uf-10v-0805/dp/2211186
+http://no.farnell.com/tdk/c2012x5r1h475k125ab/cap-mlcc-x5r-4-7uf-50v-0805/dp/2346932
+http://no.farnell.com/murata/grm21br60j107me15l/capacitor-mlcc-x5r-100uf-6-3v/dp/2494476
+http://no.farnell.com/multicomp/mc0805n100d500ct/cap-mlcc-c0g-np0-10pf-0805/dp/1759191
+http://no.farnell.com/walsin/0805b104k500ct/capacitor-mlcc-x7r-0-1uf-50v-0805/dp/2496944
+http://no.farnell.com/avx/08053d106kat2a/cap-mlcc-x5r-10uf-25v-0805/dp/1867958
+http://no.farnell.com/multicomp/mc0805f105z500ct/cap-mlcc-y5v-1uf-50v-0805/dp/1759432
+http://no.farnell.com/kingbright/kphhs-1005qbc-d-v/led-0402-blue/dp/2290337
+http://no.farnell.com/yageo-phycomp/rc0805fr-0710kl/res-thick-film-10k-1-0-125w-0805/dp/9237755
+http://no.farnell.com/welwyn/wcr0805-150rfi/res-thick-film-150r-1-0-125w-0805/dp/1099794
+http://no.farnell.com/texas-instruments/ina196aidbvt/ic-current-shunt-monitor-500khz/dp/1564942
+http://no.farnell.com/euroquartz/48-000mhz-xo91050uita/osc-5x7mm-smd-cer-48-000mhz/dp/1640952
+http://no.farnell.com/epson/q3102jf010001-sg-3030jf-32-768khz-b/oscillator-spxo-sg-3030jf-32-768/dp/1278042
