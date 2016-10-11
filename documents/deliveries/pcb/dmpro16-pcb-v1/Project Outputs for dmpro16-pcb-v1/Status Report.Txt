@@ -1,0 +1,11 @@
+Output: Simple BOM
+Type  : SimpleBOM
+From  : Variant [[No Variations]] of Project [dmpro16-pcb-v1.PrjPcb]
+   Generated File[dmpro16-pcb-v1-FPGA-Power.BOM]
+   Generated File[dmpro16-pcb-v1-FPGA-Power.CSV]
+
+
+Files Generated   : 2
+Documents Printed : 0
+
+Finished Output Generation At 09:45:33 On 11.10.2016
