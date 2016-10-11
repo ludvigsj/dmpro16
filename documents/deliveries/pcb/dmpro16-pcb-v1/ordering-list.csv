@@ -1,4 +1,4 @@
-﻿"Manufacturer","Mfg. part no.","Supplier","Supp. part no.","Quantity","Description"
+"Manufacturer","Mfg. part no.","Supplier","Supp. part no.","Quantity","Description"
 "FTDI","FT232RL-REEL","Digikey","768-1007-1-ND","5","USB-to-UART gateway"
 "Adafruit Industries LLC","1393","Digikey","1528-1183-ND","3","eINK display"
 "OmniVision Technologies Inc","OVM7690-RYAA","Digikey","884-1029-1-ND","3","Camera"
@@ -10,3 +10,4 @@
 "Molex","503182-1853","Farnell","2334075","5","microSD card holder"
 "Panasonic Electronic Components","EVPASBC1A","Farnell","2425611","5","Tactile switch"
 "Epson","Q33310F700025 SG-310SCF","Farnell","1278070","5","Crystal oscillator"
+“AMP from TE Connectivity”,”826942-3”,”Farnell”,”1248159”,”10”,”2x3 2.54mm header”
