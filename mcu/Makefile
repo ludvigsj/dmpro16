@@ -94,7 +94,7 @@ DEPFLAGS = -MMD -MP -MF $(@:.o=.d)
 #
 # Add -Wa,-ahld=$(LST_DIR)/$(@F:.o=.lst) to CFLAGS to produce assembly list files
 #
-override CFLAGS += -D$(DEVICE) -Wall -Wextra -mcpu=cortex-m3 -mthumb \
+override CFLAGS += -D$(DEVICE) -std=c11 -Wall -Wextra -mcpu=cortex-m3 -mthumb \
 -mfix-cortex-m3-ldrd -ffunction-sections \
 -fdata-sections -fomit-frame-pointer  \
 $(DEPFLAGS)
@@ -127,7 +127,8 @@ src/em_emu.c \
 src/em_gpio.c \
 src/em_usart.c \
 src/em_int.c \
-src/spi_master.c
+src/spi_master.c \
+src/display.c
 
 s_SRC +=
 

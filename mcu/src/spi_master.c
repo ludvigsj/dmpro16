@@ -32,6 +32,8 @@
  ******************************************************************************/
 
 #include <stdbool.h>
+#include <string.h>
+#include <stdint.h>
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_usart.h"
@@ -41,6 +43,7 @@
 #include "em_emu.h"
 #include "em_int.h"
 #include "dmactrl.h"
+#include "spi_master.h"
 
 #define DMA_CHANNEL_TX   0
 #define DMA_CHANNEL_RX   1
@@ -55,8 +58,9 @@ volatile bool txActive;
 
 /* SPI Data Buffers */
 //const char spiTxData[] = "Hello World! This is Gecko!";
-//const char spiTxData[] = { 0x04 | 0x02, 0x00};
-const char spiTxData[] = {0x01 | 0x02, 0x30, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x00, 0x00};
+const char spiTxData[] = {0x01 | 0x02, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+uint8_t displayBuffer[96][14];
 #define SPI_TRANSFER_SIZE (sizeof(spiTxData)/sizeof(char))
 volatile char spiRxData1[SPI_TRANSFER_SIZE];
 volatile char spiRxData2[SPI_TRANSFER_SIZE];
@@ -105,15 +109,14 @@ void setupSpi(void)
   
   /* Initialize SPI */
   usartInit.databits = usartDatabits8;
-  //usartInit.baudrate = 1000000;
-  usartInit.baudrate = 115200;
+  usartInit.baudrate = 1000000;
   usartInit.master = 1;
   usartInit.msbf = 0;
   usartInit.clockMode = usartClockMode0;
   USART_InitSync(USART1, &usartInit);
   
   /* Turn on automatic Chip Select control */
-  USART1->CTRL |= USART_CTRL_AUTOCS;
+  USART1->CTRL |= USART_CTRL_AUTOCS | USART_CTRL_CSINV;
   
   /* Enable SPI transmit and receive */
   USART_Enable(USART1, usartEnable);
@@ -283,6 +286,12 @@ void sleepUntilDmaDone(void)
   }  
 }
 
+void setupDmaSpi()
+{
+	setupCmu();
+	setupSpi();
+	setupDma();
+}
 
 
 /**************************************************************************//**
@@ -293,41 +302,80 @@ void sleepUntilDmaDone(void)
  * 2) Transmit data (string) and transfer received data to RAM buffer
  * 3) Transmit dummy data and transfer received data to RAM buffer
  *****************************************************************************/
+/*
 int main(void)
 { 
-  /* Initialize chip */
+	for (int i = 1; i <= 96; i++)
+	{
+		uint8_t color;
+		displayBuffer[i][0] = i;
+		displayBuffer[i][13] = 0x00;
+		for (int j = 1; j < 13; j++)
+		{
+			if (j == 1 || j == 12)
+				color = 0xff;
+			else if (i % 10 == 0 && j != 11)
+				color = 0x00;
+			else if (i > 90)
+				color = 0xff;
+			else
+				color = 0xfe;
+			displayBuffer[i][j] = color;
+		}
+	}
+  /* Initialize chip /
   CHIP_Init();
   
-  /* Configuring clocks in the Clock Management Unit (CMU) */
+  /* Configuring clocks in the Clock Management Unit (CMU) /
   setupCmu();
   
-  /* Configura USART for SPI */
+  /* Configura USART for SPI /
   setupSpi();
     
-  /* Configure DMA transfer from RAM to SPI using ping-pong */      
+  /* Configure DMA transfer from RAM to SPI using ping-pong /      
   setupDma();
   
-  /* Send data to slave, no data reception */
-  spiDmaTransfer((uint8_t*) spiTxData, NULL, SPI_TRANSFER_SIZE);
-  
-  /* Sleep until DMA is done */
+  /* Send data to slave, no data reception /
+  //spiDmaTransfer((uint8_t*) spiTxData, NULL, SPI_TRANSFER_SIZE);
+
+	uint8_t board[688];
+	board[0] = 0x01 | 0x02;
+	memcpy(&board[1], &displayBuffer[0][0], 686);
+	board[687] = 0x00;
+	spiDmaTransfer((uint8_t*) board, NULL, 688);
+	sleepUntilDmaDone();
+	board[0] = 0x01 | 0x02;
+	memcpy(&board[1], &displayBuffer[48][0], 686);
+	board[687] = 0x00;
+	spiDmaTransfer((uint8_t*) board, NULL,688);
+	uint8_t clear[2] = {0x04 | 0x02, 0x00};
+//	spiDmaTransfer((uint8_t*) clear, NULL, 2);
+
+  /* Sleep until DMA is done /
   sleepUntilDmaDone();
+/*
+  spiDmaTransfer(displayBuffer, NULL, 1344);
+  sleepUntilDmaDone();
+  spiDmaTransfer((uint8_t*) 0x00, NULL, 1);
+  sleepUntilDmaDone();
+  /
   
-  /* Send data to slave and save received data in buffer */
+  /* Send data to slave and save received data in buffer /
   //spiDmaTransfer((uint8_t*) spiTxData, (uint8_t*) spiRxData1, SPI_TRANSFER_SIZE);
   
-  /* Sleep until DMA is done */
+  /* Sleep until DMA is done /
   //sleepUntilDmaDone();
   
-  /* Send dummy data to slave and save received data in buffer */
+  /* Send dummy data to slave and save received data in buffer /
   //spiDmaTransfer(NULL, (uint8_t*) spiRxData2, SPI_TRANSFER_SIZE);
 
-  /* Sleep until DMA is done */
+  /* Sleep until DMA is done /
   //sleepUntilDmaDone();
  
-  /* Cleaning up after DMA transfers */
+  /* Cleaning up after DMA transfers /
   DMA_Reset();
 
-  /* Done */
+  /* Done /
   while (1);
 }
+*/
