@@ -1,0 +1,40 @@
+Møte 2016-10-18
+===============
+
+Olav: sett på chisel. spikra arkitektur, bortsett fra selve summeringen. må 
+gjøre noe artig der for å ikke spise for mange LUTer. Når man har spikra det
+er alt sammen ferdig. Neuralnettet er pipelinet. Tok utgangspunkt i å bruke
+alle ressurser når man power-estimerte.
+
+Eirik: Sitter i chisel. Hjørne-ting
+
+Katrine: Skjerm funker, men er speilvendt.
+
+Edgar: Status kamera, ikke kommet veldig langt. Har dump av data fra i fjor,
+slår opp i datablad. Har kommet 50 av 600 bytes gjennom dump. Lest nesten
+hele I²C-specen. Har ingen måte å teste om ting funker, får ikke kobla kamera
+til et sted det kan kjøres kode. 
+
+Ludvig: Ting har ikke plass?! Sjekk om bits eller bytes.
+
+Arne: Odd Rune-liste
+
+- Buck-convertere mer passende en LinReg, pga energi
+  - LOL
+- Merk LDK leverer 200mA. Regner på at dere har regnet
+  på strøm.
+  - TODO: Må dobbeltsjekke at det er nok strøm i 3V3-rail.
+    Må regnes på. 700mW/3.3V er 212.12 mA.
+- Decoupling-kondiser er feil sted. Skal ligge nær strømpinner.
+  - Arne skal se på og flytte litt
+- Lurt å vurdere tjukk trace til strøm.
+  - Bytter til det den andre gruppa har.
+- Oscillator sender støy. Bør være nærmere prosesseringsenheter
+- Vurder leds. Ekstremt greit med heartbeat og andre indikatorled
+  - Vi har ikke status-pinner. Innebygd debug-shit. Har shittons med chopa-
+    chopa-pinner.
+
+Arne: Masse quickfix, kan velge å gjøre noe med LED eller kan la være.
+Dette med strøm må finregnes litt på. Har lista over ting han skal sjekke ut.
+finner vi ny strømgreie er vi ferdig med en gang. Sender inn ny greie, Odd
+Rune og Tufte får se på ting så får vi bestilt.
