@@ -1,6 +1,4 @@
 #include <string.h>
-#include "em_device.h"
-#include "em_chip.h"
 #include "em_dma.h"
 #include "spi_master.h"
 #include "font.h"
@@ -11,7 +9,7 @@ void drawNumber(int number, int x, int y)
 {
 	for (int i = 0; i < 9; i++)
 	{
-		displayBuffer[y * 10 + i + 1][x + 2] = font[(number -1) * 9 + i];
+		displayBuffer[y * 10 + i + 1][x + 2] = numbers[(number -1) * 9 + i];
 	}
 }
 
@@ -37,6 +35,30 @@ void drawBoard()
 	}
 }
 
+void drawResult(int incorrect)
+{
+	if (incorrect)
+	{
+		const uint8_t in[] = { 2, 3 };
+		for (int i = 0; i < sizeof(in); i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
+				displayBuffer[i * 8 + j + 1][12] = letters[in[i] * 8 + j];
+			}
+		}
+	}
+
+	const uint8_t result[] = { 0, 4, 5, 5, 1, 0, 6 };
+	for (int i = 0; i < sizeof(result); i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			displayBuffer[(i + 2) * 8 + j + 1][12] = letters[result[i] * 8 + j];
+		}
+	}
+}
+
 void refresh()
 {
 	uint8_t clear[2] = { 0x04 | 0x02, 0x00 };
@@ -57,7 +79,7 @@ void refresh()
 	sleepUntilDmaDone();
 }
 
-void displaySudoku(int sudoku[9][9])
+void displaySudoku(int sudoku[9][9], int incorrect)
 {
 	drawBoard();
 
@@ -69,28 +91,8 @@ void displaySudoku(int sudoku[9][9])
 		}
 	}
 
+	drawResult(incorrect);
+
 	refresh();
 }
 
-int main()
-{
-    int board2[9][9] = {
-    {1, 2, 3, 4, 5, 6, 7, 8, 9},
-    {7, 5, 9, 1, 8, 3, 4, 2, 6},
-    {6, 4, 8, 2, 9, 7, 3, 1, 5},
-    {3, 7, 4, 9, 1, 5, 2, 6, 8},
-    {8, 9, 6, 3, 7, 2, 1, 5, 4},
-    {5, 1, 2, 8, 6, 4, 9, 7, 3},
-    {9, 3, 1, 5, 2, 8, 6, 4, 7},
-    {2, 6, 5, 7, 4, 9, 8, 3, 1},
-    {4, 8, 7, 6, 3, 1, 5, 9, 2},
-    };
-	CHIP_Init();
-	setupDmaSpi();
-
-	displaySudoku(board2);
-
-	DMA_Reset();
-
-	while(1);
-}

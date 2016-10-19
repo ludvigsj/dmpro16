@@ -128,7 +128,9 @@ src/em_gpio.c \
 src/em_usart.c \
 src/em_int.c \
 src/spi_master.c \
-src/display.c
+src/display.c \
+src/checksudoku.c \
+src/main.c
 
 s_SRC +=
 
