@@ -14,7 +14,7 @@ uniq = $(strip $(if $1,$(firstword $1) \
        $(call uniq,$(filter-out $(firstword $1),$1))))
 
 DEVICE = EFM32GG990F1024
-PROJECTNAME = spi_master
+PROJECTNAME = sudo-ku
 
 OBJ_DIR = build
 EXE_DIR = exe

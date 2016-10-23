@@ -60,7 +60,6 @@ volatile bool txActive;
 //const char spiTxData[] = "Hello World! This is Gecko!";
 const char spiTxData[] = {0x01 | 0x02, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-uint8_t displayBuffer[96][14];
 #define SPI_TRANSFER_SIZE (sizeof(spiTxData)/sizeof(char))
 volatile char spiRxData1[SPI_TRANSFER_SIZE];
 volatile char spiRxData2[SPI_TRANSFER_SIZE];
@@ -96,6 +95,7 @@ void setupCmu(void)
   CMU_ClockEnable(cmuClock_DMA, true);  
   CMU_ClockEnable(cmuClock_GPIO, true);  
   CMU_ClockEnable(cmuClock_USART1, true);  
+  CMU_ClockEnable(cmuClock_USART0, true);
 }
 
 
@@ -105,7 +105,7 @@ void setupCmu(void)
  *****************************************************************************/
 void setupSpi(void)
 {
-  USART_InitSync_TypeDef usartInit = USART_INITSYNC_DEFAULT;  
+  USART_InitSync_TypeDef usartInit = USART_INITSYNC_DEFAULT;
   
   /* Initialize SPI */
   usartInit.databits = usartDatabits8;
@@ -113,21 +113,35 @@ void setupSpi(void)
   usartInit.master = 1;
   usartInit.msbf = 0;
   usartInit.clockMode = usartClockMode0;
+  USART_InitSync(USART0, &usartInit);
   USART_InitSync(USART1, &usartInit);
   
   /* Turn on automatic Chip Select control */
+  USART0->CTRL |= USART_CTRL_AUTOCS;
   USART1->CTRL |= USART_CTRL_AUTOCS | USART_CTRL_CSINV;
   
   /* Enable SPI transmit and receive */
+  USART_Enable(USART0, usartEnable);
   USART_Enable(USART1, usartEnable);
   
   /* Configure GPIO pins for SPI */
+  GPIO_PinModeSet(gpioPortE, 10, gpioModePushPull, 0); /* MOSI */
+  GPIO_PinModeSet(gpioPortE, 11, gpioModeInput,    0); /* MISO */
+  GPIO_PinModeSet(gpioPortE, 12, gpioModePushPull, 0); /* CLK */
+  GPIO_PinModeSet(gpioPortE, 13, gpioModePushPull, 1); /* CS */
+
   GPIO_PinModeSet(gpioPortD, 0, gpioModePushPull, 0); /* MOSI */
   GPIO_PinModeSet(gpioPortD, 1, gpioModeInput,    0); /* MISO */
-  GPIO_PinModeSet(gpioPortD, 2, gpioModePushPull, 0); /* CLK */	
-  GPIO_PinModeSet(gpioPortD, 3, gpioModePushPull, 1); /* CS */	
+  GPIO_PinModeSet(gpioPortD, 2, gpioModePushPull, 0); /* CLK */
+  GPIO_PinModeSet(gpioPortD, 3, gpioModePushPull, 1); /* CS */
  
   /* Enable routing for SPI pins from USART to location 1 */
+  USART0->ROUTE = USART_ROUTE_TXPEN | 
+                  USART_ROUTE_RXPEN | 
+                  USART_ROUTE_CSPEN | 
+                  USART_ROUTE_CLKPEN | 
+                  USART_ROUTE_LOCATION_LOC1;
+
   USART1->ROUTE = USART_ROUTE_TXPEN | 
                   USART_ROUTE_RXPEN | 
                   USART_ROUTE_CSPEN | 
@@ -163,7 +177,7 @@ void setupDma(void)
   /* Setting up channel */
   rxChnlCfg.highPri   = false;
   rxChnlCfg.enableInt = true;
-  rxChnlCfg.select    = DMAREQ_USART1_RXDATAV;
+  rxChnlCfg.select    = DMAREQ_USART0_RXDATAV;
   rxChnlCfg.cb        = &spiCallback;
   DMA_CfgChannel(DMA_CHANNEL_RX, &rxChnlCfg);
 
@@ -235,6 +249,46 @@ void spiDmaTransfer(uint8_t *txBuffer, uint8_t *rxBuffer,  int bytes)
                     (void *)&(USART1->TXDATA),
                     txBuffer,
                     bytes - 1); 
+}
+
+void displayTransfer(uint8_t *txBuffer, int bytes)
+{
+	GPIO_PinOutSet(gpioPortD, 3);
+
+  /* Setting flag to indicate that TX is in progress
+   * will be cleared by call-back function */
+  txActive = true;
+  
+  /* Clear TX regsiters */
+  USART1->CMD = USART_CMD_CLEARTX;
+  
+  /* Activate TX channel */
+  DMA_ActivateBasic(DMA_CHANNEL_TX,
+                    true,
+                    false,
+                    (void *)&(USART1->TXDATA),
+                    txBuffer,
+                    bytes - 1); 
+}
+
+void fpgaTransfer(uint8_t *rxBuffer, int bytes)
+{
+	GPIO_PinOutSet(gpioPortE, 13);
+
+    /* Setting flag to indicate that RX is in progress
+     * will be cleared by call-back function */
+    rxActive = true;
+    
+    /* Clear RX regsiters */
+    USART1->CMD = USART_CMD_CLEARRX;
+    
+    /* Activate RX channel */
+    DMA_ActivateBasic(DMA_CHANNEL_RX,
+                      true,
+                      false,
+                      rxBuffer,
+                      (void *)&(USART1->RXDATA),
+                      bytes - 1); 
 }
 
 

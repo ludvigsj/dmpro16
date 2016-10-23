@@ -62,20 +62,20 @@ void drawResult(int incorrect)
 void refresh()
 {
 	uint8_t clear[2] = { 0x04 | 0x02, 0x00 };
-	spiDmaTransfer((uint8_t*) clear, NULL, 2);
+	displayTransfer((uint8_t*) clear, 2);
 	sleepUntilDmaDone();
 
 	uint8_t board[688];
 	board[0] = 0x01 | 0x02;
 	memcpy(&board[1], &displayBuffer[0][0], 686);
 	board[687] = 0x00;
-	spiDmaTransfer((uint8_t*) board, NULL, 688);
+	displayTransfer((uint8_t*) board, 688);
 	sleepUntilDmaDone();
 
 	board[0] = 0x01 | 0x02;
 	memcpy(&board[1], &displayBuffer[48][0], 686);
 	board[687] = 0x00;
-	spiDmaTransfer((uint8_t*) board, NULL, 688);
+	displayTransfer((uint8_t*) board, 688);
 	sleepUntilDmaDone();
 }
 
