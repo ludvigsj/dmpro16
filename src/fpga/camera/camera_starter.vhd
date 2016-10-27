@@ -21,10 +21,23 @@ architecture Behavioral of camera_starter is
         rw      : std_logic; -- '1' is read
     end record;
     
+    -- From CSI-2 mipi:
+    -- 
+    -- Messages are of the format: [S][Slave Address][R/W][A][Sub address][A][Data][A][P]
+    -- S: Start, SDA goes low when SCL is high
+    -- Slave Address: 7 bits. For OV5647 this is 6C for write, 6D for read.
+    -- R/W: Read or write bit, 1 is read
+    -- A: Ack bit from slave. Slave sets SDA to low during Ack pulse.
+    -- Sub address: address to read from or write to. 8 bits
+    -- Data: 8 bits of data, either from slave to master if read, or master to slave if write
+    -- P: Stop condition
+    
     constant NUM_MESSAGES : integer := 645;
     type i2c_sequence is array (0 to NUM_MESSAGES-1) of i2c_message_t;
     constant SEQUENCE : i2c_sequence := (
-        (x"6C", x"00", '0'),
+        (x"6C", x"00", '0'), -- = 0b[0110110][0]. According to spec above, this would give a slave address of 0x36 and R/W set to 0.
+                             -- It should probably be 0b[1101100][0] = 0xD8 for write, and 0b[1101101][1] = 0xDB for read, so
+                             -- that the slave addresses are 0x6C and 0x6D.
         (x"6D", x"00", '1'),
         (x"6C", x"00", '0'),
         (x"6D", x"00", '1'),
