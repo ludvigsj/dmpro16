@@ -222,6 +222,18 @@
 \end{itemize}
 \end{frame}
 
+\begin{frame}{BNN Architecture}{Image of the architecture}
+\centering{
+	\includegraphics[width=\textheight]{graphics/bnn.png}
+}
+\end{frame}
 
+\begin{frame}{BNN Architecture}{Pipelining}
+\begin{itemize}
+    \item The next neuron in one layer can start processing one clock cycle after the current neuron
+    \item We can start on the next image as soon as the previous one is done with the first layer
+    \item All layers can be used at the same time, each working on a different image
+\end{itemize}
+\end{frame}
 
 \end{document}
