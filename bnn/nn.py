@@ -86,7 +86,7 @@ apply_growth(nn_out_synapses, g4)
 for test_image in range(total_images):
     image_vector = np.empty(784, dtype=int)
     for i in range(784):
-        if test_set[0][test_image][i] >= 0.6: # colors are not linear
+        if test_set[0][test_image][i] >= 0.55: # performs better than 0.50
             image_vector[i] = 1
         else:
             image_vector[i] = 0
