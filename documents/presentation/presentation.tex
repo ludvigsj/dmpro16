@@ -91,7 +91,7 @@
 \item Point camera at an image of a solved sudoku-board
 \item Push button
 \item Camera image is stored in FPGA BRAM
-\item FPGA figures out the transform required to make a 289 by 289 image from the input image
+\item FPGA figures out the transform required to rotate, scale and crop the input image 
 \item FPGA performs transform, cutting it into pieces, trimming edges of the squares to avoid sending outlines into the BNN etc.
 \item BNN (on FPGA) detects digits
 \item Digits sent to MCU, where the sudoku is checked and result (and potentially other relevant info, incorrect rows etc.) is output to the user
@@ -129,8 +129,8 @@
 \begin{itemize}
 \item We need 9x9 times 28x28 pixels of relevant image data. Results in 9x9x28x28x2 = 127008 pixels.
 \item Smallest standard accommodating this is HVGA(480x320=153600 pixels). But is uncommonly supported. Hence we use VGA(640x480=307200 pixels).
-\item We use 4 bit grayscale to store the images. Equals 307200x4=1228800 bits.
-\item Image from the the camera is in a different format than our 4-bit grayscale. This needs conversion on the fly, either on FPGA or MCU.
+\item We use 1 bit black/white to store the images. Thus we need 307200 bitsof storage.
+\item Image from the the camera is in a different format than our 1-bit black/white. This needs conversion on the fly.
 \item Considering the size of the image, it is possible to do keep the image in the memory of the FPGA without the use of an external SRAM
 \end{itemize}
 \end{frame}
@@ -138,7 +138,7 @@
 \begin{frame}{Argumentation}{Image transformation on FPGA}
 \begin{itemize}
 \item With the restrictions we put on the picture we can find the corners with a somewhat naive algorithm that should be possible to implement on the FPGA
-\item The process of doing an affine transformation on the camera input data is a simple, arithmetical operation, easy to implement elegantly on an FPGA, given six matrix elements.
+\item The process of doing an affine transformation on the camera input data is a simple, arithmetical operation, easy to implement elegantly on an FPGA.
 \item The resulting, transformed image/images are only needed on the FPGA
 \end{itemize}
 \end{frame}
@@ -165,7 +165,80 @@
 \end{itemize}
 \end{frame}
 
+%-------------------------------------------------------
+\section{PCB Design}
+%-------------------------------------------------------
 
+\begin{frame}{PCB Design}{Top level schematic}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/pcb-top-level.png}
+}
+\end{frame}
+
+\begin{frame}{PCB Design}{3D Drawing}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/pcb-3d.png}
+}
+\end{frame}
+
+%-------------------------------------------------------
+\section{Data flow and memory}
+%-------------------------------------------------------
+
+\begin{frame}{Data flow and memory}{On the FPGA}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/mem_top.pdf}
+}
+\end{frame}
+
+\begin{frame}{Data flow and memory}{In the Transformer-module}
+\centering{
+	\includegraphics[height=.7\textheight]{graphics/mem_trans.pdf}
+}
+\end{frame}
+
+%-------------------------------------------------------
+\section{Image transformation}
+%-------------------------------------------------------
+
+\begin{frame}{Image transformation}{Cropping and straightening}
+\begin{itemize}
+    \item Done by a matrix transform \emph{from} the required destination image coordinates (pixels) \emph{to} input-image coordinates (sub-pixel)
+    \item Uses coordinates of the topmost corners
+\end{itemize}
+\pause
+
+    \begin{equation*}    
+        T(x,y) = \begin{bmatrix}
+                a&-b \\
+                b&a
+            \end{bmatrix} \cdot 
+            \begin{bmatrix}x\\y\end{bmatrix}
+                + \begin{bmatrix}x_0\\y_0\end{bmatrix}
+    \end{equation*}
+    \begin{align*}
+        a &= \frac{x_1 - x_0}{w_\text{dest}} &
+        b &= \frac{y_1 - y_0}{w_\text{dest}}
+    \end{align*}
+    % Where $x_0, y_0$ and $x_1, y_1$ are the top-left and top-right corners, and $w_\text{dest}$ is the width/height of the destination image.
+\end{frame}
+
+\begin{frame}{Image transformation}{Slicing and padding}
+    \begin{itemize}
+        \item A \emph{slice} is a small square containing one digit
+        \item The pixels are to be sent into the BNN slicewise
+    \pause
+        \item Going from slice coordinates $(n, x', y')$, $n$ being the slice number, to sudoku-wide coordinates $(x,y)$ with padding $w_p$:
+    \end{itemize}
+    \begin{align*}
+        x &= (28+2w_p)(n\bmod 9) + x' + w_p \\
+        y &= (28+2w_p)\lfloor n/9\rfloor + y' + w_p
+    \end{align*}
+    \pause
+    \begin{itemize}
+        \item This makes $w_\text{dest} = 28\cdot 9 + 2\cdot 9\cdot w_p = 252+18w_p$
+    \end{itemize}
+\end{frame}
 %-------------------------------------------------------
 \section{Binarizing the neural network}
 %-------------------------------------------------------
