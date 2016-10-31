@@ -1,0 +1,74 @@
+Sysdesign v4 på mandag:
+-----------------------------
+- Forventer gode figurer, ytterlgiere instansiering av komponentene
+  på FPGA (vi har bra toppnivå)
+- Få til to ting:
+  - Folk skal være i stand til å forstå hva som skjer
+    (Trekker abstraksjon ned)
+  - Det skal være oversiktlig
+    (Trekker abstraksjon opp)
+- Hvordan funker BNN-komponenten
+- Lifetime: hvilke komponenter trengs langs veien? (Til hjelp når man
+  lager figure, ikke nødvendigvis nok å bare ha BNN-enhet, trenger nok
+  også andre "små" ting (konvertering, kontroll, buffering etc.). Ikke
+  i ekstreme detaljer. Boks med pil inn->ut)
+
+PCB:
+-------------
+- Fikk spørsmål fra Kina
+  - Sendte svar etter diskusjon med Gunnar, ikke fått svar tilbake.
+  - Regner med at kineserne er fornøyd
+  - Yaman skal sende sporingsnummer så fort han har det
+- Har sendt Farnell-bestilling til admin. De svarer ikke med mindre det
+  er noe galt.
+- Arne spør om loddeprosess:
+  - Komponenter, kort, loddeting + ovn.
+  - Odd Rune pleier å hjelpe litt
+  - Dekke kort med alu.folie, ha hull der man har BGA. Putter på varme.
+    - Bra greier. Odd Rune er bra kis.
+  - Lodder resten (ehh)
+- Skaffer filer og laster opp på it'slearning
+
+FPGA:
+------------
+- "Swish, ferdig" - Olav
+- Høynivå
+
+Kamera:
+-----------
+- Jahre har hørt rykter om at kamera er defekt?
+  - Skal finne RPi og teste kamera
+- Skal grave i dump og finne ut av hvordan snakke med ting
+- Viktige er å få bildet inn; kan faktisk ende med å bruke RPi
+
+Konvertering
+-----------------
+- To linjer chisel
+- Minneting: bør has i tegning/design-dok
+  - Tegning må asbtraksjonsnivå ned
+- Bør følge opp Eirik på hjørne-algoritme i Chisel
+
+BNN
+----------------
+- Ilse tegner
+- Olav sier velkommen
+- Husk på propageringstid, klokketing
+- Nesten trivielt: feed forward om man kjører hele nevroner eller lag
+om gangen
+- Må være kontrollogikk som orkestrerer å fikse ett bilde
+- Finnes et høyere nivå med kontroll, finnes høyere nivå med pipelineing
+- Jahre: nå gjelder det å få ting til å virke. Heller dumt og stabilt
+enn lurt og ikke ferdig. "Lurt og ferdig er best da".
+
+Til neste gang
+-------------------
+- BNN-figur bare rentegnet
+- Lavere nivå-tegning-tingen
+- Minne-tingen
+- Tips til om ting er kompakt nok til at adder-tree kan lages fullstendig:
+  - Bra abstraksjon: FIFOer, eller køer. Kanskje enkleste minneabstraksjon.
+    Minimerer også mengde minne man trenger.
+    LUDVIGS NOTAT: Dette er faktisk sant
+- Grensesnitt mellom MCU og FPGA
+- Nå er det kritisk å utnytte gruppa! Tilnærmet uendelig mengde arbeid
+  å gjøre. Ikke enkelt koordinerbart.
