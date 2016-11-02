@@ -1,7 +1,7 @@
 PCB:
 * Thermal baking
 	Noone knows what this is, and apparently the camera and FPGA has
-	different thermal profiles. Ludvig looks at this.
+	different thermal profiles.
 
 FPGA:
 * Flash
@@ -12,7 +12,7 @@ FPGA:
 
 * Bus
 	We need some reserve signals between MCU and FPGA. In addition to
-	SPI bus. A 16-bit wide bus between FPGA and MCU would be nice. Arne
+	SPI bus. A 16-bit wide bus between FPGA and MCU would be nice.
 
 * Image
 	Do we really need to operate on 4-bit grayscale? BNN and corner
