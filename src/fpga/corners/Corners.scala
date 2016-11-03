@@ -77,7 +77,7 @@ class CornersModule extends Module {
 }
 
 class CornersModuleTests(c: CornersModule) extends Tester(c) {
-  val photo = ImageIO.read(new File("../../test_images/sudoku2_middle.bmp"));
+  val photo = ImageIO.read(new File("../../../test_images/sudoku2_middle.bmp"));
   for (y <- 0 until 480)
   {
     for (x <- 0 until 640)
