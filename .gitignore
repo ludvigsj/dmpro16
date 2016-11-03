@@ -6,4 +6,5 @@ documents/deliveries/pcb/dmpro16-pcb-v1/History/**
 src/fpga/bnn/target
 src/fpga/bnn/project
 src/fpga/bnn/sim_test
+src/fpga/bnn/out_dir
 
