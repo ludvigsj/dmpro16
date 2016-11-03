@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 
-topdir=../
-(find -L "${topdir}/verilog" -name '*.v' | xargs -n1 -I{} echo "vhdl work" {})
+topdir=../bnn
+(find -L "${topdir}/verilog" -name '*.v' | xargs -n1 -I{} echo "v work" {})
