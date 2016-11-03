@@ -12,15 +12,12 @@ class CornersModule extends Module {
     val x1= UInt(OUTPUT, width = 16)
     val y0= UInt(OUTPUT, width = 16)
     val y1= UInt(OUTPUT, width = 16)
-    val x = UInt(OUTPUT, width = 16)
-    val y = UInt(OUTPUT, width = 16)
   }
 
-  val x = Reg(init=UInt(0, width = 16));
-  val y = Reg(init=UInt(0, width = 16));
-  val left, right, firstx, firsty = Reg(init=UInt(0, width = 16));
-  val secondx, secondy = Reg(init=UInt(999, width = 16));
+  val x, y, left, right, firstx, firsty, secondx2, secondy2 = Reg(init=UInt(0, width = 16));
+  val secondx1, secondy1 = Reg(init=UInt(999, width = 16));
   val first = Reg(init=Bool(false));
+  val x0temp, y0temp, x1temp, y1temp = Reg(init=UInt(0, width = 16));
 
   when(x === 639.U){
     y := y + 1.U;
@@ -35,26 +32,52 @@ class CornersModule extends Module {
       firsty := y;
       first := Bool(true);
     }.otherwise{
-      when(x < secondx){
-        secondx := x;
-        secondy := y;
+      when(x < secondx1){
+        secondx1 := x;
+        secondy1 := y;
+      }.elsewhen(x > secondx2){
+        secondx2 := x;
+        secondy2 := y;
       }
     }
   }
 
-  io.x0 := firstx;
-  io.y0 := firsty;
-  io.x1 := secondx;
-  io.y1 := secondy;
+  when(secondy2 < secondy1){
+    when(secondx2 < firstx){
+      x0temp := firstx;
+      y0temp := firsty;
+      x1temp := secondx2;
+      y1temp := secondy2;
+    }.otherwise{
+      x0temp := firstx;
+      y0temp := firsty;
+      x1temp := secondx2;
+      y1temp:= secondy2;
+    }
+  }.otherwise{
+    when(secondx1 <= firstx){
+      x0temp := firstx;
+      y0temp := firsty;
+      x1temp := secondx1;
+      y1temp := secondy1;
+    }.otherwise{
+      x0temp := firstx;
+      y0temp := firsty;
+      x1temp := secondx1;
+      y1temp := secondy1;
+    }
 
-  io.x := x;
-  io.y := y;
+  }
+
+  io.x0 := x0temp;
+  io.y0 := y0temp;
+  io.x1 := x1temp;
+  io.y1 := y1temp;
 
 }
 
 class CornersModuleTests(c: CornersModule) extends Tester(c) {
-  val photo = ImageIO.read(new File("../../test_images/sudoku2_left_-39deg.bmp"));
-
+  val photo = ImageIO.read(new File("../../test_images/sudoku2_middle.bmp"));
   for (y <- 0 until 480)
   {
     for (x <- 0 until 640)
@@ -67,12 +90,11 @@ class CornersModuleTests(c: CornersModule) extends Tester(c) {
       step(1)
     }
   }
+  expect(c.io.x0, 180)
+  expect(c.io.y0, 108)
+  expect(c.io.x1, 439)
+  expect(c.io.y1, 108)
 
-  expect(c.io.x0, 228)
-  expect(c.io.y0, 44)
-
-  expect(c.io.x1, 27)
-  expect(c.io.y1, 207)
 
 
 }
