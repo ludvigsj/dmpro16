@@ -1,0 +1,16 @@
+[0m[[0minfo[0m] [0mRunning SudoKu.neuron [0m
+[0m[[0mdebug[0m] [0mWaiting for threads to exit or System.exit to be called.[0m
+[0m[[0mdebug[0m] [0m  Classpath:[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/git/dmpro16/src/fpga/bnn/target/scala-2.11/classes[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.8.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/edu.berkeley.cs/chisel_2.11/jars/chisel_2.11-2.2.36.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scalatest/scalatest_2.11/bundles/scalatest_2.11-2.2.5.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.11.8.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scala-lang.modules/scala-xml_2.11/bundles/scala-xml_2.11-1.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scalacheck/scalacheck_2.11/jars/scalacheck_2.11-1.12.5.jar[0m
+[0m[[0mdebug[0m] [0m	/home/ludvigsj/.ivy2/cache/org.scala-sbt/test-interface/jars/test-interface-1.0.jar[0m
+[0m[[0mdebug[0m] [0mWaiting for thread run-main-0 to terminate.[0m
+[0m[[0mdebug[0m] [0m	Thread run-main-0 exited.[0m
+[0m[[0mdebug[0m] [0mInterrupting remaining threads (should be all daemons).[0m
+[0m[[0mdebug[0m] [0mSandboxed run complete..[0m
+[0m[[0mdebug[0m] [0mExited with code 0[0m
