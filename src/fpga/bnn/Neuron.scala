@@ -1,21 +1,22 @@
-package SudoKu
+package SudoKu.bnn
 
 import Chisel._
 
 class Neuron extends Module {
-    val preload_w = Array(
-        Bool(true),
-        Bool(false),
-        Bool(false),
-        Bool(true)
-    )
-
     val io = new Bundle {
         val pixel_num = UInt(INPUT, 10)
         val in = Bool(INPUT)
         val out = Bool(OUTPUT)
         val stcp = Bool(INPUT)
     }
+    
+	val preload_w = Array(
+        Bool(true),
+        Bool(false),
+        Bool(false),
+        Bool(true)
+    )
+
 
     val t = UInt()
     t := UInt(249, 10)
