@@ -11,10 +11,10 @@ class Transformer(padding: Int) extends Module {
         val done = Bool(OUTPUT)
     }
 
-    val matrix = MatrixTransformer(padding)
-    val cam = CameraController()
-    val imgmem = ImgMem()
-    val corner = CornerFinder()
+    val matrix = Module(new MatrixTransformer(padding))
+    val cam = Module(new CameraController())
+    val imgmem = Module(new ImgMem())
+    val corner = Module(new CornerFinder())
 
     cam.io.enable := io.enable
     corner.io.enable := cam.io.done
@@ -42,6 +42,20 @@ class CameraController extends BlackBox {
         val enable = Bool(INPUT)
         val addr = UInt(OUTPUT, 20)
         val write = Bool(OUTPUT)
+    }
+}
+
+// TODO: Eirik, replace this with actual corner finder
+class CornerFinder extends BlackBox {
+    val io = new Bundle {
+        val done = Bool(OUTPUT)
+        val enable = Bool(INPUT)
+        val addr = UInt(OUTPUT, 20)
+        val x0 = UInt(OUTPUT, 16)
+        val x1 = UInt(OUTPUT, 16)
+        val y0 = UInt(OUTPUT, 16)
+        val y1 = UInt(OUTPUT, 16)
+        val pixel = UInt(INPUT, 1)
     }
 }
 
