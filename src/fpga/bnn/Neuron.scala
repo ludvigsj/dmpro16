@@ -1,49 +1,45 @@
 package SudoKu.bnn
 
 import Chisel._
+import Weights._
 
-class Neuron extends Module {
+class Neuron(layer: Int, neuron: Int) extends Module {
     val io = new Bundle {
-        val pixel_num = UInt(INPUT, 10)
-        val in = Bool(INPUT)
-        val out = Bool(OUTPUT)
-        val stcp = Bool(INPUT)
+        val input = Bool(INPUT)
+		val enable = Bool(INPUT)
+        val last_input = Bool(INPUT)
+        val output = Bool(OUTPUT)
+		val sum_out = UInt(OUTPUT, width=9)
     }
     
-	val preload_w = Array(
-        Bool(true),
-        Bool(false),
-        Bool(false),
-        Bool(true)
-    )
+    val weights = Vec( Weights.w(layer)(neuron) )
+    val accumulator = Reg(init=UInt(0, width=9))
+
+	val weight_location = RegEnable(Mux(io.last_input, UInt(0), weight_location+UInt(1)) ,io.enable)
 
 
-    val t = UInt()
-    t := UInt(249, 10)
-    val w = Vec(preload_w)
-    val acc = Reg(init=UInt(0, 10))
-    val outstore = Reg(init=Bool(false))
-    /*when(io.stcp){
-        outstore := acc > t
-        acc := UInt(0)
-    } .otherwise {*/
-    acc := acc + io.in
-    io.out := outstore
+	io.sum_out := accumulator
+
+	val compare = Module( new Compare(layer, neuron) )
+	compare.io.sum := io.sum_out
+    //val outstore = Reg(next = compare.io.neuron_value)
+    val outstore = RegEnable(compare.io.neuron_value, io.last_input)
+
 }
 
 class NeuronTest(c: Neuron) extends Tester(c) {
-    
+   step(1) 
 }
 
 object neuron {
     def main(args: Array[String]): Unit = {
         val gen_args =
-        //Array("--backend", "c", "--genHarness", "--compile", "--test", "--targetDir", "sim_test")
+        Array("--backend", "c", "--genHarness", "--compile", "--test", "--targetDir", "sim_test")
         //Array("--backend", "v", "--targetDir", "verilog")
-        Array("--backend", "dot", "--targetDir", "dot")
+        //Array("--backend", "dot", "--targetDir", "dot")
         chiselMainTest(
             gen_args, 
-            () => Module(new Neuron())) { c => new NeuronTest(c) }
+            () => Module(new Neuron(0, 1))) { c => new NeuronTest(c) }
     }
 }
 
