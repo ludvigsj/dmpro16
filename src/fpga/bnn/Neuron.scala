@@ -5,10 +5,10 @@ import Weights._
 
 class Neuron(layer: Int, neuron: Int) extends Module {
     val io = new Bundle {
-        val input = Bool(INPUT)
+        val input = Bits(INPUT, width=1)
 		val enable = Bool(INPUT)
         val last_input = Bool(INPUT)
-        val output = Bool(OUTPUT)
+        val output = Bits(OUTPUT, width=1)
 		val sum_out = UInt(OUTPUT, width=9)
     }
     
@@ -17,8 +17,8 @@ class Neuron(layer: Int, neuron: Int) extends Module {
 	val weight_location = Reg(init=UInt(0, width=9))
 	val synapse = ~(weights(weight_location) ^ io.input)
 	when(io.enable) {
-		weight_location := Mux(io.last_input, UInt(0), weight_location+UInt(1)) 
 		accumulator := accumulator+synapse
+		weight_location := Mux(io.last_input, UInt(0), weight_location+UInt(1)) 
 	}.otherwise {
 		accumulator := UInt(0)
 	}
@@ -36,7 +36,7 @@ class Neuron(layer: Int, neuron: Int) extends Module {
 class NeuronTest(c: Neuron) extends Tester(c) {
    // These expects are written with the assumption that BNN Data has not
    // changed
-   poke(c.io.input, false)
+   poke(c.io.input, 0)
    poke(c.io.enable, true)
    poke(c.io.last_input, false)
    step(1)
@@ -45,32 +45,32 @@ class NeuronTest(c: Neuron) extends Tester(c) {
    peek(c.outstore)
    peek(c.io.last_input)
    peek(c.compare.io.neuron_value)
-   expect(c.io.output,false)
+   expect(c.io.output, 0)
    expect(c.accumulator, 0)
 
-   poke(c.io.input, true)
+   poke(c.io.input, 1)
    poke(c.io.enable, true)
    poke(c.io.last_input, false)
    step(1)
-   expect(c.io.output,false)
+   expect(c.io.output, 0)
    expect(c.accumulator, 1)
 
-   poke(c.io.input, false)
+   poke(c.io.input, 0)
    poke(c.io.enable, true)
    poke(c.io.last_input, true)
    step(1)
-   expect(c.io.output, false)
+   expect(c.io.output, 0)
    expect(c.accumulator, 2)
 
    poke(c.io.enable, false)
    poke(c.io.last_input, false)
    step(1)
-   expect(c.io.output, true)
+   expect(c.io.output, 1)
    expect(c.accumulator, 0)
 
    step(1)
    expect(c.accumulator, 0)
-   expect(c.io.output, true)
+   expect(c.io.output, 1)
 }
 
 object neuron {
