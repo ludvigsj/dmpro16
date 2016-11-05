@@ -10,12 +10,9 @@ class Compare(layer: Int, neuron: Int) extends Module {
 		val neuron_value = Bool(OUTPUT)
     }
 
-
-	//val threshold = Vec( Thresholds.t(layer)(neuron) )(0)
 	val threshold = Thresholds.t(layer)(neuron)
 	val output = Mux( io.sum >= threshold, Bool(true), Bool(false))
-	val output_register = Reg(next = output)
-	io.neuron_value := output_register
+	io.neuron_value := output
 }
 
 class CompareTest(c: Compare) extends Tester(c) {
