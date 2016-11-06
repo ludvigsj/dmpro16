@@ -127,6 +127,8 @@ src/em_emu.c \
 src/em_gpio.c \
 src/em_usart.c \
 src/em_int.c \
+src/em_ebi.c \
+src/bsp_dk_3201.c \
 src/spi_master.c \
 src/display.c \
 src/checksudoku.c \

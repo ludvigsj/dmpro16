@@ -45,8 +45,8 @@
 #include "dmactrl.h"
 #include "spi_master.h"
 
-#define DMA_CHANNEL_TX   0
-#define DMA_CHANNEL_RX   1
+#define DMA_CHANNEL_RX   0
+#define DMA_CHANNEL_TX   1
 #define DMA_CHANNELS     2
 
 /* DMA Callback structure */
@@ -94,8 +94,8 @@ void setupCmu(void)
   /* Enabling clocks */
   CMU_ClockEnable(cmuClock_DMA, true);  
   CMU_ClockEnable(cmuClock_GPIO, true);  
-  CMU_ClockEnable(cmuClock_USART1, true);  
   CMU_ClockEnable(cmuClock_USART0, true);
+  CMU_ClockEnable(cmuClock_USART1, true);  
 }
 
 
@@ -105,19 +105,26 @@ void setupCmu(void)
  *****************************************************************************/
 void setupSpi(void)
 {
-  USART_InitSync_TypeDef usartInit = USART_INITSYNC_DEFAULT;
+  USART_InitSync_TypeDef usartInit0 = USART_INITSYNC_DEFAULT;
+  USART_InitSync_TypeDef usartInit1 = USART_INITSYNC_DEFAULT;
   
   /* Initialize SPI */
-  usartInit.databits = usartDatabits8;
-  usartInit.baudrate = 1000000;
-  usartInit.master = 1;
-  usartInit.msbf = 0;
-  usartInit.clockMode = usartClockMode0;
-  USART_InitSync(USART0, &usartInit);
-  USART_InitSync(USART1, &usartInit);
+  usartInit0.databits = usartDatabits8;
+  usartInit0.baudrate = 1000000;
+  usartInit0.master = 1;
+  usartInit0.msbf = 0;
+  usartInit0.clockMode = usartClockMode0;
+  USART_InitSync(USART0, &usartInit0);
+  usartInit1.databits = usartDatabits8;
+  usartInit1.baudrate = 1000000;
+  usartInit1.master = 1;
+  usartInit1.msbf = 0;
+  usartInit1.clockMode = usartClockMode0;
+  USART_InitSync(USART1, &usartInit1);
   
   /* Turn on automatic Chip Select control */
-  USART0->CTRL |= USART_CTRL_AUTOCS;
+  //USART0->CTRL |= USART_CTRL_AUTOCS | USART_CTRL_CSINV | USART_CTRL_AUTOTX;
+  USART0->CTRL |= USART_CTRL_AUTOCS | USART_CTRL_CSINV;
   USART1->CTRL |= USART_CTRL_AUTOCS | USART_CTRL_CSINV;
   
   /* Enable SPI transmit and receive */
@@ -136,14 +143,14 @@ void setupSpi(void)
   GPIO_PinModeSet(gpioPortD, 3, gpioModePushPull, 1); /* CS */
  
   /* Enable routing for SPI pins from USART to location 1 */
-  USART0->ROUTE = USART_ROUTE_TXPEN | 
+  USART0->ROUTE = USART_ROUTE_TXPEN |
                   USART_ROUTE_RXPEN | 
                   USART_ROUTE_CSPEN | 
                   USART_ROUTE_CLKPEN | 
-                  USART_ROUTE_LOCATION_LOC1;
+                  USART_ROUTE_LOCATION_LOC0;
 
   USART1->ROUTE = USART_ROUTE_TXPEN | 
-                  USART_ROUTE_RXPEN | 
+                  USART_ROUTE_RXPEN |
                   USART_ROUTE_CSPEN | 
                   USART_ROUTE_CLKPEN | 
                   USART_ROUTE_LOCATION_LOC1;
@@ -162,6 +169,8 @@ void setupDma(void)
   DMA_CfgDescr_TypeDef    rxDescrCfg;
   DMA_CfgChannel_TypeDef  txChnlCfg;
   DMA_CfgDescr_TypeDef    txDescrCfg;
+  DMA_CfgChannel_TypeDef  txChnlCfg1;
+  DMA_CfgDescr_TypeDef    txDescrCfg1;
   
   /* Initializing the DMA */
   dmaInit.hprot        = 0;
@@ -188,6 +197,21 @@ void setupDma(void)
   rxDescrCfg.arbRate = dmaArbitrate1;
   rxDescrCfg.hprot   = 0;
   DMA_CfgDescr(DMA_CHANNEL_RX, true, &rxDescrCfg);
+
+  /* Setting up channel */
+  txChnlCfg1.highPri   = false;
+  txChnlCfg1.enableInt = true;
+  txChnlCfg1.select    = DMAREQ_USART0_TXBL;
+  txChnlCfg1.cb        = &spiCallback;
+  DMA_CfgChannel(DMA_CHANNEL_RX, &txChnlCfg1);
+
+  /* Setting up channel descriptor */
+  txDescrCfg1.dstInc  = dmaDataIncNone;
+  txDescrCfg1.srcInc  = dmaDataInc1;
+  txDescrCfg1.size    = dmaDataSize1;
+  txDescrCfg1.arbRate = dmaArbitrate1;
+  txDescrCfg1.hprot   = 0;
+  DMA_CfgDescr(DMA_CHANNEL_RX, true, &txDescrCfg1);
   
   /*** Setting up TX DMA ***/
 
@@ -225,14 +249,14 @@ void spiDmaTransfer(uint8_t *txBuffer, uint8_t *rxBuffer,  int bytes)
     rxActive = true;
     
     /* Clear RX regsiters */
-    USART1->CMD = USART_CMD_CLEARRX;
+    USART0->CMD = USART_CMD_CLEARRX;
     
     /* Activate RX channel */
     DMA_ActivateBasic(DMA_CHANNEL_RX,
                       true,
                       false,
                       rxBuffer,
-                      (void *)&(USART1->RXDATA),
+                      (void *)&(USART0->RXDATA),
                       bytes - 1); 
   }
   /* Setting flag to indicate that TX is in progress
@@ -253,7 +277,7 @@ void spiDmaTransfer(uint8_t *txBuffer, uint8_t *rxBuffer,  int bytes)
 
 void displayTransfer(uint8_t *txBuffer, int bytes)
 {
-	GPIO_PinOutSet(gpioPortD, 3);
+  GPIO_PinOutSet(gpioPortD, 3);
 
   /* Setting flag to indicate that TX is in progress
    * will be cleared by call-back function */
@@ -280,15 +304,26 @@ void fpgaTransfer(uint8_t *rxBuffer, int bytes)
     rxActive = true;
     
     /* Clear RX regsiters */
-    USART1->CMD = USART_CMD_CLEARRX;
+    USART0->CMD = USART_CMD_CLEARRX;
     
     /* Activate RX channel */
     DMA_ActivateBasic(DMA_CHANNEL_RX,
                       true,
                       false,
                       rxBuffer,
-                      (void *)&(USART1->RXDATA),
+                      (void *)&(USART0->RXDATA),
                       bytes - 1); 
+
+//	txActive = true;
+
+	USART0->CMD = USART_CMD_CLEARTX;
+
+	DMA_ActivateBasic(DMA_CHANNEL_RX,
+					  true,
+					  false,
+					  (void *)&(USART0->TXDATA),
+					  NULL,
+					  bytes - 1);
 }
 
 

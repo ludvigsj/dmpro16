@@ -1,3 +1,4 @@
+#include "bsp.h"
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_dma.h"
@@ -7,7 +8,8 @@
 
 int main()
 {
-	int zeroboard[9][9] = { { 0 } };
+	BSP_Init(BSP_INIT_DK_SPI);
+
     int board[9][9] = {
     {1, 2, 3, 4, 5, 6, 7, 8, 9},
     {7, 5, 9, 1, 8, 3, 4, 2, 6},
@@ -23,8 +25,17 @@ int main()
 	CHIP_Init();
 	setupDmaSpi();
 
+	uint8_t number[1];
+	fpgaTransfer((uint8_t*) number, 1);
+	sleepUntilDmaDone();
+	int testBoard[9][9] = { { number[0] } };
+	displaySudoku(testBoard, 0);
+	//displaySudoku(board, 1);
+
+	/*
 	int incorrect = checkSudoku(board);
 	displaySudoku(board, incorrect);
+	*/
 
 	DMA_Reset();
 	while(1);
