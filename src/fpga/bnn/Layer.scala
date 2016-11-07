@@ -34,7 +34,59 @@ class Layer(layer: Int, neuron_count: Int) extends Module {
 }
 
 class LayerTest(c: Layer) extends Tester(c) {
-	step(1)
+  // STEP 1 -> 1
+  poke(c.io.enable, false)
+  step(1)
+  expect(c.counter, 0)
+  // STEP 1 -> 2
+  poke(c.io.input, 0)
+  poke(c.io.enable, true)
+  step(1)
+  expect(c.neurons(1).io.input, 0)
+  expect(c.counter, 1)
+  expect(c.neurons(1).io.last_input, false)
+  expect(c.neurons(1).accumulator, 0)
+  expect(c.neurons(1).outstore, 0)
+  expect(c.neurons(1).io.output, 0)
+  // STEP 1 -> 3
+  poke(c.io.input, 1)
+  step(1)
+  expect(c.neurons(1).io.input, 1)
+  expect(c.counter, 2)
+  expect(c.neurons(1).io.last_input, false)
+  expect(c.neurons(1).accumulator, 1)
+  expect(c.io.done, false)
+  expect(c.neurons(1).outstore, 0)
+  expect(c.neurons(1).io.output, 0)
+  // STEP 1 -> 4
+  poke(c.io.input, 0)
+  step(1)
+  expect(c.neurons(1).io.input, 0)
+  expect(c.counter, 3)
+  expect(c.neurons(1).io.last_input, true)
+  expect(c.neurons(1).accumulator, 2)
+  expect(c.neurons(1).outstore, 0)
+  expect(c.neurons(1).io.output, 1)
+  expect(c.io.done, true)
+  // STEP 1 -> 5
+  poke(c.io.enable, false)
+  step(1)
+  expect(c.neurons(1).io.enable, false)
+  expect(c.neurons(1).io.last_input, false)
+  expect(c.counter, 0)
+  expect(c.neurons(1).accumulator, 0)
+  expect(c.neurons(1).io.last_input, false)
+  expect(c.io.done, false)
+  expect(c.neurons(1).outstore, 1)
+  expect(c.neurons(1).io.output, 1)
+  // STEP 1 -> 6
+  step(1)
+  expect(c.neurons(1).io.last_input, false)
+  expect(c.counter, 0)
+  expect(c.io.done, false)
+  expect(c.io.output, 3)
+  expect(c.neurons(1).outstore, 1)
+  expect(c.neurons(1).io.output, 1)
 }
 
 object layer {
