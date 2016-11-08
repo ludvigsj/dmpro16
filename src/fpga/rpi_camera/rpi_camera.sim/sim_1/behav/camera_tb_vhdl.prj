@@ -1,0 +1,7 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  "../../../rpi_camera.srcs/sources_1/new/csi2_master.vhd"
+vhdl xil_defaultlib  "../../../rpi_camera.srcs/sources_1/new/camera.vhd"
+vhdl xil_defaultlib  "../../../rpi_camera.srcs/sim_1/new/camera_tb.vhd"
+
+# Do not sort compile order
+nosort
