@@ -16,13 +16,15 @@ class SpiSlave extends Module {
 
 	val number = UInt(6, 8)
 	val n = Reg(init = UInt(0, 10))
-	io.miso := number(n - UInt(1))
+	io.miso := number(n)
 
-	when(Bool(io.cs) && (fallingedge(Bool(io.clk))))
+	when(Bool(io.cs))
 	{
-		n := n + UInt(1)
+		when(fallingedge(Bool(io.clk)))
+		{
+			n := n + UInt(1)
+		}
 	}
-	.elsewhen(Bool(io.cs)) {}
 	.otherwise
 	{
 		n := UInt(0)
