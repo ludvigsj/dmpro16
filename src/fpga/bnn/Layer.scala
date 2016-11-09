@@ -3,20 +3,21 @@ package SudoKu.bnn
 import Chisel._
 import Array._
 
-class Layer(layer: Int, neuron_count: Int) extends Module {
+class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   val io = new Bundle {
     val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
     val output = Bits(OUTPUT, width=neuron_count)
-    val done = Bool(OUTPUT)
+    val layer_done = Bool(OUTPUT)
 }
 
   val counter = Reg(init=UInt(0,9))
+  val done_counter = Reg(init=UInt(0,9))
   when(io.enable){
     counter := counter + UInt(1)
-  }.otherwise {
-    counter := UInt(0)
-  }
+  }//.otherwise {
+  //  counter := UInt(0)
+  //}
 
   val last_input = Bool(Mux(Bool(counter>=UInt(neuron_count)), Bool(true), Bool(false)))
 
@@ -27,10 +28,21 @@ class Layer(layer: Int, neuron_count: Int) extends Module {
     neurons(neuron).io.input := io.input
     neurons(neuron).io.enable := io.enable
     neurons(neuron).io.last_input := last_input
-    out_vec(neuron) := neurons(neuron).io.output
+    //out_vec(neuron) := neurons(neuron).io.output
+    out_vec(neuron_count-1-neuron) := neurons(neuron).io.output
   }
   io.output := out_vec
-  io.done := neurons(0).io.done
+  //io.layer_done := neurons(0).io.done
+
+  when(last_input){
+    counter := UInt(0)
+  }
+  when(counter === UInt(input_count)-UInt(2)) {
+    io.layer_done := Bool(true)
+  }.otherwise{
+    io.layer_done := Bool(false)
+  }
+
 }
 
 class LayerTest(c: Layer) extends Tester(c) {
@@ -55,7 +67,7 @@ class LayerTest(c: Layer) extends Tester(c) {
   expect(c.counter, 2)
   expect(c.neurons(1).io.last_input, false)
   expect(c.neurons(1).accumulator, 1)
-  expect(c.io.done, false)
+  expect(c.io.layer_done, false)
   expect(c.neurons(1).outstore, 0)
   expect(c.neurons(1).io.output, 0)
   // STEP 1 -> 4
@@ -67,23 +79,23 @@ class LayerTest(c: Layer) extends Tester(c) {
   expect(c.neurons(1).accumulator, 2)
   expect(c.neurons(1).outstore, 0)
   expect(c.neurons(1).io.output, 1)
-  expect(c.io.done, true)
+  expect(c.io.layer_done, true)
   // STEP 1 -> 5
-  poke(c.io.enable, false)
   step(1)
-  expect(c.neurons(1).io.enable, false)
+  //expect(c.neurons(1).io.enable, false)
   expect(c.neurons(1).io.last_input, false)
   expect(c.counter, 0)
   expect(c.neurons(1).accumulator, 0)
   expect(c.neurons(1).io.last_input, false)
-  expect(c.io.done, false)
+  expect(c.io.layer_done, false)
   expect(c.neurons(1).outstore, 1)
   expect(c.neurons(1).io.output, 1)
   // STEP 1 -> 6
+  poke(c.io.enable, false)
   step(1)
   expect(c.neurons(1).io.last_input, false)
   expect(c.counter, 0)
-  expect(c.io.done, false)
+  expect(c.io.layer_done, false)
   expect(c.io.output, 3)
   expect(c.neurons(1).outstore, 1)
   expect(c.neurons(1).io.output, 1)
@@ -97,7 +109,7 @@ object layer {
     //Array("--backend", "dot", "--targetDir", "dot")
     chiselMainTest(
       gen_args,
-      () => Module(new Layer(0, 3))) { c => new LayerTest(c) }
+      () => Module(new Layer(0, 3, 3))) { c => new LayerTest(c) }
       //() => Module(new Layer(0, 256))) { c => new LayerTest(c) }
   }
 }

@@ -16,12 +16,10 @@ class Neuron(layer: Int, neuron: Int) extends Module {
   val accumulator = Reg(init=UInt(0, width=9))
   val weight_location = Reg(init=UInt(0, width=9))
   val synapse = ~(weights(weight_location) ^ io.input)
+  io.done := io.last_input
   when(io.enable) {
     accumulator := accumulator+synapse
     weight_location := weight_location+UInt(1)
-  }.otherwise {
-    accumulator := UInt(0)
-    weight_location := UInt(0)
   }
 
   val threshold = Thresholds.t(layer)(neuron)
@@ -35,8 +33,14 @@ class Neuron(layer: Int, neuron: Int) extends Module {
 
   val outstore = RegEnable(result, io.last_input)
 
+  when(io.last_input) {
+    accumulator := UInt(0)
+    weight_location := UInt(0)
+  }
+
+  //io.output := outstore
   io.output := Mux( io.last_input, result, outstore )
-  io.done := io.last_input
+  //io.done := io.last_input
 }
 
 class NeuronTest(c: Neuron) extends Tester(c) {
@@ -86,7 +90,7 @@ object neuron {
     //Array("--backend", "v", "--targetDir", "verilog")
     //Array("--backend", "dot", "--targetDir", "dot")
     chiselMainTest(
-      gen_args, 
+      gen_args,
       () => Module(new Neuron(0, 1))) { c => new NeuronTest(c) }
   }
 }
