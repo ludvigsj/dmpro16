@@ -12,14 +12,12 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
 }
 
   val counter = Reg(init=UInt(0,9))
-  val done_counter = Reg(init=UInt(0,9))
   when(io.enable){
     counter := counter + UInt(1)
-  }//.otherwise {
-  //  counter := UInt(0)
-  //}
+  }
+  val counter_signal = counter
 
-  val last_input = Bool(Mux(Bool(counter>=UInt(neuron_count)), Bool(true), Bool(false)))
+  val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
 
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
@@ -27,22 +25,23 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
     neurons(neuron).io.input := io.input
     neurons(neuron).io.enable := io.enable
+    neurons(neuron).io.weight_location := counter_signal
     neurons(neuron).io.last_input := last_input
-    //out_vec(neuron) := neurons(neuron).io.output
-    out_vec(neuron_count-1-neuron) := neurons(neuron).io.output
+    out_vec(neuron) := neurons(neuron).io.output
   }
   io.output := out_vec
-  //io.layer_done := neurons(0).io.done
+  io.layer_done := neurons(0).io.done
 
-  when(last_input){
-    counter := UInt(0)
+  // The first layer runs always, and has no time to reset to 0
+  if (layer == 0) {
+    when(last_input){
+      counter := UInt(1)
+    }
+  } else {
+    when(last_input){
+      counter := UInt(0)
+    }
   }
-  when(counter === UInt(input_count)-UInt(2)) {
-    io.layer_done := Bool(true)
-  }.otherwise{
-    io.layer_done := Bool(false)
-  }
-
 }
 
 class LayerTest(c: Layer) extends Tester(c) {

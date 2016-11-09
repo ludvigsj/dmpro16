@@ -32,18 +32,20 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
       */
       layers(layer).io.enable := io.enable
     } else {
-      layers(layer).io.input := layers(layer-1).io.output
+      layers(layer).io.input := layers(layer-1).io.output(counters(layer))
+
+      when (layers(layer).io.enable) {
+        counters(layer) := counters(layer) + UInt(1)
+      }.otherwise {
+        counters(layer) := UInt(0)
+      }
       when (layers(layer-1).io.layer_done) {
-          enable_regs(layer) := Bool(true)
+        layers(layer).io.enable := Bool(true)
+      }.elsewhen (counters(layer) < UInt(layers_input(layer)) & (counters(layer)>UInt(0))) {
+        layers(layer).io.enable := Bool(true)
+      }.otherwise {
+        layers(layer).io.enable := Bool(false)
       }
-      when (enable_regs(layer)) {
-          counters(layer) := counters(layer) + UInt(1)
-      }
-      when (counters(layer) >= UInt(layers_input(layer))){
-          counters(layer) := UInt(0)
-          enable_regs(layer) := Bool(false)
-      }
-      layers(layer).io.enable := enable_regs(layer)
     }
   }
   io.output := layers.last.io.output
@@ -52,10 +54,15 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
 class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn) {
   def printLayerOutput() {
     for (layer <- 0 until num_layers) {
+      peek(bnn.layers(layer).io.input)
       peek(bnn.layers(layer).io.output)
       peek(bnn.layers(layer).io.enable)
     }
   }
+  poke(bnn.io.enable, false)
+  poke(bnn.io.input, 1)
+  step(1)
+  printLayerOutput()
   poke(bnn.io.input, 1)
   poke(bnn.io.enable, true)
   step(1)
@@ -112,37 +119,6 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn) {
   printLayerOutput()
   peek(bnn.io.output)
   step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
-  peek(bnn.io.output)
-  step(1)
-  printLayerOutput()
 }
 
 object bnn {

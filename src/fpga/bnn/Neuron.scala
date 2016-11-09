@@ -8,18 +8,21 @@ class Neuron(layer: Int, neuron: Int) extends Module {
     val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
     val last_input = Bool(INPUT)
+    val weight_location = UInt(INPUT, width=9)
     val output = Bits(OUTPUT, width=1)
     val done = Bool(OUTPUT)
   }
 
   val weights = Vec( Weights.w(layer)(neuron) )
   val accumulator = Reg(init=UInt(0, width=9))
-  val weight_location = Reg(init=UInt(0, width=9))
-  val synapse = ~(weights(weight_location) ^ io.input)
+  val synapse = ~(weights(io.weight_location) ^ io.input)
   io.done := io.last_input
   when(io.enable) {
-    accumulator := accumulator+synapse
-    weight_location := weight_location+UInt(1)
+    when(io.weight_location === UInt(0)) {
+      accumulator := synapse
+    }.otherwise {
+      accumulator := accumulator+synapse
+    }
   }
 
   val threshold = Thresholds.t(layer)(neuron)
@@ -35,12 +38,9 @@ class Neuron(layer: Int, neuron: Int) extends Module {
 
   when(io.last_input) {
     accumulator := UInt(0)
-    weight_location := UInt(0)
   }
 
-  //io.output := outstore
   io.output := Mux( io.last_input, result, outstore )
-  //io.done := io.last_input
 }
 
 class NeuronTest(c: Neuron) extends Tester(c) {
@@ -50,7 +50,7 @@ class NeuronTest(c: Neuron) extends Tester(c) {
   poke(c.io.enable, true)
   poke(c.io.last_input, false)
   step(1)
-  peek(c.weight_location)
+  peek(c.io.weight_location)
   peek(c.outstore)
   expect(c.io.output, 0)
   expect(c.accumulator, 0)
