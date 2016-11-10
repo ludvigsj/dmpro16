@@ -84,14 +84,14 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn) {
 object bnn {
   def main(args: Array[String]): Unit = {
     val gen_args =
-      Array("--backend", "c", "--genHarness", "--compile", "--test", "--targetDir", "sim_test")
-      //Array("--backend", "v", "--targetDir", "verilog")
+      //Array("--backend", "c", "--genHarness", "--compile", "--test", "--targetDir", "sim_test")
+      Array("--backend", "v", "--targetDir", "verilog")
       //Array("--backend", "dot", "--targetDir", "dot")
       chiselMainTest(
         gen_args,
                        // num_layers, input_size, output_size
-          () => Module(new BNN(3, List(4, 3, 3), List(3, 3, 3))))
-          //() => Module(new BNN(4, List(784, 256, 256, 256), List(256, 256, 256, 10))))
+          //() => Module(new BNN(3, List(4, 3, 3), List(3, 3, 3))))
+          () => Module(new BNN(4, List(784, 256, 256, 256), List(256, 256, 256, 10))))
             { c => new BNNTest(c, 3) }
   }
 }

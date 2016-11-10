@@ -48,6 +48,7 @@ class LayerTest(c: Layer) extends Tester(c) {
   // STEP 1 -> 1
   poke(c.io.enable, false)
   step(1)
+  peek(c.neurons(0).threshold)
   expect(c.counter, 0)
   // STEP 1 -> 2
   poke(c.io.input, 0)

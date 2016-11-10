@@ -1,8 +1,37 @@
 package SudoKu.bnn
 
 import Chisel._
+import scala.collection.mutable.ArrayBuffer
 
 object Thresholds {
+  def readCSV(filename:String) : Array[Array[UInt]] = {
+    var rows:Array[Array[UInt]] = Array.empty
+    val source = io.Source.fromFile(filename)
+    for (line <- source.getLines) {
+      val row = line.split(",").map(_.trim).map(_.toInt).map(x => UInt(x))
+      rows = rows :+ row
+    }
+    rows
+  }
+  val t = readCSV("./thresholds.csv")
+}
+
+object Weights {
+  def readCSV(filename:String) : Array[Array[UInt]] = {
+    var rows:Array[Array[UInt]] = Array.empty
+    val source = io.Source.fromFile(filename)
+    for (line <- source.getLines) {
+      val row = line.split(",").map(_.trim).map(_.toInt).map(x => UInt(x))
+      rows = rows :+ row
+    }
+    rows
+  }
+
+  val w = Array( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))
+}
+
+
+object TestThresholds {
   // Thresholds.t[layer][neuron]
   val t =
   Array(
@@ -12,7 +41,7 @@ object Thresholds {
   )
 }
 
-object Weights {
+object TestWeights {
   // Weights.w[layer][neuron][synapse]
   val w =
   Array(
