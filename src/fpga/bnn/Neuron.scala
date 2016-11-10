@@ -8,13 +8,13 @@ class Neuron(layer: Int, neuron: Int) extends Module {
     val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
     val last_input = Bool(INPUT)
-    val weight_location = UInt(INPUT, width=9)
+    val weight_location = UInt(INPUT, width=10)
     val output = Bits(OUTPUT, width=1)
     val done = Bool(OUTPUT)
   }
 
   val weights = Vec( Weights.w(layer)(neuron) )
-  val accumulator = Reg(init=UInt(0, width=9))
+  val accumulator = Reg(init=UInt(0, width=10))
   val synapse = ~(weights(io.weight_location) ^ io.input)
   io.done := io.last_input
   when(io.enable) {

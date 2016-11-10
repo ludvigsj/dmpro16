@@ -11,7 +11,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
     val layer_done = Bool(OUTPUT)
 }
 
-  val counter = Reg(init=UInt(0,9))
+  val counter = Reg(init=UInt(0,10))
   when(io.enable){
     counter := counter + UInt(1)
   }
