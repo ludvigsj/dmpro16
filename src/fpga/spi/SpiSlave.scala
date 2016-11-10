@@ -14,25 +14,23 @@ class SpiSlave extends Module {
 		val miso = UInt(OUTPUT, 1)
 	}
 
-	val number = UInt(6, 8)
-//	val n = Reg(init = UInt(0, 10))
-//	io.miso := number(n)
-
-	val enable = Reg(init = Bool(false))
-	io.miso := ShiftRegister(io.mosi, number, 8, enable);
+	val reg = Module(new SpiShiftRegister())
+	reg.io.value := UInt(6, 8)
+	reg.io.in := io.mosi
+	io.miso := reg.io.out
 
 	when(Bool(io.cs))
 	{
+		reg.io.set := Bool(false)
 		when(fallingedge(Bool(io.clk)))
 		{
-//			n := n + UInt(1)
-			enable := Bool(true)
+			reg.io.shift := Bool(true)
 		}
 	}
 	.otherwise
 	{
-		//n := UInt(0)
-		enable := Bool(false)
+		reg.io.shift := Bool(false)
+		reg.io.set := Bool(true)
 	}
 
 }
