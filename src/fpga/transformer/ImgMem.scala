@@ -18,14 +18,14 @@ class ImgMem() extends Module {
         val wen = Bool(INPUT)
     }
 
+    val out_reg = Reg(init = UInt(0, width=1))
     val mem = Mem(n=(640*480), out=UInt(width=1), seqRead=true) // Storing a VGA-sized bw image
-    
-    io.out := UInt(0,width=1) // Default value?
+    io.out := out_reg
 
     when(io.wen){
         mem(io.addr) := io.in
     } .otherwise {
-        io.out := mem(io.addr)
+        out_reg := mem(io.addr)
     }
 }
 

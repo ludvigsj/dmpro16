@@ -216,13 +216,15 @@ module CameraController(
   assign io_done = 1'h1;
 endmodule
 
-module ImgMem(input clk,
+module ImgMem(input clk, input reset,
     input [19:0] io_addr,
     output io_out,
     input  io_in,
     input  io_wen
 );
 
+  reg  out_reg;
+  wire T7;
   wire T0;
   wire T1;
   reg  mem [307199:0];
@@ -230,8 +232,8 @@ module ImgMem(input clk,
   wire T3;
   wire T4;
   wire[18:0] T5;
-  wire[18:0] T7;
   wire[18:0] T8;
+  wire[18:0] T9;
   wire T6;
 
 `ifndef SYNTHESIS
@@ -239,25 +241,32 @@ module ImgMem(input clk,
   integer initvar;
   initial begin
     #0.002;
+    out_reg = {1{$random}};
     for (initvar = 0; initvar < 307200; initvar = initvar+1)
       mem[initvar] = {1{$random}};
   end
 // synthesis translate_on
 `endif
 
-  assign io_out = T0;
-  assign T0 = T6 ? T1 : 1'h0;
-  assign T1 = mem[T8];
+  assign io_out = out_reg;
+  assign T7 = reset ? 1'h0 : T0;
+  assign T0 = T6 ? T1 : out_reg;
+  assign T1 = mem[T9];
   assign T3 = io_wen & T4;
   assign T4 = T5 < 19'h4b000;
   assign T5 = io_addr[18:0];
-  assign T7 = io_addr[18:0];
   assign T8 = io_addr[18:0];
+  assign T9 = io_addr[18:0];
   assign T6 = io_wen ^ 1'h1;
 
   always @(posedge clk) begin
+    if(reset) begin
+      out_reg <= 1'h0;
+    end else if(T6) begin
+      out_reg <= T1;
+    end
     if (T3)
-      mem[T7] <= io_in;
+      mem[T8] <= io_in;
   end
 endmodule
 
@@ -755,7 +764,7 @@ module Transformer(input clk, input reset,
        .io_write( cam_io_write ),
        .io_in( io_px_camera )
   );
-  ImgMem imgmem(.clk(clk),
+  ImgMem imgmem(.clk(clk), .reset(reset),
        .io_addr( T2 ),
        .io_out( imgmem_io_out ),
        .io_in( cam_io_data ),
