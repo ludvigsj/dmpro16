@@ -35,7 +35,8 @@ class Transformer(padding: Int) extends Module {
     matrix.io.y1 := corner.io.y1
 }
 
-class CameraController extends BlackBox {
+/* Bra modul ass */
+class CameraController extends Module {
     val io = new Bundle {
         val done = Bool(OUTPUT)
         val data = UInt(OUTPUT, 1)
@@ -43,6 +44,11 @@ class CameraController extends BlackBox {
         val addr = UInt(OUTPUT, 20)
         val write = Bool(OUTPUT)
     }
+
+    io.done := Bool(true)
+    io.data := UInt(0)
+    io.addr := UInt(0)
+    io.write := Bool(false)
 }
 
 class TransformerTests(c: Transformer) extends Tester(c) {
@@ -51,7 +57,8 @@ class TransformerTests(c: Transformer) extends Tester(c) {
 
 object transformer {
     def main(args: Array[String]): Unit = {
-        chiselMainTest(Array[String]("--backend", "c", "--compile", "--test", "--genHarness"),
+        //chiselMainTest(Array[String]("--backend", "c", "--compile", "--test", "--genHarness"),
+        chiselMainTest(Array[String]("--backend", "v", "--targetDir", "verilog"),
             () => Module(new Transformer(0))){c => new TransformerTests(c)}
     }
 }
