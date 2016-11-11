@@ -199,20 +199,57 @@ module MatrixTransformer(input clk, input reset,
   end
 endmodule
 
-module CameraController(
+module CameraController(input clk, input reset,
     output io_done,
     output io_data,
     input  io_enable,
     output[19:0] io_addr,
-    output io_write
+    output io_write,
+    input  io_in
 );
 
+  wire T0;
+  wire en;
+  wire T1;
+  wire T2;
+  reg [19:0] current_addr;
+  wire[19:0] T7;
+  wire[19:0] T3;
+  wire[19:0] T4;
+  wire[19:0] T5;
+  wire T6;
 
+`ifndef SYNTHESIS
+// synthesis translate_off
+  integer initvar;
+  initial begin
+    #0.002;
+    current_addr = {1{$random}};
+  end
+// synthesis translate_on
+`endif
 
-  assign io_write = 1'h0;
-  assign io_addr = 20'h0;
-  assign io_data = 1'h0;
-  assign io_done = 1'h1;
+  assign io_write = T0;
+  assign T0 = en ? 1'h1 : 1'h0;
+  assign en = T1;
+  assign T1 = io_enable & T2;
+  assign T2 = current_addr < 20'h4b000;
+  assign T7 = reset ? 20'h0 : T3;
+  assign T3 = en ? T4 : current_addr;
+  assign T4 = current_addr + 20'h1;
+  assign io_addr = T5;
+  assign T5 = en ? current_addr : 20'h0;
+  assign io_data = io_in;
+  assign io_done = T6;
+  assign T6 = 20'h4b000 <= current_addr;
+
+  always @(posedge clk) begin
+    if(reset) begin
+      current_addr <= 20'h0;
+    end else if(en) begin
+      current_addr <= T4;
+    end
+  end
 endmodule
 
 module ImgMem(input clk,
@@ -699,14 +736,17 @@ module CornersModule(input clk, input reset,
 endmodule
 
 module Transformer(input clk, input reset,
+    input  io_px_camera,
     input  io_enable,
-    output io_done
+    output io_done,
+    output io_px_out
 );
 
   wire T0;
   wire T1;
   wire[19:0] T2;
   wire[19:0] mux1;
+  wire T3;
   wire cam_io_done;
   wire cam_io_data;
   wire[19:0] cam_io_addr;
@@ -726,6 +766,8 @@ module Transformer(input clk, input reset,
   assign T1 = cam_io_done ^ 1'h1;
   assign T2 = corner_io_done ? matrix_io_src_addr : mux1;
   assign mux1 = cam_io_done ? corner_io_adr : cam_io_addr;
+  assign io_px_out = T3;
+  assign T3 = corner_io_done ? imgmem_io_out : 1'h0;
   assign io_done = matrix_io_done;
   MatrixTransformer matrix(.clk(clk), .reset(reset),
        .io_src_addr( matrix_io_src_addr ),
@@ -741,12 +783,13 @@ module Transformer(input clk, input reset,
     assign matrix.io_done = {1{$random}};
 // synthesis translate_on
 `endif
-  CameraController cam(
+  CameraController cam(.clk(clk), .reset(reset),
        .io_done( cam_io_done ),
        .io_data( cam_io_data ),
        .io_enable( io_enable ),
        .io_addr( cam_io_addr ),
-       .io_write( cam_io_write )
+       .io_write( cam_io_write ),
+       .io_in( io_px_camera )
   );
   ImgMem imgmem(.clk(clk),
        .io_addr( T2 ),
