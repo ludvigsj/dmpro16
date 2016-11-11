@@ -18,18 +18,6 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
     layers(layer) = Module( new Layer(layer, layers_input(layer), layers_output(layer)) )
     if(layer == 0) {
       layers(layer).io.input := io.input
-      // The code below is only needed if enable is only true for one cycle
-      /*
-      val images_started = Reg(init=UInt(0, width=7))
-      counters(layer) := counters(layer) + UInt(1)
-      when (counters(layer) >= UInt(layers_input(layer))){
-          counters(layer) := UInt(0)
-          images_started := images_started + UInt(1)
-      }
-      when (images_started === UInt(81)) {
-          enable_regs(layer) = Bool(false)
-      }
-      */
       layers(layer).io.enable := io.enable
     } else {
       layers(layer).io.input := layers(layer-1).io.output(counters(layer))
@@ -59,10 +47,6 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
       peek(bnn.layers(layer).io.enable)
     }
   }
-  //val layer0_output = Array(0,0,0,0,5,5,5,5,3,3,3,3,3,3,3,3)
-  //val layer1_output = Array(0,0,0,0,0,0,0,2,2,2,2,6,6,6,6,6)
-  //val layer2_output = Array(0,0,0,0,0,0,0,0,0,0,2,2,2,2,6,6)
-  //val input = Array(1,0,0,0,1,0,1,1)
 
   def readCSV(filename:String) : Array[Int] = {
     var rows:Array[Int] = Array.empty
@@ -91,12 +75,16 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
     step(1)
   }
   poke(bnn.io.enable, false)
-  for (i <- 0 until 10) {
-    step(1)
-    printSometimes()
+  for (i <- 0 until 1000) {
+    var printed = false
+    if (bnn.io.output == 0) {
+      step(1)
+    }
+    else if (!printed) {
+      printLayerOutput()
+      printed = true
+    }
   }
-  step(1000)
-  printLayerOutput()
 
 }
 

@@ -16,9 +16,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
     counter := counter + UInt(1)
   }
   val counter_signal = counter
-
-  val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
-
+  val last_input = Bool(counter>=UInt(input_count))
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
@@ -30,7 +28,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
     out_vec(neuron) := neurons(neuron).io.output
   }
   io.output := out_vec
-  io.layer_done := neurons(0).io.done
+  io.layer_done := last_input
 
   // The first layer runs always, and has no time to reset to 0
   if (layer == 0) {
