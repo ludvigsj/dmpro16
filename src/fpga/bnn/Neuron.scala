@@ -10,13 +10,13 @@ class Neuron(layer: Int, neuron: Int) extends Module {
     val last_input = Bool(INPUT)
     val weight_location = UInt(INPUT, width=10)
     val output = Bits(OUTPUT, width=1)
+    val done = Bool(OUTPUT)
   }
 
   val weights = Vec( Weights.w(layer)(neuron) )
   val accumulator = Reg(init=UInt(0, width=10))
-  val synapse = (io.weight ^ io.input)
-  //val synapse = ~(weights(io.weight_location) ^ io.input)
-  
+  val synapse = ~(weights(io.weight_location) ^ io.input)
+  io.done := io.last_input
   when(io.enable) {
     when(io.weight_location === UInt(0)) {
       accumulator := synapse
@@ -26,7 +26,13 @@ class Neuron(layer: Int, neuron: Int) extends Module {
   }
 
   val threshold = Thresholds.t(layer)(neuron)
-  val result = Bool(accumulator >= threshold)
+  val result = Mux( accumulator >= threshold, Bool(true), Bool(false))
+
+  // We need a delay to pass the tests in NeuronTest. This delay is not
+  // needed when we test a system with multiple neurons, because 
+  // Chisel does some optimizations.
+  // val delay_last = Reg(next=io.last_input)
+  // val outstore = RegEnable(result, io.delayed_last_input)
 
   val outstore = RegEnable(result, io.last_input)
 
