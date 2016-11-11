@@ -17,6 +17,7 @@ class MatrixTransformer(padding: Int) extends Module {
     }
 
     val at = Module(new AddrTrans(padding))
+    
 
     at.io.x0 := io.x0
     at.io.x1 := io.x1
@@ -28,6 +29,7 @@ class MatrixTransformer(padding: Int) extends Module {
     at.io.dest_addr := out_addr
 
     io.src_addr := at.io.src_addr
+    io.done := Bool(false)
 
     when(io.enable){
         out_addr := out_addr + UInt(1)

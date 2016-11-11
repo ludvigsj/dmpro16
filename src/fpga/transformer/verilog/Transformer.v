@@ -103,14 +103,14 @@ endmodule
 
 module AddrTrans(
     input [31:0] io_dest_addr,
-    output[31:0] io_src_addr,
+    output[19:0] io_src_addr,
     input [15:0] io_x0,
     input [15:0] io_x1,
     input [15:0] io_y0,
     input [15:0] io_y1
 );
 
-  wire[31:0] T2;
+  wire[19:0] T2;
   wire[25:0] T0;
   wire[25:0] T3;
   wire[25:0] T1;
@@ -121,7 +121,7 @@ module AddrTrans(
 
 
   assign io_src_addr = T2;
-  assign T2 = {6'h0, T0};
+  assign T2 = T0[19:0];
   assign T0 = T1 + T3;
   assign T3 = {10'h0, mt_io_srcX};
   assign T1 = 10'h280 * mt_io_srcY;
@@ -157,8 +157,7 @@ module MatrixTransformer(input clk, input reset,
   wire[15:0] T3;
   wire[15:0] T0;
   wire[15:0] T1;
-  wire[19:0] T4;
-  wire[31:0] at_io_src_addr;
+  wire[19:0] at_io_src_addr;
 
 `ifndef SYNTHESIS
 // synthesis translate_off
@@ -170,17 +169,12 @@ module MatrixTransformer(input clk, input reset,
 // synthesis translate_on
 `endif
 
-`ifndef SYNTHESIS
-// synthesis translate_off
-  assign io_done = {1{$random}};
-// synthesis translate_on
-`endif
   assign T2 = {16'h0, out_addr};
   assign T3 = reset ? 16'h0 : T0;
   assign T0 = io_enable ? T1 : out_addr;
   assign T1 = out_addr + 16'h1;
-  assign io_src_addr = T4;
-  assign T4 = at_io_src_addr[19:0];
+  assign io_done = 1'h0;
+  assign io_src_addr = at_io_src_addr;
   AddrTrans at(
        .io_dest_addr( T2 ),
        .io_src_addr( at_io_src_addr ),
@@ -751,11 +745,6 @@ module Transformer(input clk, input reset,
        .io_y1( corner_io_y1 ),
        .io_enable( corner_io_done )
   );
-`ifndef SYNTHESIS
-// synthesis translate_off
-    assign matrix.io_done = {1{$random}};
-// synthesis translate_on
-`endif
   CameraController cam(
        .io_done( cam_io_done ),
        .io_data( cam_io_data ),
@@ -772,9 +761,9 @@ module Transformer(input clk, input reset,
   );
   CornersModule corner(.clk(clk), .reset(reset),
        .io_pxin( imgmem_io_out ),
-       //.io_pxin1(  )
-       //.io_pxin2(  )
-       //.io_pxin3(  )
+       .io_pxin1( imgmem_io_out ),
+       .io_pxin2( imgmem_io_out ),
+       .io_pxin3( imgmem_io_out ),
        .io_x0( corner_io_x0 ),
        .io_x1( corner_io_x1 ),
        .io_y0( corner_io_y0 ),
@@ -783,12 +772,5 @@ module Transformer(input clk, input reset,
        .io_done( corner_io_done ),
        .io_adr( corner_io_adr )
   );
-`ifndef SYNTHESIS
-// synthesis translate_off
-    assign corner.io_pxin1 = {1{$random}};
-    assign corner.io_pxin2 = {1{$random}};
-    assign corner.io_pxin3 = {1{$random}};
-// synthesis translate_on
-`endif
 endmodule
 
