@@ -199,6 +199,22 @@ module MatrixTransformer(input clk, input reset,
   end
 endmodule
 
+module CameraController(
+    output io_done,
+    output io_data,
+    input  io_enable,
+    output[19:0] io_addr,
+    output io_write
+);
+
+
+
+  assign io_write = 1'h0;
+  assign io_addr = 20'h0;
+  assign io_data = 1'h0;
+  assign io_done = 1'h1;
+endmodule
+
 module ImgMem(input clk,
     input [19:0] io_addr,
     output io_out,
