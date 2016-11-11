@@ -56,23 +56,10 @@ class CameraController extends Module {
         val in = UInt(INPUT, 1)
     }
 
-    val current_addr = Reg(init=UInt(0, 20))
-    val en = Bool()
-    en := io.enable && (current_addr < UInt(640*480, width=20))
     io.data := io.in
-    io.done := Bool(false)
-
-    when (en){
-        io.addr := current_addr
-        io.write := Bool(true)
-        current_addr := current_addr + UInt(1)
-    } .otherwise {
-        io.addr := UInt(0)
-        io.write := Bool(false)
-    }
-    when (current_addr >= UInt(640*480, width=20)){
-        io.done := Bool(true)
-    }
+    io.done := Bool(true)
+    io.write := Bool(true)
+    io.addr := UInt(0)
 }
 
 class TransformerTests(c: Transformer) extends Tester(c) {

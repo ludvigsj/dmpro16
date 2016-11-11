@@ -199,7 +199,7 @@ module MatrixTransformer(input clk, input reset,
   end
 endmodule
 
-module CameraController(input clk, input reset,
+module CameraController(
     output io_done,
     output io_data,
     input  io_enable,
@@ -208,48 +208,12 @@ module CameraController(input clk, input reset,
     input  io_in
 );
 
-  wire T0;
-  wire en;
-  wire T1;
-  wire T2;
-  reg [19:0] current_addr;
-  wire[19:0] T7;
-  wire[19:0] T3;
-  wire[19:0] T4;
-  wire[19:0] T5;
-  wire T6;
 
-`ifndef SYNTHESIS
-// synthesis translate_off
-  integer initvar;
-  initial begin
-    #0.002;
-    current_addr = {1{$random}};
-  end
-// synthesis translate_on
-`endif
 
-  assign io_write = T0;
-  assign T0 = en ? 1'h1 : 1'h0;
-  assign en = T1;
-  assign T1 = io_enable & T2;
-  assign T2 = current_addr < 20'h4b000;
-  assign T7 = reset ? 20'h0 : T3;
-  assign T3 = en ? T4 : current_addr;
-  assign T4 = current_addr + 20'h1;
-  assign io_addr = T5;
-  assign T5 = en ? current_addr : 20'h0;
+  assign io_write = 1'h1;
+  assign io_addr = 20'h0;
   assign io_data = io_in;
-  assign io_done = T6;
-  assign T6 = 20'h4b000 <= current_addr;
-
-  always @(posedge clk) begin
-    if(reset) begin
-      current_addr <= 20'h0;
-    end else if(en) begin
-      current_addr <= T4;
-    end
-  end
+  assign io_done = 1'h1;
 endmodule
 
 module ImgMem(input clk,
@@ -783,7 +747,7 @@ module Transformer(input clk, input reset,
     assign matrix.io_done = {1{$random}};
 // synthesis translate_on
 `endif
-  CameraController cam(.clk(clk), .reset(reset),
+  CameraController cam(
        .io_done( cam_io_done ),
        .io_data( cam_io_data ),
        .io_enable( io_enable ),
