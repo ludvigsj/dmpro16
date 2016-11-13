@@ -1,10 +1,26 @@
 #include "bsp.h"
 #include "em_device.h"
 #include "em_chip.h"
+#include "em_cmu.h"
 #include "em_dma.h"
+#include "em_emu.h"
 #include "spi_master.h"
 #include "display.h"
 #include "checksudoku.h"
+
+uint32_t msTicks = 0;
+
+void SysTickHandler(void)
+{
+	msTicks++;
+}
+
+void Delay(uint32_t dlyTicks)
+{
+	uint32_t curTicks;
+	curTicks = msTicks;
+	while ((msTicks - curTicks) < dlyTicks);
+}
 
 int main()
 {
@@ -25,6 +41,13 @@ int main()
 	CHIP_Init();
 	setupDmaSpi();
 
+	if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1);
+	GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 1);
+	CMU_ClockEnable(cmuClock_CORELE, true);
+	GPIO->CTRL |= GPIO_CTRL_EM4RET;
+	GPIO->CMD |= GPIO_CMD_EM4WUCLR;
+	GPIO->EM4WUEN |= GPIO_EM4WUEN_EM4WUEN_A0;
+
 	uint8_t number[1];
 	fpgaTransfer((uint8_t*) number, 1);
 	sleepUntilDmaDone();
@@ -38,6 +61,10 @@ int main()
 	*/
 
 	DMA_Reset();
+
+	Delay(5000);
+	EMU_EnterEM4();
+
 	while(1);
 
 }
