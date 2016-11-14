@@ -7,6 +7,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   val io = new Bundle {
     val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
+    val reset = Bool(INPUT)
     val output = Bits(OUTPUT, width=neuron_count)
     val layer_done = Bool(OUTPUT)
 }
@@ -20,16 +21,23 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   val delayed_input = Reg(next=io.input)
   val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
 
+  val weights = Vec( Weights.w(layer) )
+  val current_weights = Reg( next=weights(count_signal) )
+
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
+    neurons(neuron).io.enable := io.enable
+    neurons(neuron).io.reset := io.reset
+    neurons(neuron).io.last_input := last_input
+
     //neurons(neuron).io.input := io.input
     neurons(neuron).io.input := delayed_input
-    neurons(neuron).io.enable := io.enable
+    neurons(neuron).io.weight := current_weights(neuron)
     //neurons(neuron).io.weight_location := count_signal
-    neurons(neuron).io.weight_location := delayed_location
-    neurons(neuron).io.last_input := last_input
+    //neurons(neuron).io.weight_location := delayed_location
+
     out_vec(neuron) := neurons(neuron).io.output
   }
   io.output := out_vec

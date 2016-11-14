@@ -18,18 +18,15 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
     layers(layer) = Module( new Layer(layer, layers_input(layer), layers_output(layer)) )
     if(layer == 0) {
       layers(layer).io.input := io.input
-      // The code below is only needed if enable is only true for one cycle
-      /*
-      val images_started = Reg(init=UInt(0, width=7))
-      counters(layer) := counters(layer) + UInt(1)
+
       when (counters(layer) >= UInt(layers_input(layer))){
-          counters(layer) := UInt(0)
-          images_started := images_started + UInt(1)
+        counters(layer) := UInt(0) // may need to be 1
+        layers(layer).io.reset := Bool(true)
+      }.otherwise {
+        counters(layer) := counters(layer) + UInt(1)
+        layers(layer).io.reset := Bool(false)
       }
-      when (images_started === UInt(81)) {
-          enable_regs(layer) = Bool(false)
-      }
-      */
+
       layers(layer).io.enable := io.enable
     } else {
       layers(layer).io.input := layers(layer-1).io.output(counters(layer))
@@ -41,10 +38,13 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
       }
       when (layers(layer-1).io.layer_done) {
         layers(layer).io.enable := Bool(true)
+        layers(layer).io.reset := Bool(true)
       }.elsewhen (counters(layer) < UInt(layers_input(layer)) & (counters(layer)>UInt(0))) {
         layers(layer).io.enable := Bool(true)
+        layers(layer).io.reset := Bool(false)
       }.otherwise {
         layers(layer).io.enable := Bool(false)
+        layers(layer).io.reset := Bool(false)
       }
     }
   }

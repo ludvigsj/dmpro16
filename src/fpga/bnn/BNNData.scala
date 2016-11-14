@@ -17,8 +17,9 @@ object Thresholds {
 }
 
 object Weights {
-  def readCSV(filename:String) : List[List[Bits]] = {
+  def readCSV(filename:String) : List[Bits] = {
     var rows:List[List[Bits]] = List.empty
+    var bits:List[Bits] = List.empty
     val source = io.Source.fromFile(filename)
     for (line <- source.getLines) {
       val row:List[Bits] = line.split(",")
@@ -29,7 +30,12 @@ object Weights {
             //.map(x => Reg(init=(x)))
       rows = rows :+ row
     }
-    rows
+
+    for( x <- rows ) {
+      bits = bits :+ x.reduceLeft( Cat(_,_) )
+    }
+
+    bits
   }
 
   val w = List( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))

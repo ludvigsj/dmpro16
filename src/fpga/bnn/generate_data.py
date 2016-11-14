@@ -79,14 +79,19 @@ with open('thresholds.csv', 'w') as thresholds_file:
     thresholds_file.write(thresholds_string)
 
 
+nn_first_synapses = np.swapaxes(nn_first_synapses,0,1)
+nn_second_synapses = np.swapaxes(nn_second_synapses,0,1)
+nn_third_synapses = np.swapaxes(nn_third_synapses,0,1)
+nn_out_synapses = np.swapaxes(nn_out_synapses,0,1)
+
 for weights in [nn_first_synapses, nn_second_synapses, nn_third_synapses, nn_out_synapses]:
     w_string = ''
-    for neuron in range(weights.shape[0]):
-        for synapse in range(weights.shape[1]):
-            if (synapse != weights.shape[1]-1):
-                w_string += str(weights[neuron][synapse]) + ','
+    for s in range(weights.shape[0]):
+        for n in range(weights.shape[1]):
+            if (n != weights.shape[1]-1):
+                w_string += str(weights[s][n]) + ','
             else:
-                w_string += str(weights[neuron][synapse])
+                w_string += str(weights[s][n])
         #if (neuron != weights.shape[0]-1):
         w_string += '\n'
     if weights is nn_first_synapses:

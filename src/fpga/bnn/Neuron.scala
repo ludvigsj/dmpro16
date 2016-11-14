@@ -5,28 +5,31 @@ import Weights._
 
 class Neuron(layer: Int, neuron: Int) extends Module {
   val io = new Bundle {
-    val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
+    val reset = Bool(INPUT)
     val last_input = Bool(INPUT)
-    val weight_location = UInt(INPUT, width=10)
+
+    val input = Bits(INPUT, width=1)
+    val weight = Bits(INPUT, width=1)
+
     val output = Bits(OUTPUT, width=1)
     val done = Bool(OUTPUT)
   }
 
   //val weights = Mem( Weights.w(layer)(neuron), Weights.w(layer)(neuron).size, true )
-  val weights = Vec( Weights.w(layer)(neuron) )
+  //val weights = Vec( Weights.w(layer)(neuron) )
   //val list = Weights.w(layer)(neuron)
   //val weights = Vec( Weights.w(layer)(neuron).map(x => Reg(init=(x) )))
 
   //val regFile = Vec.fill() { Reg(init = UInt(0, width = dataBits)) }
   val accumulator = Reg(init=UInt(0, width=10))
   //val delayed_location = Reg(next=io.weight_location)
-  val w = Reg(next=weights(io.weight_location))
-  val i = Reg(next=io.input)
-  val synapse = ~(w ^ i)
+  //val w = Reg(next=weights(io.weight_location))
+  //val i = Reg(next=io.input)
+  val synapse = ~(io.weight ^ io.input)
   io.done := io.last_input
   when(io.enable) {
-    when(io.weight_location === UInt(0)) {
+    when(io.reset) {
       accumulator := synapse
     }.otherwise {
       accumulator := accumulator+synapse
@@ -58,7 +61,6 @@ class NeuronTest(c: Neuron) extends Tester(c) {
   poke(c.io.enable, true)
   poke(c.io.last_input, false)
   step(1)
-  peek(c.io.weight_location)
   peek(c.outstore)
   expect(c.io.output, 0)
   expect(c.accumulator, 0)
