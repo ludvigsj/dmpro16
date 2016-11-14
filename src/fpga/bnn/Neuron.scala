@@ -13,9 +13,17 @@ class Neuron(layer: Int, neuron: Int) extends Module {
     val done = Bool(OUTPUT)
   }
 
+  //val weights = Mem( Weights.w(layer)(neuron), Weights.w(layer)(neuron).size, true )
   val weights = Vec( Weights.w(layer)(neuron) )
+  //val list = Weights.w(layer)(neuron)
+  //val weights = Vec( Weights.w(layer)(neuron).map(x => Reg(init=(x) )))
+
+  //val regFile = Vec.fill() { Reg(init = UInt(0, width = dataBits)) }
   val accumulator = Reg(init=UInt(0, width=10))
-  val synapse = ~(weights(io.weight_location) ^ io.input)
+  //val delayed_location = Reg(next=io.weight_location)
+  val w = Reg(next=weights(io.weight_location))
+  val i = Reg(next=io.input)
+  val synapse = ~(w ^ i)
   io.done := io.last_input
   when(io.enable) {
     when(io.weight_location === UInt(0)) {

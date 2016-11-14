@@ -95,7 +95,7 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
     step(1)
     printSometimes()
   }
-  step(1000)
+  step(1500)
   printLayerOutput()
 
 }

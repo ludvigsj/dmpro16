@@ -87,8 +87,8 @@ for weights in [nn_first_synapses, nn_second_synapses, nn_third_synapses, nn_out
                 w_string += str(weights[neuron][synapse]) + ','
             else:
                 w_string += str(weights[neuron][synapse])
-        if (neuron != weights.shape[0]-1):
-            w_string += '\n'
+        #if (neuron != weights.shape[0]-1):
+        w_string += '\n'
     if weights is nn_first_synapses:
         filename = 'weights0.csv'
     elif weights is nn_second_synapses:

@@ -15,17 +15,20 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   when(io.enable){
     counter := counter + UInt(1)
   }
-  val counter_signal = counter
-
+  val delayed_location = Reg(next=counter)
+  val count_signal = counter
+  val delayed_input = Reg(next=io.input)
   val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
 
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
-    neurons(neuron).io.input := io.input
+    //neurons(neuron).io.input := io.input
+    neurons(neuron).io.input := delayed_input
     neurons(neuron).io.enable := io.enable
-    neurons(neuron).io.weight_location := counter_signal
+    //neurons(neuron).io.weight_location := count_signal
+    neurons(neuron).io.weight_location := delayed_location
     neurons(neuron).io.last_input := last_input
     out_vec(neuron) := neurons(neuron).io.output
   }
