@@ -87,12 +87,9 @@ nn_out_synapses = np.swapaxes(nn_out_synapses,0,1)
 for weights in [nn_first_synapses, nn_second_synapses, nn_third_synapses, nn_out_synapses]:
     w_string = ''
     for s in range(weights.shape[0]):
+        w_string += 'b'
         for n in range(weights.shape[1]):
-            if (n != weights.shape[1]-1):
-                w_string += str(weights[s][n]) + ','
-            else:
-                w_string += str(weights[s][n])
-        #if (neuron != weights.shape[0]-1):
+            w_string += str(weights[s][n])
         w_string += '\n'
     if weights is nn_first_synapses:
         filename = 'weights0.csv'

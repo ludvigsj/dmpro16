@@ -3,7 +3,7 @@ package SudoKu.bnn
 import Chisel._
 import Weights._
 
-class Neuron(layer: Int, neuron: Int) extends Module {
+class Neuron(layer: Int, neuron: Int, accumulator_size: Int) extends Module {
   val io = new Bundle {
     val enable = Bool(INPUT)
     val reset = Bool(INPUT)
@@ -22,7 +22,7 @@ class Neuron(layer: Int, neuron: Int) extends Module {
   //val weights = Vec( Weights.w(layer)(neuron).map(x => Reg(init=(x) )))
 
   //val regFile = Vec.fill() { Reg(init = UInt(0, width = dataBits)) }
-  val accumulator = Reg(init=UInt(0, width=10))
+  val accumulator = Reg(init=UInt(0, width=accumulator_size))
   //val delayed_location = Reg(next=io.weight_location)
   //val w = Reg(next=weights(io.weight_location))
   //val i = Reg(next=io.input)
@@ -101,7 +101,7 @@ object neuron {
     //Array("--backend", "dot", "--targetDir", "dot")
     chiselMainTest(
       gen_args,
-      () => Module(new Neuron(0, 1))) { c => new NeuronTest(c) }
+      () => Module(new Neuron(0, 1, 3))) { c => new NeuronTest(c) }
   }
 }
 

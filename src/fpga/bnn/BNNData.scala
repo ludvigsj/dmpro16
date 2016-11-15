@@ -17,28 +17,28 @@ object Thresholds {
 }
 
 object Weights {
-  def readCSV(filename:String) : List[Bits] = {
-    var rows:List[List[Bits]] = List.empty
-    var bits:List[Bits] = List.empty
+  //def readCSV(filename:String) : Array[Bits] = {
+  def readCSV(filename:String) : Array[String] = {
+    var rows:Array[String] = Array.empty
     val source = io.Source.fromFile(filename)
     for (line <- source.getLines) {
-      val row:List[Bits] = line.split(",")
-            .map(_.trim)
-            .map(_.toInt)
-            .map(x => Bits(x, width=1)).toList
-            //.map(Bits(_))
-            //.map(x => Reg(init=(x)))
+      val row:String = line.trim
       rows = rows :+ row
     }
-
-    for( x <- rows ) {
-      bits = bits :+ x.reduceLeft( Cat(_,_) )
-    }
-
-    bits
+    //rows.map(x => Bits(x))
+    return rows
   }
 
-  val w = List( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))
+  def getW(): Array[Array[String]] = {
+      return Array( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"), readCSV("./weights0.csv"))
+  }
+
+ def getWforLayer(i: Int): Array[String] = {
+     val ww = getW()
+     return ww(i)
+ }
+
+  //val w = Array( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))
 }
 
 
