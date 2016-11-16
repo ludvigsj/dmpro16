@@ -46,8 +46,8 @@
 #include "spi_master.h"
 
 #define DMA_CHANNEL_RX   0
-#define DMA_CHANNEL_TX   1
-#define DMA_CHANNELS     2
+#define DMA_CHANNEL_TX   2
+#define DMA_CHANNELS     3
 
 /* DMA Callback structure */
 DMA_CB_TypeDef spiCallback;
@@ -110,9 +110,9 @@ void setupSpi(void)
   
   /* Initialize SPI */
   usartInit0.databits = usartDatabits8;
-  usartInit0.baudrate = 1000000;
+  usartInit0.baudrate = 10000;
   usartInit0.master = 1;
-  usartInit0.msbf = 0;
+  usartInit0.msbf = 1;
   usartInit0.clockMode = usartClockMode0;
   USART_InitSync(USART0, &usartInit0);
   usartInit1.databits = usartDatabits8;
@@ -203,7 +203,7 @@ void setupDma(void)
   txChnlCfg1.enableInt = true;
   txChnlCfg1.select    = DMAREQ_USART0_TXBL;
   txChnlCfg1.cb        = &spiCallback;
-  DMA_CfgChannel(DMA_CHANNEL_RX, &txChnlCfg1);
+  DMA_CfgChannel(1, &txChnlCfg1);
 
   /* Setting up channel descriptor */
   txDescrCfg1.dstInc  = dmaDataIncNone;
@@ -211,7 +211,7 @@ void setupDma(void)
   txDescrCfg1.size    = dmaDataSize1;
   txDescrCfg1.arbRate = dmaArbitrate1;
   txDescrCfg1.hprot   = 0;
-  DMA_CfgDescr(DMA_CHANNEL_RX, true, &txDescrCfg1);
+  DMA_CfgDescr(1, true, &txDescrCfg1);
   
   /*** Setting up TX DMA ***/
 
@@ -318,7 +318,7 @@ void fpgaTransfer(uint8_t *rxBuffer, int bytes)
 
 	USART0->CMD = USART_CMD_CLEARTX;
 
-	DMA_ActivateBasic(DMA_CHANNEL_RX,
+	DMA_ActivateBasic(1,
 					  true,
 					  false,
 					  (void *)&(USART0->TXDATA),

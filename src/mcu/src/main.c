@@ -10,7 +10,7 @@
 
 uint32_t msTicks = 0;
 
-void SysTickHandler(void)
+void SysTick_Handler(void)
 {
 	msTicks++;
 }
@@ -25,6 +25,8 @@ void Delay(uint32_t dlyTicks)
 int main()
 {
 	BSP_Init(BSP_INIT_DK_SPI);
+	CHIP_Init();
+	setupDmaSpi();
 
     int board[9][9] = {
     {1, 2, 3, 4, 5, 6, 7, 8, 9},
@@ -38,12 +40,10 @@ int main()
     {4, 8, 7, 6, 3, 1, 5, 9, 2},
     };
 
-	CHIP_Init();
-	setupDmaSpi();
 
+	CMU_ClockEnable(cmuClock_CORELE, true);
 	if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1);
 	GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 1);
-	CMU_ClockEnable(cmuClock_CORELE, true);
 	GPIO->CTRL |= GPIO_CTRL_EM4RET;
 	GPIO->CMD |= GPIO_CMD_EM4WUCLR;
 	GPIO->EM4WUEN |= GPIO_EM4WUEN_EM4WUEN_A0;
@@ -51,9 +51,12 @@ int main()
 	uint8_t number[1];
 	fpgaTransfer((uint8_t*) number, 1);
 	sleepUntilDmaDone();
-	int testBoard[9][9] = { { number[0] } };
+	int testBoard[9][9];
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			testBoard[i][j] = number[0];
 	displaySudoku(testBoard, 0);
-	//displaySudoku(board, 1);
+//	displaySudoku(board, 1);
 
 	/*
 	int incorrect = checkSudoku(board);
@@ -62,9 +65,10 @@ int main()
 
 	DMA_Reset();
 
-	Delay(5000);
+	Delay(2000);
 	EMU_EnterEM4();
 
 	while(1);
 
 }
+
