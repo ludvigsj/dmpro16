@@ -15,8 +15,9 @@ entity sudo_ku is
           camerabus_cam1_dn1 : in std_logic;
           camerabus_cam1_dp0 : in std_logic;
           camerabus_cam1_dn0 : in std_logic;
-          );
-    -- TODO: Add SPI-bus to ports
+          enable             : in std_logic
+      );
+    -- TODO: Add SPI-bus + enable to ports
 end entity sudo_ku;
 
 architecture behavior of sudo_ku is
@@ -31,7 +32,6 @@ architecture behavior of sudo_ku is
             cam_read  : out std_logic;
             cam_data  : in std_logic_vector(0 downto 0);
             cam_empty : in std_logic;
-            enable    : in std_logic;
             bnn_write : out std_logic;
             bnn_data  : out std_logic_vector(0 downto 0);
             bnn_full  : in std_logic
@@ -45,7 +45,6 @@ architecture behavior of sudo_ku is
             trans_read  : out std_logic;
             trans_data  : in std_logic_vector(0 downto 0);
             trans_empty : in std_logic;
-            enable      : in std_logic;
             spi_write   : out std_logic;
             spi_data    : out std_logic_vector(9 downto 0);
             spi_full    : in std_logic
@@ -77,24 +76,22 @@ architecture behavior of sudo_ku is
     signal iBnnSpiD, oBnnSpiD : std_logic_vector(9 downto 0);
 begin
     cam: entity work.cameraController
-        port map(clk => fpgaclock, rst => rst,
+        port map(clk => fpgaclock, rst => rst, enable => enable,
             trans_write => iCamTransW, trans_data => iCamTransD,
             trans_full => iCamTransF);
-        -- TODO: add CSI ports (and enable?)
+        -- TODO: add CSI ports
     trans: Transformer
         port map(clk => fpgaclock, reset => rst,
             cam_read => oCamTransR, cam_data => oCamTransD,
             cam_empty => oCamTransE,
             bnn_write => iTransBnnW, bnn_data => iTransBnnD,
             bnn_full => iTransBnnF);
-        -- TODO: add enable?
     bnn_inst: BNN
         port map(clk => fpgaclock, reset => rst,
             trans_read => oTransBnnR, trans_data => oTransBnnD,
             trans_empty => oTransBnnE,
             spi_write => iBnnSpiW, spi_data => iBnnSpiD,
             spi_full => iBnnSpiF);
-        -- TODO: Ditto
     spi: SpiSlave
         port map(clk => fpgaclock, reset => rst,
             bnn_read => oBnnSpiR, bnn_data => oBnnSpiD,
