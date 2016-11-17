@@ -32,9 +32,6 @@ class Transformer(padding: Int) extends Module {
     imgmem.io.wen := cam.io.write && !cam.io.done
 
     corner.io.pxin := imgmem.io.out
-    corner.io.pxin1 := imgmem.io.out
-    corner.io.pxin2 := imgmem.io.out
-    corner.io.pxin3 := imgmem.io.out
 
     matrix.io.x0 := corner.io.x0
     matrix.io.y0 := corner.io.y0

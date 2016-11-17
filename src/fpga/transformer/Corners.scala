@@ -29,9 +29,6 @@ class CornersModule extends Module {
   val pxin2 = Reg(next=pxin1);
   val pxin3 = Reg(next=pxin2);
 
-
-
-
   val done = Reg(init=Bool(false));
 
   io.done := done;
@@ -85,18 +82,18 @@ class CornersModule extends Module {
     when(firstFound){
 
       /*when(x > secondx2 &&
-        io.pxin1 === UInt(0) &&
-        io.pxin2 === UInt(0) &&
-        io.pxin3 === UInt(0)){
+        pxin2 === UInt(0) &&
+        pxin1 === UInt(0) &&
+        io.pxin === UInt(0)){
 
           secondx2 := x;
           secondy2 := y;
       }
 
       when(x > rightestx &&
-        io.pxin1 === UInt(0) &&
-        io.pxin2 === UInt(0) &&
-        io.pxin3 === UInt(0)){
+        pxin2 === UInt(0) &&
+        pxin1 === UInt(0) &&
+        io.pxin === UInt(0)){
 
           rightestx := x;
           rightesty := y;
