@@ -4,16 +4,12 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.io.File
 import java.awt.Color
-import java.awt.image.Raster
 
 class CornersModule extends Module {
   // x0, y0 always outputs left corner. x1, y1 always outputs right corner.
 
   val io = new Bundle {
     val pxin = UInt(INPUT, width = 1)
-    val pxin1 = UInt(INPUT, width = 1)
-    val pxin2 = UInt(INPUT, width = 1)
-    val pxin3 = UInt(INPUT, width = 1)
     val x0= UInt(OUTPUT, width = 16)
     val x1= UInt(OUTPUT, width = 16)
     val y0= UInt(OUTPUT, width = 16)
@@ -27,6 +23,12 @@ class CornersModule extends Module {
   val secondx1, secondy1, leftestx, leftesty = Reg(init=UInt(999, width = 16));
   val first, firstFound = Reg(init=Bool(false));
   val x0temp, y0temp, x1temp, y1temp = Reg(init=UInt(0, width = 16));
+  val pxin1 = Reg(next=io.pxin);
+  val pxin2 = Reg(next=pxin1);
+  val pxin3 = Reg(next=pxin2);
+
+
+
 
   val done = Reg(init=UInt(0, width = 1));
 
@@ -64,16 +66,16 @@ class CornersModule extends Module {
   }
 
   when(first && !firstFound &&
-    io.pxin === UInt(0) &&
-    io.pxin1 === UInt(0) &&
-    io.pxin2 === UInt(0) &&
-    io.pxin3 === UInt(0) ){
+    pxin3 === UInt(0) &&
+    pxin2 === UInt(0) &&
+    pxin1 === UInt(0) &&
+    io.pxin === UInt(0) ){
       firstx := x - 1.U;
       firsty := y;
       firstFound := Bool(true);
   }
 
-  when(io.pxin === UInt(1)){
+  when(pxin3 === UInt(1)){
     when(!first){
       first := Bool(true);
     }
@@ -99,17 +101,17 @@ class CornersModule extends Module {
       }*/
 
       when(x < secondx1 &&
-        io.pxin1 === UInt(1) &&
-        io.pxin2 === UInt(1) &&
-        io.pxin3 === UInt(1)){
+        pxin2 === UInt(1) &&
+        pxin1 === UInt(1) &&
+        io.pxin === UInt(1)){
           secondx1 := x;
           secondy1 := y;
       }
 
       when(x < leftestx &&
-        io.pxin1 === UInt(1) &&
-        io.pxin2 === UInt(1) &&
-        io.pxin3 === UInt(1)){
+        pxin2 === UInt(1) &&
+        pxin1 === UInt(1) &&
+        io.pxin === UInt(1)){
           leftestx := x;
           leftesty := y;
       }
@@ -140,9 +142,9 @@ class CornersModule extends Module {
     }
 
     when(leftestx > secondx1 && leftesty > (secondy1 + 5.U)){
-      x0temp := secondx1;
+      x0temp := secondx1 - 3.U;
       y0temp := secondy1;
-      x1temp := firstx;
+      x1temp := firstx - 3.U;
       y1temp := firsty;
 
       done := 1.U;
@@ -155,11 +157,11 @@ class CornersModuleTests(c: CornersModule) extends Tester(c) {
   var x,y, x0,y0,x1,y1 : Int = 0;
   var done : Boolean = false;
 
-  /*val imagename : String = "foto3.jpg";
+  val imagename : String = "foto3.jpg";
   x0 = 176;
   y0 = 86;
   x1 = 504;
-  y1 = 60;*/
+  y1 = 60;
 
   /*val imagename : String = "foto6.jpg";
   x0 = 155;
@@ -167,11 +169,11 @@ class CornersModuleTests(c: CornersModule) extends Tester(c) {
   x1 = 477;
   y1 = 99;*/
 
-  val imagename : String = "foto2.jpg";
+  /*val imagename : String = "foto2.jpg";
   x0 = 193;
   y0 = 92;
   x1 = 501;
-  y1 = 89;
+  y1 = 89;*/
 
   poke(c.io.enable,1);
 
@@ -182,26 +184,6 @@ class CornersModuleTests(c: CornersModule) extends Tester(c) {
       poke(c.io.pxin, 1);
     }else{
       poke(c.io.pxin, 0);
-    }
-
-    if(x <= 636){
-      if((new Color(photo.getRGB(x+1, y))).getGreen()  >= 128){
-        poke(c.io.pxin1, 1);
-      }else{
-        poke(c.io.pxin1, 0);
-      }
-      if((new Color(photo.getRGB(x+2, y))).getGreen()  >= 128){
-        poke(c.io.pxin2, 1);
-      }else{
-        poke(c.io.pxin2, 0);
-      }
-      if((new Color(photo.getRGB(x+3, y))).getGreen()  >= 128){
-        poke(c.io.pxin3, 1);
-      }else{
-        poke(c.io.pxin3, 0);
-      }
-
-
     }
 
     step(1)
