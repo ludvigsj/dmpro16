@@ -9,7 +9,7 @@ image bit address, given the coordinates x0, x1, y0 and y1
 class AddrTrans(padding: Int) extends Module {
     val io = new Bundle {
         val dest_addr = UInt(INPUT, 32)
-        val src_addr = UInt(OUTPUT, 32)
+        val src_addr = UInt(OUTPUT, 20)
         val x0 = UInt(INPUT, 16)
         val x1 = UInt(INPUT, 16)
         val y0 = UInt(INPUT, 16)

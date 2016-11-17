@@ -1,3 +1,5 @@
+package SudoKu
+
 import Chisel._
 
 import javax.imageio.ImageIO
@@ -14,8 +16,8 @@ class CornersModule extends Module {
     val x1= UInt(OUTPUT, width = 16)
     val y0= UInt(OUTPUT, width = 16)
     val y1= UInt(OUTPUT, width = 16)
-    val enable = UInt(INPUT, width = 1)
-    val done = UInt(OUTPUT, width = 1)
+    val enable = Bool(INPUT)
+    val done = Bool(OUTPUT)
     val adr = UInt(OUTPUT, width = 20)
   }
 
@@ -30,7 +32,7 @@ class CornersModule extends Module {
 
 
 
-  val done = Reg(init=UInt(0, width = 1));
+  val done = Reg(init=Bool(false));
 
   io.done := done;
   io.adr := y * 639.U + x;
@@ -40,7 +42,7 @@ class CornersModule extends Module {
   io.x1 := x1temp;
   io.y1 := y1temp;
 
-  when(io.enable === 1.U){
+  when(io.enable){
     when(x === 639.U){
       y := y + 1.U;
       x := 0.U;
@@ -53,7 +55,7 @@ class CornersModule extends Module {
     x := 0.U;
     y := 0.U;
 
-    done := 0.U;
+    done := Bool(false);
     first := Bool(false);
     secondx1 := 999.U;
     secondx2 := 0.U;
@@ -62,7 +64,7 @@ class CornersModule extends Module {
   }
 
   when(y === 479.U && x === 639.U){
-    done := 1.U;
+    done := Bool(true);
   }
 
   when(first && !firstFound &&
@@ -127,7 +129,7 @@ class CornersModule extends Module {
       x1temp := secondx2;
       y1temp := secondy2;
 
-      done := 1.U;
+      done := Bool(true);
 
     }
 
@@ -138,7 +140,7 @@ class CornersModule extends Module {
       x1temp := secondx2;
       y1temp := secondy2;
 
-      done := 1.U;
+      done := Bool(true);
     }
 
     when(leftestx > secondx1 && leftesty > (secondy1 + 5.U)){
@@ -147,7 +149,7 @@ class CornersModule extends Module {
       x1temp := firstx - 3.U;
       y1temp := firsty;
 
-      done := 1.U;
+      done := Bool(true);
     }
   }
 
@@ -175,7 +177,7 @@ class CornersModuleTests(c: CornersModule) extends Tester(c) {
   x1 = 501;
   y1 = 89;*/
 
-  poke(c.io.enable,1);
+  poke(c.io.enable,true);
 
   val photo = ImageIO.read(new File("../../../test_images/" + imagename));
 

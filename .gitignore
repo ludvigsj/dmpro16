@@ -2,3 +2,13 @@
 .DS_Store
 *.SchDocPreview
 documents/deliveries/pcb/dmpro16-pcb-v1/History/**
+
+# Ignore Chisel-junk
+src/fpga/transformer/*
+!src/fpga/transformer/**/
+!src/fpga/transformer/*.*
+src/fpga/transformer/*.cpp
+src/fpga/transformer/*.o
+src/fpga/transformer/*.h
+src/fpga/transformer/project/**
+src/fpga/transformer/target/**
