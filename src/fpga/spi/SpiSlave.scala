@@ -12,16 +12,20 @@ class SpiSlave extends Module {
 		val clk = UInt(INPUT, 1)
 		val mosi = UInt(INPUT, 1)
 		val miso = UInt(OUTPUT, 1)
+		val bnn_read = Bool(OUTPUT)
+		val bnn_data = UInt(INPUT, 10)
+		val bnn_empty = Bool(INPUT)
 	}
 
 	val reg = Module(new SpiShiftRegister())
-	reg.io.value := UInt(6, 8)
+	reg.io.value := UInt(0, 8)
 	reg.io.in := io.mosi
 	io.miso := reg.io.out
 
 	when(Bool(io.cs))
 	{
 		reg.io.set := Bool(false)
+		io.bnn_read := Bool(false)
 		when(fallingedge(Bool(io.clk)))
 		{
 			reg.io.shift := Bool(true)
@@ -31,6 +35,44 @@ class SpiSlave extends Module {
 	{
 		reg.io.shift := Bool(false)
 		reg.io.set := Bool(true)
+		io.bnn_read := Bool(true)
+	}
+
+	when(io.bnn_data === UInt(1))
+	{
+		reg.io.value := UInt(1)
+	}
+	when(io.bnn_data === UInt(2))
+	{
+		reg.io.value := UInt(2)
+	}
+	when(io.bnn_data === UInt(4))
+	{
+		reg.io.value := UInt(3)
+	}
+	when(io.bnn_data === UInt(8))
+	{
+		reg.io.value := UInt(4)
+	}
+	when(io.bnn_data === UInt(16))
+	{
+		reg.io.value := UInt(5)
+	}
+	when(io.bnn_data === UInt(32))
+	{
+		reg.io.value := UInt(6)
+	}
+	when(io.bnn_data === UInt(64))
+	{
+		reg.io.value := UInt(7)
+	}
+	when(io.bnn_data === UInt(128))
+	{
+		reg.io.value := UInt(8)
+	}
+	when(io.bnn_data === UInt(256))
+	{
+		reg.io.value := UInt(9)
 	}
 
 }

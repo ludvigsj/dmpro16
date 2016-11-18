@@ -4,6 +4,7 @@
 #include "em_cmu.h"
 #include "em_dma.h"
 #include "em_emu.h"
+#include "em_rmu.h"
 #include "spi_master.h"
 #include "display.h"
 #include "checksudoku.h"
@@ -24,7 +25,7 @@ void Delay(uint32_t dlyTicks)
 
 int main()
 {
-	BSP_Init(BSP_INIT_DK_SPI);
+//	BSP_Init(BSP_INIT_DK_SPI);
 	CHIP_Init();
 	setupDmaSpi();
 
@@ -40,13 +41,12 @@ int main()
     {4, 8, 7, 6, 3, 1, 5, 9, 2},
     };
 
+	GPIO_PinModeSet(gpioPortE, 14, gpioModePushPull, 1);
+	GPIO_PinModeSet(gpioPortE, 15, gpioModeInput, 1);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	GPIO_IntConfig(gpioPortE, 15, true, true, true);
+	EMU_EnterEM3(true);
 
-	CMU_ClockEnable(cmuClock_CORELE, true);
-	if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1);
-	GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 1);
-	GPIO->CTRL |= GPIO_CTRL_EM4RET;
-	GPIO->CMD |= GPIO_CMD_EM4WUCLR;
-	GPIO->EM4WUEN |= GPIO_EM4WUEN_EM4WUEN_A0;
 
 	uint8_t number[1];
 	fpgaTransfer((uint8_t*) number, 1);
@@ -65,10 +65,18 @@ int main()
 
 	DMA_Reset();
 
+	CMU_ClockEnable(cmuClock_CORELE, true);
+	if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1);
+	RMU_ResetCauseClear();
+
 	Delay(2000);
+	GPIO_PinModeSet(gpioPortA, 0, gpioModeInput, 1);
+	GPIO->CTRL |= GPIO_CTRL_EM4RET;
+	GPIO->CMD |= GPIO_CMD_EM4WUCLR;
+	GPIO->EM4WUEN |= GPIO_EM4WUEN_EM4WUEN_A0;
+
 	EMU_EnterEM4();
 
-	while(1);
-
+	return 0;
 }
 

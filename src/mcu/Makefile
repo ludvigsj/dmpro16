@@ -125,6 +125,7 @@ src/em_cmu.c \
 src/em_dma.c \
 src/em_emu.c \
 src/em_gpio.c \
+src/em_rmu.c \
 src/em_usart.c \
 src/em_int.c \
 src/em_ebi.c \
