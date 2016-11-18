@@ -21,7 +21,7 @@ class MatrTrans extends Module {
     }
 
 
-    io.srcX := ((io.x1-io.x0)*io.dstX - (io.y1-io.y0)*io.dstY)/UInt(252) + io.x0
+    io.srcX := (((io.x1-io.x0)*io.dstX).zext - ((io.y1-io.y0)*io.dstY).zext)/SInt(252) + io.x0
     io.srcY := ((io.y1-io.y0)*io.dstX + (io.x1-io.x0)*io.dstY)/UInt(252) + io.y0
 }
 

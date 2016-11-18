@@ -142,72 +142,29 @@ module AddrTrans(
   );
 endmodule
 
-module MatrixTransformer(input clk, input reset,
+module MatrixTransformer(
     output[19:0] io_src_addr,
-    output io_done,
     input [15:0] io_x0,
     input [15:0] io_x1,
     input [15:0] io_y0,
     input [15:0] io_y1,
-    input  io_enable
+    input [19:0] io_dest_addr
 );
 
-  wire[31:0] T2;
-  reg [15:0] out_addr;
-  wire[15:0] T3;
-  wire[15:0] T0;
-  wire[15:0] T1;
+  wire[31:0] T0;
   wire[19:0] at_io_src_addr;
 
-`ifndef SYNTHESIS
-// synthesis translate_off
-  integer initvar;
-  initial begin
-    #0.002;
-    out_addr = {1{$random}};
-  end
-// synthesis translate_on
-`endif
 
-  assign T2 = {16'h0, out_addr};
-  assign T3 = reset ? 16'h0 : T0;
-  assign T0 = io_enable ? T1 : out_addr;
-  assign T1 = out_addr + 16'h1;
-  assign io_done = 1'h0;
+  assign T0 = {12'h0, io_dest_addr};
   assign io_src_addr = at_io_src_addr;
   AddrTrans at(
-       .io_dest_addr( T2 ),
+       .io_dest_addr( T0 ),
        .io_src_addr( at_io_src_addr ),
        .io_x0( io_x0 ),
        .io_x1( io_x1 ),
        .io_y0( io_y0 ),
        .io_y1( io_y1 )
   );
-
-  always @(posedge clk) begin
-    if(reset) begin
-      out_addr <= 16'h0;
-    end else if(io_enable) begin
-      out_addr <= T1;
-    end
-  end
-endmodule
-
-module CameraController(
-    output io_done,
-    output io_data,
-    input  io_enable,
-    output[19:0] io_addr,
-    output io_write,
-    input  io_in
-);
-
-
-
-  assign io_write = 1'h1;
-  assign io_addr = 20'h0;
-  assign io_data = io_in;
-  assign io_done = 1'h1;
 endmodule
 
 module ImgMem(input clk, input reset,
@@ -266,9 +223,6 @@ endmodule
 
 module CornersModule(input clk, input reset,
     input  io_pxin,
-    input  io_pxin1,
-    input  io_pxin2,
-    input  io_pxin3,
     output[15:0] io_x0,
     output[15:0] io_x1,
     output[15:0] io_y0,
@@ -278,11 +232,11 @@ module CornersModule(input clk, input reset,
     output[19:0] io_adr
 );
 
-  wire[19:0] T96;
+  wire[19:0] T98;
   wire[25:0] T0;
-  wire[25:0] T97;
+  wire[25:0] T99;
   reg [15:0] x;
-  wire[15:0] T98;
+  wire[15:0] T100;
   wire[15:0] T1;
   wire[15:0] T2;
   wire[15:0] T3;
@@ -294,12 +248,12 @@ module CornersModule(input clk, input reset,
   wire T9;
   wire[25:0] T10;
   reg [15:0] y;
-  wire[15:0] T99;
+  wire[15:0] T101;
   wire[15:0] T11;
   wire[15:0] T12;
   wire[15:0] T13;
   reg  done;
-  wire T100;
+  wire T102;
   wire T14;
   wire T15;
   wire T16;
@@ -312,24 +266,26 @@ module CornersModule(input clk, input reset,
   wire T23;
   wire T24;
   reg [15:0] leftesty;
-  wire[15:0] T101;
+  wire[15:0] T103;
   wire[15:0] T25;
   wire T26;
   wire T27;
   wire T28;
   wire T29;
   wire T30;
+  reg  pxin1;
   wire T31;
   wire T32;
+  reg  pxin2;
   wire T33;
   reg [15:0] leftestx;
-  wire[15:0] T102;
+  wire[15:0] T104;
   wire[15:0] T34;
   wire[15:0] T35;
   wire[15:0] T36;
   wire T37;
   reg  firstFound;
-  wire T103;
+  wire T105;
   wire T38;
   wire T39;
   wire T40;
@@ -339,10 +295,11 @@ module CornersModule(input clk, input reset,
   wire T44;
   wire T45;
   wire T46;
+  reg  pxin3;
   wire T47;
   wire T48;
   reg  first;
-  wire T104;
+  wire T106;
   wire T49;
   wire T50;
   wire T51;
@@ -350,11 +307,11 @@ module CornersModule(input clk, input reset,
   wire T53;
   wire[15:0] T54;
   reg [15:0] firsty;
-  wire[15:0] T105;
+  wire[15:0] T107;
   wire[15:0] T55;
   wire T56;
   reg [15:0] firstx;
-  wire[15:0] T106;
+  wire[15:0] T108;
   wire[15:0] T57;
   wire[15:0] T58;
   wire T59;
@@ -362,16 +319,16 @@ module CornersModule(input clk, input reset,
   wire T61;
   wire T62;
   reg [15:0] rightesty;
-  wire[15:0] T107;
+  wire[15:0] T109;
   wire[15:0] T63;
   reg [15:0] secondy2;
-  wire[15:0] T108;
+  wire[15:0] T110;
   wire T64;
   reg [15:0] secondx2;
-  wire[15:0] T109;
+  wire[15:0] T111;
   wire[15:0] T65;
   reg [15:0] rightestx;
-  wire[15:0] T110;
+  wire[15:0] T112;
   wire[15:0] T66;
   wire[15:0] T67;
   wire T68;
@@ -379,7 +336,7 @@ module CornersModule(input clk, input reset,
   wire T70;
   wire[15:0] T71;
   reg [15:0] secondy1;
-  wire[15:0] T111;
+  wire[15:0] T113;
   wire[15:0] T72;
   wire T73;
   wire T74;
@@ -390,30 +347,32 @@ module CornersModule(input clk, input reset,
   wire T79;
   wire T80;
   reg [15:0] secondx1;
-  wire[15:0] T112;
+  wire[15:0] T114;
   wire[15:0] T81;
   wire[15:0] T82;
   wire T83;
   reg [15:0] y1temp;
-  wire[15:0] T113;
+  wire[15:0] T115;
   wire[15:0] T84;
   wire[15:0] T85;
   wire[15:0] T86;
   reg [15:0] y0temp;
-  wire[15:0] T114;
+  wire[15:0] T116;
   wire[15:0] T87;
   wire[15:0] T88;
   wire[15:0] T89;
   reg [15:0] x1temp;
-  wire[15:0] T115;
+  wire[15:0] T117;
   wire[15:0] T90;
   wire[15:0] T91;
   wire[15:0] T92;
-  reg [15:0] x0temp;
-  wire[15:0] T116;
   wire[15:0] T93;
+  reg [15:0] x0temp;
+  wire[15:0] T118;
   wire[15:0] T94;
   wire[15:0] T95;
+  wire[15:0] T96;
+  wire[15:0] T97;
 
 `ifndef SYNTHESIS
 // synthesis translate_off
@@ -424,8 +383,11 @@ module CornersModule(input clk, input reset,
     y = {1{$random}};
     done = {1{$random}};
     leftesty = {1{$random}};
+    pxin1 = {1{$random}};
+    pxin2 = {1{$random}};
     leftestx = {1{$random}};
     firstFound = {1{$random}};
+    pxin3 = {1{$random}};
     first = {1{$random}};
     firsty = {1{$random}};
     firstx = {1{$random}};
@@ -443,11 +405,11 @@ module CornersModule(input clk, input reset,
 // synthesis translate_on
 `endif
 
-  assign io_adr = T96;
-  assign T96 = T0[19:0];
-  assign T0 = T10 + T97;
-  assign T97 = {10'h0, x};
-  assign T98 = reset ? 16'h0 : T1;
+  assign io_adr = T98;
+  assign T98 = T0[19:0];
+  assign T0 = T10 + T99;
+  assign T99 = {10'h0, x};
+  assign T100 = reset ? 16'h0 : T1;
   assign T1 = T9 ? 16'h0 : T2;
   assign T2 = T7 ? T6 : T3;
   assign T3 = T4 ? 16'h0 : x;
@@ -458,12 +420,12 @@ module CornersModule(input clk, input reset,
   assign T8 = T5 ^ 1'h1;
   assign T9 = io_enable ^ 1'h1;
   assign T10 = y * 10'h27f;
-  assign T99 = reset ? 16'h0 : T11;
+  assign T101 = reset ? 16'h0 : T11;
   assign T11 = T9 ? 16'h0 : T12;
   assign T12 = T4 ? T13 : y;
   assign T13 = y + 16'h1;
   assign io_done = done;
-  assign T100 = reset ? 1'h0 : T14;
+  assign T102 = reset ? 1'h0 : T14;
   assign T14 = T68 ? 1'h1 : T15;
   assign T15 = T60 ? 1'h1 : T16;
   assign T16 = T22 ? 1'h1 : T17;
@@ -475,97 +437,99 @@ module CornersModule(input clk, input reset,
   assign T22 = T59 & T23;
   assign T23 = T56 & T24;
   assign T24 = T54 < leftesty;
-  assign T101 = reset ? 16'h3e7 : T25;
+  assign T103 = reset ? 16'h3e7 : T25;
   assign T25 = T26 ? y : leftesty;
   assign T26 = T37 & T27;
   assign T27 = T29 & T28;
-  assign T28 = io_pxin3 == 1'h1;
+  assign T28 = io_pxin == 1'h1;
   assign T29 = T31 & T30;
-  assign T30 = io_pxin2 == 1'h1;
+  assign T30 = pxin1 == 1'h1;
   assign T31 = T33 & T32;
-  assign T32 = io_pxin1 == 1'h1;
+  assign T32 = pxin2 == 1'h1;
   assign T33 = x < leftestx;
-  assign T102 = reset ? 16'h3e7 : T34;
+  assign T104 = reset ? 16'h3e7 : T34;
   assign T34 = T26 ? x : T35;
   assign T35 = T9 ? 16'h3e7 : T36;
   assign T36 = T4 ? 16'h3e7 : leftestx;
   assign T37 = T53 & firstFound;
-  assign T103 = reset ? 1'h0 : T38;
+  assign T105 = reset ? 1'h0 : T38;
   assign T38 = T39 ? 1'h1 : firstFound;
   assign T39 = T41 & T40;
-  assign T40 = io_pxin3 == 1'h0;
+  assign T40 = io_pxin == 1'h0;
   assign T41 = T43 & T42;
-  assign T42 = io_pxin2 == 1'h0;
+  assign T42 = pxin1 == 1'h0;
   assign T43 = T45 & T44;
-  assign T44 = io_pxin1 == 1'h0;
+  assign T44 = pxin2 == 1'h0;
   assign T45 = T47 & T46;
-  assign T46 = io_pxin == 1'h0;
+  assign T46 = pxin3 == 1'h0;
   assign T47 = first & T48;
   assign T48 = firstFound ^ 1'h1;
-  assign T104 = reset ? 1'h0 : T49;
+  assign T106 = reset ? 1'h0 : T49;
   assign T49 = T51 ? 1'h1 : T50;
   assign T50 = T9 ? 1'h0 : first;
   assign T51 = T53 & T52;
   assign T52 = first ^ 1'h1;
-  assign T53 = io_pxin == 1'h1;
+  assign T53 = pxin3 == 1'h1;
   assign T54 = firsty + 16'h5;
-  assign T105 = reset ? 16'h0 : T55;
+  assign T107 = reset ? 16'h0 : T55;
   assign T55 = T39 ? y : firsty;
   assign T56 = leftestx == firstx;
-  assign T106 = reset ? 16'h0 : T57;
+  assign T108 = reset ? 16'h0 : T57;
   assign T57 = T39 ? T58 : firstx;
   assign T58 = x - 16'h1;
   assign T59 = x == 16'h27f;
   assign T60 = T59 & T61;
   assign T61 = T64 & T62;
   assign T62 = T63 < rightesty;
-  assign T107 = reset ? 16'h0 : rightesty;
+  assign T109 = reset ? 16'h0 : rightesty;
   assign T63 = secondy2 + 16'h5;
-  assign T108 = reset ? 16'h0 : secondy2;
+  assign T110 = reset ? 16'h0 : secondy2;
   assign T64 = rightestx < secondx2;
-  assign T109 = reset ? 16'h0 : T65;
+  assign T111 = reset ? 16'h0 : T65;
   assign T65 = T9 ? 16'h0 : secondx2;
-  assign T110 = reset ? 16'h0 : T66;
+  assign T112 = reset ? 16'h0 : T66;
   assign T66 = T9 ? 16'h0 : T67;
   assign T67 = T4 ? 16'h0 : rightestx;
   assign T68 = T59 & T69;
   assign T69 = T83 & T70;
   assign T70 = T71 < leftesty;
   assign T71 = secondy1 + 16'h5;
-  assign T111 = reset ? 16'h3e7 : T72;
+  assign T113 = reset ? 16'h3e7 : T72;
   assign T72 = T73 ? y : secondy1;
   assign T73 = T37 & T74;
   assign T74 = T76 & T75;
-  assign T75 = io_pxin3 == 1'h1;
+  assign T75 = io_pxin == 1'h1;
   assign T76 = T78 & T77;
-  assign T77 = io_pxin2 == 1'h1;
+  assign T77 = pxin1 == 1'h1;
   assign T78 = T80 & T79;
-  assign T79 = io_pxin1 == 1'h1;
+  assign T79 = pxin2 == 1'h1;
   assign T80 = x < secondx1;
-  assign T112 = reset ? 16'h3e7 : T81;
+  assign T114 = reset ? 16'h3e7 : T81;
   assign T81 = T73 ? x : T82;
   assign T82 = T9 ? 16'h3e7 : secondx1;
   assign T83 = secondx1 < leftestx;
   assign io_y1 = y1temp;
-  assign T113 = reset ? 16'h0 : T84;
+  assign T115 = reset ? 16'h0 : T84;
   assign T84 = T68 ? firsty : T85;
   assign T85 = T60 ? secondy2 : T86;
   assign T86 = T22 ? secondy2 : y1temp;
   assign io_y0 = y0temp;
-  assign T114 = reset ? 16'h0 : T87;
+  assign T116 = reset ? 16'h0 : T87;
   assign T87 = T68 ? secondy1 : T88;
   assign T88 = T60 ? firsty : T89;
   assign T89 = T22 ? firsty : y0temp;
   assign io_x1 = x1temp;
-  assign T115 = reset ? 16'h0 : T90;
-  assign T90 = T68 ? firstx : T91;
+  assign T117 = reset ? 16'h0 : T90;
+  assign T90 = T68 ? T93 : T91;
   assign T91 = T60 ? secondx2 : T92;
   assign T92 = T22 ? secondx2 : x1temp;
+  assign T93 = firstx - 16'h3;
   assign io_x0 = x0temp;
-  assign T116 = reset ? 16'h0 : T93;
-  assign T93 = T68 ? secondx1 : T94;
-  assign T94 = T60 ? firstx : T95;
-  assign T95 = T22 ? firstx : x0temp;
+  assign T118 = reset ? 16'h0 : T94;
+  assign T94 = T68 ? T97 : T95;
+  assign T95 = T60 ? firstx : T96;
+  assign T96 = T22 ? firstx : x0temp;
+  assign T97 = secondx1 - 16'h3;
 
   always @(posedge clk) begin
     if(reset) begin
@@ -602,6 +566,8 @@ module CornersModule(input clk, input reset,
     end else if(T26) begin
       leftesty <= y;
     end
+    pxin1 <= io_pxin;
+    pxin2 <= pxin1;
     if(reset) begin
       leftestx <= 16'h3e7;
     end else if(T26) begin
@@ -616,6 +582,7 @@ module CornersModule(input clk, input reset,
     end else if(T39) begin
       firstFound <= 1'h1;
     end
+    pxin3 <= pxin2;
     if(reset) begin
       first <= 1'h0;
     end else if(T51) begin
@@ -684,7 +651,7 @@ module CornersModule(input clk, input reset,
     if(reset) begin
       x1temp <= 16'h0;
     end else if(T68) begin
-      x1temp <= firstx;
+      x1temp <= T93;
     end else if(T60) begin
       x1temp <= secondx2;
     end else if(T22) begin
@@ -693,7 +660,7 @@ module CornersModule(input clk, input reset,
     if(reset) begin
       x0temp <= 16'h0;
     end else if(T68) begin
-      x0temp <= secondx1;
+      x0temp <= T97;
     end else if(T60) begin
       x0temp <= firstx;
     end else if(T22) begin
@@ -703,21 +670,52 @@ module CornersModule(input clk, input reset,
 endmodule
 
 module Transformer(input clk, input reset,
-    input  io_px_camera,
-    input  io_enable,
-    output io_done,
-    output io_px_out
+    output io_cam_read,
+    input  io_cam_data,
+    input  io_cam_empty,
+    output io_bnn_write,
+    output io_bnn_data,
+    input  io_bnn_full
 );
 
+  reg  loaded;
+  wire T27;
   wire T0;
   wire T1;
-  wire[19:0] T2;
+  wire T2;
+  reg [19:0] pixel;
+  wire[19:0] T28;
+  wire[19:0] T3;
+  wire[19:0] T4;
+  wire[19:0] T5;
+  wire[19:0] T6;
+  wire[19:0] T7;
+  wire T8;
+  wire T9;
+  reg  done;
+  wire T29;
+  wire T10;
+  wire T11;
+  wire T12;
+  reg  writing;
+  wire T30;
+  wire T13;
+  wire T14;
+  wire T15;
+  reg  reading;
+  wire T31;
+  wire T16;
+  wire T17;
+  wire T18;
+  wire T19;
+  wire T20;
+  wire T21;
+  wire T22;
+  wire T23;
+  wire[19:0] T24;
   wire[19:0] mux1;
-  wire T3;
-  wire cam_io_done;
-  wire cam_io_data;
-  wire[19:0] cam_io_addr;
-  wire cam_io_write;
+  wire T25;
+  wire T26;
   wire imgmem_io_out;
   wire[15:0] corner_io_x0;
   wire[15:0] corner_io_x1;
@@ -726,51 +724,114 @@ module Transformer(input clk, input reset,
   wire corner_io_done;
   wire[19:0] corner_io_adr;
   wire[19:0] matrix_io_src_addr;
-  wire matrix_io_done;
 
+`ifndef SYNTHESIS
+// synthesis translate_off
+  integer initvar;
+  initial begin
+    #0.002;
+    loaded = {1{$random}};
+    pixel = {1{$random}};
+    done = {1{$random}};
+    writing = {1{$random}};
+    reading = {1{$random}};
+  end
+// synthesis translate_on
+`endif
 
-  assign T0 = cam_io_write & T1;
-  assign T1 = cam_io_done ^ 1'h1;
-  assign T2 = corner_io_done ? matrix_io_src_addr : mux1;
-  assign mux1 = cam_io_done ? corner_io_adr : cam_io_addr;
-  assign io_px_out = T3;
-  assign T3 = corner_io_done ? imgmem_io_out : 1'h0;
-  assign io_done = matrix_io_done;
-  MatrixTransformer matrix(.clk(clk), .reset(reset),
+  assign T27 = reset ? 1'h0 : T0;
+  assign T0 = T1 ? 1'h1 : loaded;
+  assign T1 = reading & T2;
+  assign T2 = 20'h4b000 <= pixel;
+  assign T28 = reset ? 20'h0 : T3;
+  assign T3 = T8 ? T7 : T4;
+  assign T4 = corner_io_done ? 20'h0 : T5;
+  assign T5 = reading ? T6 : pixel;
+  assign T6 = pixel + 20'h1;
+  assign T7 = pixel + 20'h1;
+  assign T8 = T14 & T9;
+  assign T9 = done ^ 1'h1;
+  assign T29 = reset ? 1'h0 : T10;
+  assign T10 = T11 ? 1'h1 : done;
+  assign T11 = writing & T12;
+  assign T12 = 20'hf810 <= pixel;
+  assign T30 = reset ? 1'h0 : T13;
+  assign T13 = corner_io_done ? 1'h1 : writing;
+  assign T14 = writing & T15;
+  assign T15 = io_bnn_full ^ 1'h1;
+  assign T31 = reset ? 1'h0 : T16;
+  assign T16 = T21 ? 1'h0 : T17;
+  assign T17 = T18 ? 1'h1 : reading;
+  assign T18 = T20 & T19;
+  assign T19 = io_cam_empty ^ 1'h1;
+  assign T20 = loaded ^ 1'h1;
+  assign T21 = T18 ^ 1'h1;
+  assign T22 = T23 ? 1'h0 : reading;
+  assign T23 = reading ^ 1'h1;
+  assign T24 = corner_io_done ? matrix_io_src_addr : mux1;
+  assign mux1 = loaded ? corner_io_adr : pixel;
+  assign io_bnn_data = imgmem_io_out;
+  assign io_bnn_write = T25;
+  assign T25 = T8 ? 1'h1 : 1'h0;
+  assign io_cam_read = T26;
+  assign T26 = T18 ? 1'h1 : 1'h0;
+  MatrixTransformer matrix(
        .io_src_addr( matrix_io_src_addr ),
-       .io_done( matrix_io_done ),
        .io_x0( corner_io_x0 ),
        .io_x1( corner_io_x1 ),
        .io_y0( corner_io_y0 ),
        .io_y1( corner_io_y1 ),
-       .io_enable( corner_io_done )
-  );
-  CameraController cam(
-       .io_done( cam_io_done ),
-       .io_data( cam_io_data ),
-       .io_enable( io_enable ),
-       .io_addr( cam_io_addr ),
-       .io_write( cam_io_write ),
-       .io_in( io_px_camera )
+       .io_dest_addr( pixel )
   );
   ImgMem imgmem(.clk(clk), .reset(reset),
-       .io_addr( T2 ),
+       .io_addr( T24 ),
        .io_out( imgmem_io_out ),
-       .io_in( cam_io_data ),
-       .io_wen( T0 )
+       .io_in( io_cam_data ),
+       .io_wen( T22 )
   );
   CornersModule corner(.clk(clk), .reset(reset),
        .io_pxin( imgmem_io_out ),
-       .io_pxin1( imgmem_io_out ),
-       .io_pxin2( imgmem_io_out ),
-       .io_pxin3( imgmem_io_out ),
        .io_x0( corner_io_x0 ),
        .io_x1( corner_io_x1 ),
        .io_y0( corner_io_y0 ),
        .io_y1( corner_io_y1 ),
-       .io_enable( cam_io_done ),
+       .io_enable( loaded ),
        .io_done( corner_io_done ),
        .io_adr( corner_io_adr )
   );
+
+  always @(posedge clk) begin
+    if(reset) begin
+      loaded <= 1'h0;
+    end else if(T1) begin
+      loaded <= 1'h1;
+    end
+    if(reset) begin
+      pixel <= 20'h0;
+    end else if(T8) begin
+      pixel <= T7;
+    end else if(corner_io_done) begin
+      pixel <= 20'h0;
+    end else if(reading) begin
+      pixel <= T6;
+    end
+    if(reset) begin
+      done <= 1'h0;
+    end else if(T11) begin
+      done <= 1'h1;
+    end
+    if(reset) begin
+      writing <= 1'h0;
+    end else if(corner_io_done) begin
+      writing <= 1'h1;
+    end
+    if(reset) begin
+      reading <= 1'h0;
+    end else if(T21) begin
+      reading <= 1'h0;
+    end else if(T18) begin
+      reading <= 1'h1;
+    end
+  end
 endmodule
 
