@@ -41,6 +41,12 @@ int main()
     {4, 8, 7, 6, 3, 1, 5, 9, 2},
     };
 
+	GPIO_PinModeSet(gpioPortE, 14, gpioModePushPull, 1);
+	GPIO_PinModeSet(gpioPortE, 15, gpioModeInput, 1);
+	NVIC_EnableIRQ(GPIO_ODD_IRQn);
+	GPIO_IntConfig(gpioPortE, 15, true, true, true);
+	EMU_EnterEM3(true);
+
 
 	uint8_t number[1];
 	fpgaTransfer((uint8_t*) number, 1);
