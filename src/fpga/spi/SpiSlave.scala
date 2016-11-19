@@ -1,6 +1,7 @@
 package SudoKu
 
 import Chisel._
+import scala.language.reflectiveCalls
 
 class SpiSlave extends Module {
 
@@ -12,30 +13,73 @@ class SpiSlave extends Module {
 		val clk = UInt(INPUT, 1)
 		val mosi = UInt(INPUT, 1)
 		val miso = UInt(OUTPUT, 1)
+		val wake = Bool(OUTPUT)
 		val bnn_read = Bool(OUTPUT)
 		val bnn_data = UInt(INPUT, 10)
 		val bnn_empty = Bool(INPUT)
 	}
 
 	val reg = Module(new SpiShiftRegister())
-	reg.io.value := UInt(0, 8)
+	reg.io.value := io.bnn_data
 	reg.io.in := io.mosi
 	io.miso := reg.io.out
 
+	val n = UInt(0, 3)
+	val read = Reg(init=Bool(false))
+
 	when(Bool(io.cs))
 	{
-		reg.io.set := Bool(false)
 		io.bnn_read := Bool(false)
 		when(fallingedge(Bool(io.clk)))
 		{
-			reg.io.shift := Bool(true)
+			when(n === UInt(7))
+			{
+				io.bnn_read := Bool(true)
+				read := Bool(true)
+				n := UInt(0)
+			}
+			.otherwise
+			{
+				reg.io.shift := Bool(true)
+				n := n + UInt(1)
+				read := Bool(false)
+			}
 		}
 	}
 	.otherwise
 	{
 		reg.io.shift := Bool(false)
+		io.bnn_read := Bool(false)
+		read := Bool(false)
+	}
+
+	when(read)
+	{
 		reg.io.set := Bool(true)
+		read := Bool(false)
+	}
+	.otherwise
+	{
+		reg.io.set := Bool(false)
+	}
+
+	when(fallingedge(io.bnn_empty))
+	{
+		read := Bool(true)
 		io.bnn_read := Bool(true)
+	}
+	.otherwise
+	{
+		io.bnn_read := Bool(false)
+	}
+
+	when(!io.bnn_empty)
+	{
+		io.wake := Bool(true)
+	}
+	.otherwise
+	{
+		io.wake := Bool(false)
 	}
 
 	when(io.bnn_data === UInt(1))
