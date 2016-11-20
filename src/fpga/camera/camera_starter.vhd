@@ -7,6 +7,8 @@ PORT(
     ;   reset     : IN     STD_LOGIC
     ;   sda       : INOUT  STD_LOGIC
     ;   scl       : INOUT  STD_LOGIC
+    ;   cam_gpio      : OUT     STD_LOGIC
+    ;   cam_clk   : OUT     STD_LOGIC
     );
 end camera_starter;
 
@@ -722,6 +724,8 @@ begin
         elsif rising_edge(clk) then
             case STATE is
             when READY =>
+                cam_gpio <= '1';
+                cam_clk <= '1';
                 i2c_addr <= SEQUENCE(c).address;
                 i2c_write_data <= SEQUENCE(c).data;
                 i2c_rw <= SEQUENCE(c).rw;
@@ -741,6 +745,8 @@ begin
                     end if;
                 end if;
             when DONE =>
+                cam_gpio <= '0';
+                cam_clk <= '0';
                 i2c_enable <= '0';
             when others =>
                 --
