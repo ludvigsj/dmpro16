@@ -676,7 +676,6 @@ architecture Behavioral of camera_starter is
         (x"6C", x"12", '0'),
         (x"6C", x"A0", '0')
     );
-    signal i2c_reset        : std_logic;
     signal i2c_enable       : std_logic := '0';
     signal i2c_addr         : byte_t;
     signal i2c_rw           : std_logic;
@@ -697,7 +696,7 @@ begin
     )
     port map(
         clk         => clk,
-        reset_n     => i2c_reset,
+        reset_n     => reset,
         ena         => i2c_enable,
         addr        => i2c_addr(7 downto 1),
         rw          => i2c_rw,
@@ -714,8 +713,7 @@ begin
         type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE);
         variable state : state_t := READY;
     begin
-        i2c_reset <= not reset;
-        if reset = '1' then
+        if reset = '0' then
             c := 0;
             state := READY;
         elsif rising_edge(clk) then
