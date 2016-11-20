@@ -13,8 +13,6 @@ PORT(
 end camera_starter;
 
 architecture Behavioral of camera_starter is
-
-    type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE);
     subtype byte_t is std_logic_vector(7 downto 0);
     type i2c_message_t is
     record
@@ -693,7 +691,6 @@ architecture Behavioral of camera_starter is
     signal i2c_busy         : std_logic;
     signal i2c_read_data    : byte_t;
     signal i2c_error        : std_logic := '0';
-    signal state : state_t := READY;
 begin
     i2c : entity work.i2c_master
     generic map(
@@ -716,11 +713,13 @@ begin
     
     feed_messages: process(reset, clk, i2c_busy) is
         variable c    : integer := 0;
+        type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE);
+        variable state : state_t := READY;
     begin
         i2c_reset <= not reset;
         if reset = '1' then
             c := 0;
-            state <= READY;
+            state := READY;
         elsif rising_edge(clk) then
             case STATE is
             when READY =>
@@ -730,18 +729,18 @@ begin
                 i2c_write_data <= SEQUENCE(c).data;
                 i2c_rw <= SEQUENCE(c).rw;
                 i2c_enable <= '1';
-                state <= PASSING_MESSAGE;
+                state := PASSING_MESSAGE;
             when PASSING_MESSAGE =>
                 if i2c_busy = '1' then
                     c := (c + 1);
-                    state <= I2C_TRANSMITTING;
+                    state := I2C_TRANSMITTING;
                 end if;
             when I2C_TRANSMITTING =>
                 if i2c_busy = '0' then
                     if c >= NUM_MESSAGES then
-                        state <= DONE;
+                        state := DONE;
                     else
-                        state <= READY;
+                        state := READY;
                     end if;
                 end if;
             when DONE =>
