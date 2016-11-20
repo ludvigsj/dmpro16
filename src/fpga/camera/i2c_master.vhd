@@ -45,6 +45,7 @@ ENTITY i2c_master IS
     rw        : IN     STD_LOGIC;                    --'0' is write, '1' is read
     data_wr   : IN     STD_LOGIC_VECTOR(7 DOWNTO 0); --data to write to slave
     busy      : OUT    STD_LOGIC;                    --indicates transaction in progress
+    rep_start : IN     STD_LOGIC;
     data_rd   : OUT    STD_LOGIC_VECTOR(7 DOWNTO 0); --data read from slave
     ack_error : BUFFER STD_LOGIC;                    --flag if improper acknowledge from slave
     sda       : INOUT  STD_LOGIC;                    --serial data output of i2c bus
@@ -181,7 +182,9 @@ BEGIN
               busy <= '0';                   --continue is accepted
               addr_rw <= addr & rw;          --collect requested slave address and command
               data_tx <= data_wr;            --collect requested data to write
-              IF(addr_rw = addr & rw) THEN   --continue transaction with another write
+              IF (rep_start = '1') THEN
+                state <= ready;
+              ELSIF(addr_rw = addr & rw) THEN   --continue transaction with another write
                 sda_int <= data_wr(bit_cnt); --write first bit of data
                 state <= wr;                 --go to write byte
               ELSE                           --continue transaction with a read or new slave
