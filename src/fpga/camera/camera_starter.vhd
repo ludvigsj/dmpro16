@@ -1,5 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.std_logic_unsigned.all;
+use IEEE.numeric_std.all;
 
 entity camera_starter is
 PORT(
@@ -34,7 +36,19 @@ architecture Behavioral of camera_starter is
         rw      : std_logic; -- '1' is read
     end record;
     
-    constant NUM_MESSAGES : integer := 735;
+    constant NUM_MESSAGES : integer := 747;
+    constant NUM_WAITS : integer := 6;
+    
+    type wait_sequence_t is array (0 to NUM_WAITS-1) of std_logic_vector(31 downto 0);
+    constant WAIT_SEQUENCE : wait_sequence_t := (
+        x"000061A8",
+        x"00198EF8",
+        x"00043238",
+        x"0000CB20",
+        x"00036EE8",
+        x"003010B0"
+    );
+    
     type i2c_sequence is array (0 to NUM_MESSAGES-1) of i2c_message_t;
     constant SEQUENCE : i2c_sequence := (
         
@@ -45,6 +59,7 @@ architecture Behavioral of camera_starter is
         (x"6D", x"56", '1'), -- should be 0x5647
         (x"6D", x"47", '1'),
         (x"FF", x"FF", '1'),
+        (x"FE", x"FF", '1'),
         
         (x"6C", x"01", '0'), -- Software reset,
         (x"6C", x"03", '0'), -- by setting 0x0103 to high
@@ -54,7 +69,7 @@ architecture Behavioral of camera_starter is
         (x"6C", x"01", '0'), -- Sleep
         (x"6C", x"00", '0'),
         (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
+        (x"FE", x"FF", '0'),
         
         (x"6C", x"01", '0'), -- More sleep?
         (x"6C", x"00", '0'),
@@ -511,8 +526,6 @@ architecture Behavioral of camera_starter is
         (x"6C", x"10", '0'),
         (x"FF", x"FF", '1'),
         
-        -- waiting
-        
         (x"6C", x"32", '0'), -- ???
         (x"6C", x"12", '0'),
         (x"6C", x"00", '0'),
@@ -557,7 +570,7 @@ architecture Behavioral of camera_starter is
         (x"6C", x"35", '0'), --  AGC
         (x"6C", x"0B", '0'),
         (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
+        (x"FE", x"FF", '1'),
         
         -- Really long wait from rpi
         
@@ -594,41 +607,62 @@ architecture Behavioral of camera_starter is
         (x"6C", x"32", '0'), -- ????
         (x"6C", x"12", '0'),
         (x"6C", x"10", '0'),
+        (x"FF", x"FF", '1'),
         
         (x"6C", x"32", '0'), -- ????
         (x"6C", x"12", '0'),
         (x"6C", x"A0", '0'),
+        (x"FE", x"FF", '1'),
         
         -- small pause
         
         (x"6C", x"01", '0'),
         (x"6C", x"00", '0'),
         (x"6C", x"01", '0'),
+        (x"FE", x"FF", '1'),
         
-        (x"6C", x"35", '0'),
+        -- small pause
+        
+        (x"6C", x"35", '0'), -- 
         (x"6C", x"0A", '0'),
         (x"6C", x"00", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"35", '0'),
         (x"6C", x"0B", '0'),
         (x"6C", x"10", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"32", '0'),
         (x"6C", x"12", '0'),
         (x"6C", x"00", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"35", '0'),
         (x"6C", x"00", '0'),
         (x"6C", x"00", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"35", '0'),
         (x"6C", x"01", '0'),
         (x"6C", x"1A", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"35", '0'),
         (x"6C", x"02", '0'),
         (x"6C", x"F0", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"32", '0'),
         (x"6C", x"12", '0'),
         (x"6C", x"10", '0'),
+        (x"FF", x"FF", '1'),
+        
         (x"6C", x"32", '0'),
         (x"6C", x"12", '0'),
         (x"6C", x"A0", '0'),
+        (x"FE", x"FF", '1'),
+        
         (x"6C", x"35", '0'),
         (x"6C", x"0A", '0'),
         (x"6C", x"00", '0'),
@@ -933,23 +967,33 @@ begin
     
     feed_messages: process(reset, clk, i2c_busy) is
         variable c    : integer := 0;
-        type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE);
+        variable d    : integer := 0;                              
+        variable wait_counter    : integer := 0;
+        type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE, PAUSE);
         variable state : state_t := READY;
     begin
         if reset = '0' then
             c := 0;
+            d := 0;
+            wait_counter := 0;
             state := READY;
         elsif rising_edge(clk) then
             case STATE is
             when READY =>
-                i2c_rep_start <= '0';
-                cam_gpio <= '1';
-                cam_clk <= '1';
-                i2c_addr <= SEQUENCE(c).address;
-                i2c_write_data <= SEQUENCE(c).data;
-                i2c_rw <= SEQUENCE(c).rw;
-                i2c_enable <= '1';
-                state := PASSING_MESSAGE;
+                if (SEQUENCE(c).address = x"FE") then
+                    c := (c + 1);
+                    i2c_enable <= '0';
+                    state := PAUSE;
+                else
+                    i2c_rep_start <= '0';
+                    cam_gpio <= '1';
+                    cam_clk <= '1';
+                    i2c_addr <= SEQUENCE(c).address;
+                    i2c_write_data <= SEQUENCE(c).data;
+                    i2c_rw <= SEQUENCE(c).rw;
+                    i2c_enable <= '1';
+                    state := PASSING_MESSAGE;
+                end if;
             when PASSING_MESSAGE =>
                 if i2c_busy = '1' then
                     c := (c + 1);
@@ -968,9 +1012,15 @@ begin
                     end if;
                 end if;
             when DONE =>
-                cam_gpio <= '0';
-                cam_clk <= '0';
                 i2c_enable <= '0';
+            when PAUSE =>
+                if d >= unsigned(wait_sequence(wait_counter)) then
+                    state := READY;
+                    d := 0;
+                    wait_counter := (wait_counter + 1);
+                else
+                    d := (d + 1);
+                end if;
             when others =>
                 --
             end case;
