@@ -27,6 +27,6 @@ set_property -dict {PACKAGE_PIN R5 IOSTANDARD LVCMOS33} [get_ports cam1_dn1_out]
 
 set_property PULLUP true [get_ports scl]
 set_property PULLUP true [get_ports sda]
-set_property PULLDOWN true [get_ports gpio]
+set_property PULLDOWN true [get_ports cam_gpio]
 set_property PULLDOWN true [get_ports cam_clk]
 
