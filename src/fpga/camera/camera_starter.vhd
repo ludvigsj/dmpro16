@@ -680,9 +680,10 @@ architecture Behavioral of camera_starter is
     signal i2c_addr         : byte_t;
     signal i2c_rw           : std_logic;
     signal i2c_write_data   : byte_t;
-    signal i2c_busy         : std_logic;
+    signal i2c_busy         : std_logic := '0';
     signal i2c_read_data    : byte_t;
     signal i2c_error        : std_logic := '0';
+    signal i2c_reset_n      : std_logic := '1';
 begin
 
     sda_out <= '0' when sda = '0' else '1';
@@ -691,7 +692,7 @@ begin
     cam1_cn_out <= cam1_cn;
     i2c : entity work.i2c_master
     generic map(
-        input_clk   => 24_000_000,
+        input_clk   => 48_000_000,
         bus_clk     => 100_000
     )
     port map(
