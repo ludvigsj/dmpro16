@@ -1,1 +1,0 @@
--wto "efa6c0298d674da0895771d923a8dd87" --debug "typical" --relax --mt "2" -L "xil_defaultlib" -L "secureip" --snapshot "camera_tb_behav" "xil_defaultlib.camera_tb" -log "elaborate.log" 

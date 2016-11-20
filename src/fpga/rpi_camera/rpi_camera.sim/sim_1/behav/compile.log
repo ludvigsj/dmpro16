@@ -1,9 +1,0 @@
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sources_1/new/csi2_master.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity csi2_master
-WARNING: [VRFC 10-471] case choice must be a locally static expression [C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sources_1/new/csi2_master.vhd:77]
-WARNING: [VRFC 10-471] case choice must be a locally static expression [C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sources_1/new/csi2_master.vhd:80]
-WARNING: [VRFC 10-471] case choice must be a locally static expression [C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sources_1/new/csi2_master.vhd:83]
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sources_1/new/camera.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity camera
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Edgar/dmpro16/src/fpga/rpi_camera/rpi_camera.srcs/sim_1/new/camera_tb.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity camera_tb
