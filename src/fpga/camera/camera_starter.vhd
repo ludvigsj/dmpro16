@@ -9,6 +9,12 @@ PORT(
     ;   scl       : INOUT  STD_LOGIC
     ;   cam_gpio      : OUT     STD_LOGIC
     ;   cam_clk   : OUT     STD_LOGIC
+    ;   cam1_cp  : IN     STD_LOGIC
+    ;   cam1_cn   : IN     STD_LOGIC
+    ;   sda_out     : OUT   STD_LOGIC
+    ;   scl_out     : OUT   STD_LOGIC
+    ;   cam1_cp_out   : OUT     STD_LOGIC
+    ;   cam1_cn_out   : OUT     STD_LOGIC
     );
 end camera_starter;
 
@@ -692,6 +698,11 @@ architecture Behavioral of camera_starter is
     signal i2c_read_data    : byte_t;
     signal i2c_error        : std_logic := '0';
 begin
+
+    sda_out <= '0' when sda = '0' else '1';
+    scl_out <= '0' when scl = '0' else '1';
+    cam1_cp_out <= cam1_cp;
+    cam1_cn_out <= cam1_cn;
     i2c : entity work.i2c_master
     generic map(
         input_clk   => 24_000_000,
