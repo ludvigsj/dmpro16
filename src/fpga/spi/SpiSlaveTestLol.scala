@@ -18,34 +18,50 @@ class SpiSlaveTestLol extends Module {
 	slave.io.mosi := io.mosi
 	io.miso := slave.io.miso
 	io.wake := slave.io.wake
-	slave.io.bnn_empty := Bool(false)
+	slave.io.bnn_empty := Bool(true)
 
 	val first = UInt(256, 10)
 	val second = UInt(1, 10)
 	val third = UInt(64, 10)
 	val fourth = UInt(16, 10)
-	val n = UInt(0)
+	val n = Reg(init=UInt(0))
+	val started = Reg(init=Bool(false))
 
+	when(!started)
+	{
+		started := Bool(true)
+		slave.io.bnn_empty := Bool(false)
+	}
 	when(slave.io.bnn_read)
 	{
-		when(n === UInt(0))
-		{
-			slave.io.bnn_data := first
-		}
-		when(n === UInt(1))
-		{
-			slave.io.bnn_data := second
-		}
-		when(n === UInt(2))
-		{
-			slave.io.bnn_data := third
-		}
-		when(n === UInt(3))
-		{
-			slave.io.bnn_data := fourth
-		}
 		n := (n + UInt(1)) % UInt(4)
 	}
 
+	when(n === UInt(0))
+	{
+		slave.io.bnn_data := first
+	}
+	.elsewhen(n === UInt(1))
+	{
+		slave.io.bnn_data := second
+	}
+	.elsewhen(n === UInt(2))
+	{
+		slave.io.bnn_data := third
+	}
+	.elsewhen(n === UInt(3))
+	{
+		slave.io.bnn_data := fourth
+	}
+	.otherwise
+	{
+		slave.io.bnn_data := UInt(0)
+	}
 
+
+}
+object spiTest {
+	def main(args: Array[String]): Unit = {
+		chiselMain(args, () => Module(new SpiSlaveTestLol()))
+	}
 }

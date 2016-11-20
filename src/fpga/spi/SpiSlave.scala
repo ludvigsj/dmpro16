@@ -20,11 +20,10 @@ class SpiSlave extends Module {
 	}
 
 	val reg = Module(new SpiShiftRegister())
-	reg.io.value := io.bnn_data
 	reg.io.in := io.mosi
 	io.miso := reg.io.out
 
-	val n = UInt(0, 3)
+	val n = Reg(init=UInt(0, 3))
 	val read = Reg(init=Bool(false))
 
 	when(Bool(io.cs))
@@ -86,37 +85,41 @@ class SpiSlave extends Module {
 	{
 		reg.io.value := UInt(1)
 	}
-	when(io.bnn_data === UInt(2))
+	.elsewhen(io.bnn_data === UInt(2))
 	{
 		reg.io.value := UInt(2)
 	}
-	when(io.bnn_data === UInt(4))
+	.elsewhen(io.bnn_data === UInt(4))
 	{
 		reg.io.value := UInt(3)
 	}
-	when(io.bnn_data === UInt(8))
+	.elsewhen(io.bnn_data === UInt(8))
 	{
 		reg.io.value := UInt(4)
 	}
-	when(io.bnn_data === UInt(16))
+	.elsewhen(io.bnn_data === UInt(16))
 	{
 		reg.io.value := UInt(5)
 	}
-	when(io.bnn_data === UInt(32))
+	.elsewhen(io.bnn_data === UInt(32))
 	{
 		reg.io.value := UInt(6)
 	}
-	when(io.bnn_data === UInt(64))
+	.elsewhen(io.bnn_data === UInt(64))
 	{
 		reg.io.value := UInt(7)
 	}
-	when(io.bnn_data === UInt(128))
+	.elsewhen(io.bnn_data === UInt(128))
 	{
 		reg.io.value := UInt(8)
 	}
-	when(io.bnn_data === UInt(256))
+	.elsewhen(io.bnn_data === UInt(256))
 	{
 		reg.io.value := UInt(9)
+	}
+	.otherwise
+	{
+		reg.io.value := UInt(0)
 	}
 
 }
@@ -198,8 +201,10 @@ class SpiSlaveTests(c: SpiSlave) extends Tester(c) {
 	//}
 //}
 
+/*
 object spiSlave {
 	def main(args: Array[String]): Unit = {
 		chiselMain(args, () => Module(new SpiSlave()))
 	}
 }
+*/
