@@ -41,10 +41,13 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
       }
       when (layers(layer-1).io.layer_done) {
         layers(layer).io.enable := Bool(true)
+        layers(layer).io.reset := Bool(true)
       }.elsewhen (counters(layer) < UInt(layers_input(layer)) & (counters(layer)>UInt(0))) {
         layers(layer).io.enable := Bool(true)
+        layers(layer).io.reset := Bool(false)
       }.otherwise {
         layers(layer).io.enable := Bool(false)
+        layers(layer).io.reset := Bool(false)
       }
     }
   }

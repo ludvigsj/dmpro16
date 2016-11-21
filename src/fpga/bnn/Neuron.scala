@@ -7,6 +7,7 @@ class Neuron(layer: Int, neuron: Int) extends Module {
   val io = new Bundle {
     val input = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
+    val reset = Bool(INPUT)
     val last_input = Bool(INPUT)
     val weight_location = UInt(INPUT, width=10)
     val weight = Bits(INPUT, width=1)
@@ -21,13 +22,16 @@ class Neuron(layer: Int, neuron: Int) extends Module {
 
   //val regFile = Vec.fill() { Reg(init = UInt(0, width = dataBits)) }
   val accumulator = Reg(init=UInt(0, width=10))
+
   //val delayed_location = Reg(next=io.weight_location)
   //val w = Reg(next=weights(io.weight_location))
+
+
   val i = Reg(next=io.input)
   val synapse = ~(io.weight ^ i)
   io.done := io.last_input
   when(io.enable) {
-    when(io.weight_location === UInt(0)) {
+    when(io.reset) {
       accumulator := synapse
     }.otherwise {
       accumulator := accumulator+synapse
