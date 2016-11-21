@@ -81,9 +81,9 @@ with open('thresholds.csv', 'w') as thresholds_file:
 
 for weights in [nn_first_synapses, nn_second_synapses, nn_third_synapses, nn_out_synapses]:
     w_string = ''
-    for neuron in range(weights.shape[0]):
-        for synapse in range(weights.shape[1]):
-            if (synapse != weights.shape[1]-1):
+    for synapse in range(weights.shape[1]):
+        for neuron in range(weights.shape[0]):
+            if (neuron != weights.shape[0]-1):
                 w_string += str(weights[neuron][synapse]) + ','
             else:
                 w_string += str(weights[neuron][synapse])
@@ -101,4 +101,3 @@ for weights in [nn_first_synapses, nn_second_synapses, nn_third_synapses, nn_out
         print('Something went wrong')
     with open(filename, 'w') as w_file:
         w_file.write(w_string)
-

@@ -15,21 +15,32 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   when(io.enable){
     counter := counter + UInt(1)
   }
-  val delayed_location = Reg(next=counter)
+  //val delayed_location = Reg(next=counter)
   val count_signal = counter
   val delayed_input = Reg(next=io.input)
   val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
+
+
+  var current_weights = Reg(init=UInt(0))
+
+  // Length of this thould be 784
+  val weights = Vec.tabulate(input_count) { i => Reg(next = Weights.w(layer)(i) ) }
+  current_weights := weights(count_signal)
 
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
+    neurons(neuron).io.enable := io.enable
+    //neurons(neuron).io.reset := io.reset
+    neurons(neuron).io.last_input := last_input
+
     //neurons(neuron).io.input := io.input
     neurons(neuron).io.input := delayed_input
-    neurons(neuron).io.enable := io.enable
+    neurons(neuron).io.weight := weights(count_signal)(neuron)
     //neurons(neuron).io.weight_location := count_signal
-    neurons(neuron).io.weight_location := delayed_location
-    neurons(neuron).io.last_input := last_input
+    //neurons(neuron).io.weight_location := delayed_location
+
     out_vec(neuron) := neurons(neuron).io.output
   }
   io.output := out_vec
@@ -116,4 +127,3 @@ object layer {
       //() => Module(new Layer(0, 256))) { c => new LayerTest(c) }
   }
 }
-

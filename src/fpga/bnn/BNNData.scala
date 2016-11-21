@@ -2,6 +2,23 @@ package SudoKu.bnn
 
 import Chisel._
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ListBuffer
+
+object Test_image {
+  def readCSV(filename:String) : List[Bits] = {
+    var rows:List[Bits] = List.empty
+    val source = io.Source.fromFile(filename)
+    for (line <- source.getLines) {
+      val row:List[Bits] = line.split(",")
+            .map(_.trim)
+            .map(_.toInt)
+            .map(x => Bits(x, width=1)).toList
+      rows = row
+    }
+    rows
+  }
+  val data = readCSV("./test_values.csv")
+}
 
 object Thresholds {
   def readCSV(filename:String) : Array[Array[UInt]] = {
@@ -16,9 +33,10 @@ object Thresholds {
   val t = readCSV("./thresholds.csv")
 }
 
+// Perhaps rotate matrix 90 deg
 object Weights {
-  def readCSV(filename:String) : List[List[Bits]] = {
-    var rows:List[List[Bits]] = List.empty
+  def readCSV(filename:String) : List[Bits] = {
+    var rows:List[Bits] = List.empty
     val source = io.Source.fromFile(filename)
     for (line <- source.getLines) {
       val row:List[Bits] = line.split(",")
@@ -27,8 +45,16 @@ object Weights {
             .map(x => Bits(x, width=1)).toList
             //.map(Bits(_))
             //.map(x => Reg(init=(x)))
-      rows = rows :+ row
+
+
+      var bits:Bits = Bits(0, width=256)
+      for( x <- row) {
+         bits << Bits(1)
+         bits = bits + x
+      }
+      rows = rows ::: List(bits)
     }
+
     rows
   }
 
