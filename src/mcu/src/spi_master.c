@@ -74,7 +74,7 @@ void transferComplete(unsigned int channel, bool primary, void *user)
   (void) user;
   
   /* Clear flag to indicate complete transfer */
-  if (channel == DMA_CHANNEL_TX)
+  if (channel == DMA_CHANNEL_TX || channel == 1)
   {
     txActive = false;  
   }
@@ -110,7 +110,7 @@ void setupSpi(void)
   
   /* Initialize SPI */
   usartInit0.databits = usartDatabits8;
-  usartInit0.baudrate = 10000;
+  usartInit0.baudrate = 1000000;
   usartInit0.master = 1;
   usartInit0.msbf = 1;
   usartInit0.clockMode = usartClockMode0;
@@ -314,7 +314,7 @@ void fpgaTransfer(uint8_t *rxBuffer, int bytes)
                       (void *)&(USART0->RXDATA),
                       bytes - 1); 
 
-//	txActive = true;
+	txActive = true;
 
 	USART0->CMD = USART_CMD_CLEARTX;
 

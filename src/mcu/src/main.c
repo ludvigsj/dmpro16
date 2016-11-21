@@ -23,9 +23,14 @@ void Delay(uint32_t dlyTicks)
 	while ((msTicks - curTicks) < dlyTicks);
 }
 
+void GPIO_ODD_IRQHandler(void)
+{
+	GPIO_IntClear(0x0002);
+}
+
 int main()
 {
-//	BSP_Init(BSP_INIT_DK_SPI);
+	BSP_Init(BSP_INIT_DK_SPI);
 	CHIP_Init();
 	setupDmaSpi();
 
@@ -41,32 +46,37 @@ int main()
     {4, 8, 7, 6, 3, 1, 5, 9, 2},
     };
 
-	GPIO_PinModeSet(gpioPortE, 14, gpioModePushPull, 1);
-	GPIO_PinModeSet(gpioPortE, 15, gpioModeInput, 1);
+	GPIO_PinModeSet(gpioPortE, 0, gpioModePushPull, 1);
+	GPIO_PinOutSet(gpioPortE, 0);
+	GPIO_PinModeSet(gpioPortE, 1, gpioModeInput, 1);
 	NVIC_EnableIRQ(GPIO_ODD_IRQn);
-	GPIO_IntConfig(gpioPortE, 15, true, true, true);
-	EMU_EnterEM3(true);
-
-
-	uint8_t number[1];
-	fpgaTransfer((uint8_t*) number, 1);
-	sleepUntilDmaDone();
-	int testBoard[9][9];
-	for (int i = 0; i < 9; i++)
-		for (int j = 0; j < 9; j++)
-			testBoard[i][j] = number[0];
-	displaySudoku(testBoard, 0);
-//	displaySudoku(board, 1);
-
-	/*
-	int incorrect = checkSudoku(board);
-	displaySudoku(board, incorrect);
-	*/
-
-	DMA_Reset();
+	GPIO_IntConfig(gpioPortE, 1, true, true, true);
 
 	CMU_ClockEnable(cmuClock_CORELE, true);
 	if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1);
+
+	/*
+	Delay(2000);
+	EMU_EnterEM3(true);
+	*/
+
+	while (!GPIO_PinOutGet(gpioPortE, 1));
+
+
+	uint8_t number[1];
+	int testBoard[9][9];
+	for (int i = 0; i < 81; i++)
+	{
+		fpgaTransfer((uint8_t*) number, 1);
+		sleepUntilDmaDone();
+		testBoard[i/9][i%9] = number[0];
+	}
+
+	int incorrect = checkSudoku(testBoard);
+	displaySudoku(testBoard, 1);
+
+	DMA_Reset();
+
 	RMU_ResetCauseClear();
 
 	Delay(2000);
