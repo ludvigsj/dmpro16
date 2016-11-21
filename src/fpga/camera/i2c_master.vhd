@@ -116,7 +116,7 @@ BEGIN
       ack_error <= '0';                    --clear acknowledge error flag
       bit_cnt <= 7;                        --restarts data bit counter
       data_rd <= "00000000";               --clear data read port
-    ELSIF(clk'EVENT AND clk = '1') THEN
+    ELSIF rising_edge(clk) THEN
       IF(data_clk = '1' AND data_clk_prev = '0') THEN  --data clock rising edge
         CASE state IS
           WHEN ready =>                      --idle state

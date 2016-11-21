@@ -11,10 +11,6 @@ set_property -dict {PACKAGE_PIN B4 IOSTANDARD LVCMOS33} [get_ports cam_gpio]
 set_property -dict {PACKAGE_PIN A4 IOSTANDARD LVCMOS33} [get_ports cam_clk]
 set_property -dict {PACKAGE_PIN A3 IOSTANDARD LVCMOS33} [get_ports cam1_cp]
 set_property -dict {PACKAGE_PIN C7 IOSTANDARD LVCMOS33} [get_ports cam1_cn]
-set_property -dict {PACKAGE_PIN C6 IOSTANDARD LVCMOS33} [get_ports cam1_dp1]
-set_property -dict {PACKAGE_PIN D6 IOSTANDARD LVCMOS33} [get_ports cam1_dn1]
-set_property -dict {PACKAGE_PIN D5 IOSTANDARD LVCMOS33} [get_ports cam1_dp0]
-set_property -dict {PACKAGE_PIN C3 IOSTANDARD LVCMOS33} [get_ports cam1_dn0]
 
 
 
@@ -22,8 +18,6 @@ set_property -dict {PACKAGE_PIN R8 IOSTANDARD LVCMOS33} [get_ports scl_out]
 set_property -dict {PACKAGE_PIN T7 IOSTANDARD LVCMOS33} [get_ports sda_out]
 set_property -dict {PACKAGE_PIN T8 IOSTANDARD LVCMOS33} [get_ports cam1_cp_out]
 set_property -dict {PACKAGE_PIN T9 IOSTANDARD LVCMOS33} [get_ports cam1_cn_out]
-set_property -dict {PACKAGE_PIN T10 IOSTANDARD LVCMOS33} [get_ports cam1_dp1_out]
-set_property -dict {PACKAGE_PIN R5 IOSTANDARD LVCMOS33} [get_ports cam1_dn1_out]
 
 set_property PULLUP true [get_ports scl]
 set_property PULLUP true [get_ports sda]
