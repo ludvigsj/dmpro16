@@ -29,17 +29,8 @@ class SpiShiftRegister extends Module {
     r5 := UInt(0, 1)
     r6 := UInt(0, 1)
     r7 := UInt(0, 1)
-  } .elsewhen(io.shift) {
-    r0 := io.in
-    r1 := r0
-    r2 := r1
-    r3 := r2
-    r4 := r3
-    r5 := r4
-    r6 := r5
-    r7 := r6
   }
-  .elsewhen (io.set)
+  .elsewhen(io.set)
   {
 	r0 := io.value(0)
 	r1 := io.value(1)
@@ -49,6 +40,16 @@ class SpiShiftRegister extends Module {
 	r5 := io.value(5)
 	r6 := io.value(6)
 	r7 := io.value(7)
+  }
+	.elsewhen(io.shift) {
+    r0 := io.in
+    r1 := r0
+    r2 := r1
+    r3 := r2
+    r4 := r3
+    r5 := r4
+    r6 := r5
+    r7 := r6
   }
   io.out := r7
 }

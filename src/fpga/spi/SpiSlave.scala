@@ -28,7 +28,6 @@ class SpiSlave extends Module {
 
 	when(Bool(io.cs))
 	{
-		io.bnn_read := Bool(false)
 		when(fallingedge(Bool(io.clk)))
 		{
 			when(n === UInt(7))
@@ -39,6 +38,7 @@ class SpiSlave extends Module {
 			}
 			.otherwise
 			{
+				io.bnn_read := Bool(false)
 				reg.io.shift := Bool(true)
 				n := n + UInt(1)
 				read := Bool(false)
@@ -67,10 +67,12 @@ class SpiSlave extends Module {
 		read := Bool(true)
 		io.bnn_read := Bool(true)
 	}
+	/*
 	.otherwise
 	{
 		io.bnn_read := Bool(false)
 	}
+	*/
 
 	when(!io.bnn_empty)
 	{

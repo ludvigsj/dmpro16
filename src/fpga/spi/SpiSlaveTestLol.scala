@@ -13,9 +13,9 @@ class SpiSlaveTestLol extends Module {
 
 	val slave = Module(new SpiSlave())
 
-	slave.io.cs := io.cs
-	slave.io.clk := io.clk
-	slave.io.mosi := io.mosi
+	slave.io.cs := Reg(next=io.cs)
+	slave.io.clk := Reg(next=io.clk)
+	slave.io.mosi := Reg(next=io.mosi)
 	io.miso := slave.io.miso
 	io.wake := slave.io.wake
 	slave.io.bnn_empty := Bool(true)
@@ -30,6 +30,9 @@ class SpiSlaveTestLol extends Module {
 	when(!started)
 	{
 		started := Bool(true)
+	}
+	.otherwise
+	{
 		slave.io.bnn_empty := Bool(false)
 	}
 	when(slave.io.bnn_read)
