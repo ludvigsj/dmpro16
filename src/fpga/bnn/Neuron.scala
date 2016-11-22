@@ -6,11 +6,10 @@ import Weights._
 class Neuron(layer: Int, neuron: Int) extends Module {
   val io = new Bundle {
     val input = Bits(INPUT, width=1)
+    val weight = Bits(INPUT, width=1)
     val enable = Bool(INPUT)
     val reset = Bool(INPUT)
     val last_input = Bool(INPUT)
-    val weight_location = UInt(INPUT, width=10)
-    val weight = Bits(INPUT, width=1)
     val output = Bits(OUTPUT, width=1)
     val done = Bool(OUTPUT)
   }
@@ -47,7 +46,6 @@ class NeuronTest(c: Neuron) extends Tester(c) {
   poke(c.io.enable, true)
   poke(c.io.last_input, false)
   step(1)
-  peek(c.io.weight_location)
   peek(c.outstore)
   expect(c.io.output, 0)
   expect(c.accumulator, 0)

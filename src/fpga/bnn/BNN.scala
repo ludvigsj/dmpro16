@@ -5,10 +5,13 @@ import Array._
 
 class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) extends Module {
   val io = new Bundle {
-    val input = Bits(INPUT, width=1)
-    val enable = Bool(INPUT)
-    val output = Bits(OUTPUT, width=10)
-    val done = Bool(OUTPUT)
+    val trans_data = Bits(INPUT, width=1) // input
+    val trans_empty = Bool(INPUT) // not enable
+    val trans_read = Bool(OUTPUT) // delayed data
+
+    val spi_data = Bits(OUTPUT, width=10) // output
+    val spi_write = Bool(OUTPUT) // done
+    val spi_full = Bool(INPUT) // ignore
   }
 
   var layers:Array[Layer] = ofDim(num_layers)
@@ -17,20 +20,8 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
   for (layer <- 0 until num_layers) {
     layers(layer) = Module( new Layer(layer, layers_input(layer), layers_output(layer)) )
     if(layer == 0) {
-      layers(layer).io.input := io.input
-      // The code below is only needed if enable is only true for one cycle
-      /*
-      val images_started = Reg(init=UInt(0, width=7))
-      counters(layer) := counters(layer) + UInt(1)
-      when (counters(layer) >= UInt(layers_input(layer))){
-          counters(layer) := UInt(0)
-          images_started := images_started + UInt(1)
-      }
-      when (images_started === UInt(81)) {
-          enable_regs(layer) = Bool(false)
-      }
-      */
-      layers(layer).io.enable := io.enable
+      layers(layer).io.input := io.trans_data // one more cycle delayed than we assume
+      layers(layer).io.enable := ~io.trans_empty // assume continuous data
     } else {
       layers(layer).io.input := layers(layer-1).io.output(counters(layer))
 
@@ -51,7 +42,9 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
       }
     }
   }
-  io.output := layers(num_layers-1).io.output
+  io.trans_read := Bool(true)
+  io.spi_data := layers(num_layers-1).io.output
+  io.spi_write := layers(num_layers-1).io.layer_done
 }
 
 class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
@@ -89,17 +82,17 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
   val total = 784 // 784
   //peek(bnn.layers(0).current_weights)
 
-  poke(bnn.io.enable, true)
+  poke(bnn.io.trans_empty, false)
   for (i <- 0 until total-split) {
-    poke(bnn.io.input, inputs(i))
+    poke(bnn.io.trans_data, inputs(i))
     step(1)
   }
   for (i <- total-split until total) {
-    poke(bnn.io.input, inputs(i))
+    poke(bnn.io.trans_data, inputs(i))
     printLayerOutput()
     step(1)
   }
-  poke(bnn.io.enable, false)
+  poke(bnn.io.trans_empty, true)
 
   printLayerOutput()
   step(1)
@@ -109,7 +102,7 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
   peek(bnn.layers(0).io.output)
   peek(bnn.layers(0).weightsC(0))
   step(10000)
-  peek(bnn.io.output)
+  peek(bnn.io.spi_data)
   //printLayerOutput()
 
 }

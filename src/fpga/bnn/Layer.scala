@@ -61,7 +61,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
 
     out_vec(neuron) := neurons(neuron).io.output
   }
-  io.output := out_vec
+  io.output := out_vec.toBits
   io.layer_done := neurons(0).io.done
 
   // The first layer runs always, and has no time to reset to 0
