@@ -94,7 +94,7 @@
 \item FPGA figures out the transform required to rotate, scale and crop the input image 
 \item FPGA performs transform, cutting it into pieces, trimming edges of the squares to avoid sending outlines into the BNN etc.
 \item BNN (on FPGA) detects digits
-\item Digits sent to MCU, where the sudoku is checked and result (and potentially other relevant info, incorrect rows etc.) is output to the user
+\item Digits are sent to the MCU, where the sudoku is checked and the result is output to the user
 \end{itemize}
 \end{frame}
 
