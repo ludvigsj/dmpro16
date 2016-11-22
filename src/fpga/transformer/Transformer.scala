@@ -57,14 +57,14 @@ class Transformer(padding: Int) extends Module {
 
     corner.io.pxin := imgmem.io.out
 
-    //matrix.io.x0 := corner.io.x0
-    //matrix.io.y0 := corner.io.y0
-    //matrix.io.x1 := corner.io.x1
-    //matrix.io.y1 := corner.io.y1
-    matrix.io.x0 := UInt(166)
-    matrix.io.y0 := UInt(78)
-    matrix.io.x1 := UInt(425)
-    matrix.io.y1 := UInt(100)
+    matrix.io.x0 := corner.io.x0
+    matrix.io.y0 := corner.io.y0
+    matrix.io.x1 := corner.io.x1
+    matrix.io.y1 := corner.io.y1
+    //matrix.io.x0 := UInt(166)
+    //matrix.io.y0 := UInt(78)
+    //matrix.io.x1 := UInt(425)
+    //matrix.io.y1 := UInt(100)
 
     val writing = Reg(init=Bool(false))
     val done = Reg(init=Bool(false))
@@ -95,7 +95,7 @@ class TransformerTests(c: Transformer) extends Tester(c) {
     var f = 0
     var i = 0
     for(f <- 0 until 1){
-        val byteArray = Files.readAllBytes(Paths.get("render.gray"))
+        val byteArray = Files.readAllBytes(Paths.get("../../../test_images/foto7.gray"))
         var outBytes = ArrayBuffer[Byte]()
         for(i <- 0 until byteArray.length){
             poke(c.io.cam_data, if ((byteArray(i) & 0xff) < 32) 0 else 1)
@@ -106,10 +106,12 @@ class TransformerTests(c: Transformer) extends Tester(c) {
         while(peek(c.io.bnn_write) == 0){
             step(1)
         }
-        peek(c.corner.io.x0)
-        peek(c.corner.io.y0)
-        peek(c.corner.io.x1)
-        peek(c.corner.io.y1)
+
+        expect(c.corner.io.done, 1)
+        expect(c.corner.io.x0, 106)
+        expect(c.corner.io.y0, 103)
+        expect(c.corner.io.x1, 443)
+        expect(c.corner.io.y1, 29)
         while(peek(c.io.bnn_write) == 1){
             outBytes += (if (peek(c.io.bnn_data) == 1) 255.toByte else 0.toByte)
             step(1)
