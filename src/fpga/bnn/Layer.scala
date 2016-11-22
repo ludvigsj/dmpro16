@@ -29,7 +29,10 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   //val delayed_location = Reg(next=counter)
   val count_signal = counter
   val delayed_input = Reg(next=io.input)
-  val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
+  val last_input = Bool(Mux(Bool(count_signal>=UInt(input_count)), Bool(true), Bool(false)))
+  val delayed_last = Reg(next=last_input)
+  val delayed_enable = Reg(next=io.enable)
+  val delayed_reset = Reg(next=io.reset)
 
   val weightsC = Vec.tabulate(input_count) { i => Reg(init=Weights.w(layer)(i) ) }
   val weightsV = Vec.tabulate(input_count) { i => Weights.w(layer)(i) }
@@ -48,15 +51,13 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
-    neurons(neuron).io.enable := io.enable
-    neurons(neuron).io.reset := io.reset
-    neurons(neuron).io.last_input := last_input
-
+    neurons(neuron).io.enable := delayed_enable
+    neurons(neuron).io.reset := delayed_reset
+    neurons(neuron).io.last_input:= delayed_last
+    //neurons(neuron).io.input := delayed_delayed_input
+    //neurons(neuron).io.input := ddd_input
     neurons(neuron).io.input := delayed_input
-    //neurons(neuron).io.input := delayed_input
-    neurons(neuron).io.weight := current_weights(neuron)
-    //neurons(neuron).io.weight_location := count_signal
-    //neurons(neuron).io.weight_location := delayed_location
+    neurons(neuron).io.weight := current_weights(neuron_count-1-neuron)
 
     out_vec(neuron) := neurons(neuron).io.output
   }
@@ -64,14 +65,8 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   io.layer_done := neurons(0).io.done
 
   // The first layer runs always, and has no time to reset to 0
-  if (layer == 0) {
-    when(last_input){
-      counter := UInt(1)
-    }
-  } else {
-    when(last_input){
-      counter := UInt(0)
-    }
+  when (io.layer_done) {
+    counter := UInt(0)
   }
 }
 

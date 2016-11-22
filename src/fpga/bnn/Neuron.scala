@@ -15,20 +15,10 @@ class Neuron(layer: Int, neuron: Int) extends Module {
     val done = Bool(OUTPUT)
   }
 
-  //val weights = Mem( Weights.w(layer)(neuron), Weights.w(layer)(neuron).size, true )
-  //val weights = Vec( Weights.w(layer)(neuron) )
-  //val list = Weights.w(layer)(neuron)
-  //val weights = Vec( Weights.w(layer)(neuron).map(x => Reg(init=(x) )))
-
-  //val regFile = Vec.fill() { Reg(init = UInt(0, width = dataBits)) }
   val accumulator = Reg(init=UInt(0, width=10))
 
-  //val delayed_location = Reg(next=io.weight_location)
-  //val w = Reg(next=weights(io.weight_location))
-
-
-  val i = Reg(next=io.input)
-  val synapse = ~(io.weight ^ i)
+  //val i = Reg(next=io.input)
+  val synapse = ~(io.weight ^ io.input)
   io.done := io.last_input
   when(io.enable) {
     when(io.reset) {
@@ -41,17 +31,11 @@ class Neuron(layer: Int, neuron: Int) extends Module {
   val threshold = Thresholds.t(layer)(neuron)
   val result = Mux( accumulator >= threshold, Bool(true), Bool(false))
 
-  // We need a delay to pass the tests in NeuronTest. This delay is not
-  // needed when we test a system with multiple neurons, because
-  // Chisel does some optimizations.
-  // val delay_last = Reg(next=io.last_input)
-  // val outstore = RegEnable(result, io.delayed_last_input)
-
   val outstore = RegEnable(result, io.last_input)
 
-  when(io.last_input) {
-    accumulator := UInt(0)
-  }
+  //when(io.last_input) {
+  //  accumulator := UInt(0)
+  //}
 
   io.output := Mux( io.last_input, result, outstore )
 }

@@ -83,7 +83,9 @@ apply_growth(nn_second_synapses, g2)
 apply_growth(nn_third_synapses, g3)
 apply_growth(nn_out_synapses, g4)
 
-for test_image in range(total_images):
+#for test_image in range(total_images):
+for test_image in range(1):
+    test_image = 15
     image_vector = np.empty(784, dtype=int)
     for i in range(784):
         if test_set[0][test_image][i] >= 0.55: # performs better than 0.50

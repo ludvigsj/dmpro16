@@ -35,31 +35,24 @@ object Thresholds {
 
 // Perhaps rotate matrix 90 deg
 object Weights {
-  def readCSV(filename:String) : List[Bits] = {
-    var rows:List[Bits] = List.empty
+  def readCSV(filename:String) : Array[Bits] = {
+    var rows:Array[Bits] = Array.empty
     val source = io.Source.fromFile(filename)
     for (line <- source.getLines) {
-      val row:List[Bits] = line.split(",")
+      val row:Array[Bits] = line.split(",")
             .map(_.trim)
             .map(_.toInt)
-            .map(x => Bits(x, width=1)).toList
+            .map(x => Bits(x, width=1)).toArray
             //.map(Bits(_))
             //.map(x => Reg(init=(x)))
 
-
-      val bitswidth = row.length
-      var bits:Bits = Bits(0, width=bitswidth)
-      for( x <- row) {
-         bits << Bits(1)
-         bits = bits + x
-      }
-      rows = rows ::: List(bits)
+      var bits:Bits = row.reduceLeft( Cat(_,_))
+      rows = rows ++ bits
     }
-
     rows
   }
 
-  val w = List( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))
+  val w = Array( readCSV("./weights0.csv"), readCSV("./weights1.csv"), readCSV("./weights2.csv"), readCSV("./weights3.csv"))
 }
 
 

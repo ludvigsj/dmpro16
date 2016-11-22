@@ -56,16 +56,23 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
 
 class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
   def printLayerOutput() {
-    for (layer <- 0 until num_layers) {
-      peek(bnn.layers(layer).io.input)
-      peek(bnn.layers(layer).io.output)
-      peek(bnn.layers(layer).io.enable)
-    }
+    val l = 0
+    val n = 0
+    //peek(bnn.layers(l).counter)
+    //peek(bnn.layers(layer).io.input)
+    //peek(bnn.layers(layer).io.output)
+    //peek(bnn.layers(layer).io.enable)
+    peek(bnn.layers(l).neurons(n).io.input)
+    peek(bnn.layers(l).neurons(n).io.weight)
+    peek(bnn.layers(l).neurons(n).accumulator)
+    //println(~(bnn.layers(l).neurons(n).io.weight ^ bnn.layers(l).neurons(n).io.input))
+    //peek(bnn.layers(l).neurons(n).threshold)
+    //peek(bnn.layers(l).neurons(n).accumulator)
+    //peek(bnn.layers(l).neurons(n).io.output)
+    peek(bnn.layers(l).neurons(n).io.done)
+    //peek(bnn.layers(l).count_signal)
+    //peek(bnn.layers(l).current_weights)
   }
-  //val layer0_output = Array(0,0,0,0,5,5,5,5,3,3,3,3,3,3,3,3)
-  //val layer1_output = Array(0,0,0,0,0,0,0,2,2,2,2,6,6,6,6,6)
-  //val layer2_output = Array(0,0,0,0,0,0,0,0,0,0,2,2,2,2,6,6)
-  //val input = Array(1,0,0,0,1,0,1,1)
 
   def readCSV(filename:String) : Array[Int] = {
     var rows:Array[Int] = Array.empty
@@ -78,28 +85,32 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
   }
   val inputs = readCSV("./test_values.csv")
 
-  def printSometimes() {
-    peek(bnn.layers(0).counter)
-    for (layer <- 0 until num_layers) {
-      if (bnn.layers(layer).io.layer_done == 1) {
-        peek(bnn.layers(layer).io.output)
-      }
-    }
-  }
+  val split = 784
+  val total = 784 // 784
+  //peek(bnn.layers(0).current_weights)
 
   poke(bnn.io.enable, true)
-  for (i <- 0 until 784) {
+  for (i <- 0 until total-split) {
     poke(bnn.io.input, inputs(i))
-    printSometimes()
+    step(1)
+  }
+  for (i <- total-split until total) {
+    poke(bnn.io.input, inputs(i))
+    printLayerOutput()
     step(1)
   }
   poke(bnn.io.enable, false)
-  for (i <- 0 until 10) {
-    step(1)
-    printSometimes()
-  }
-  step(1500)
+
   printLayerOutput()
+  step(1)
+  printLayerOutput()
+  step(1)
+  printLayerOutput()
+  peek(bnn.layers(0).io.output)
+  peek(bnn.layers(0).weightsC(0))
+  step(10000)
+  peek(bnn.io.output)
+  //printLayerOutput()
 
 }
 
