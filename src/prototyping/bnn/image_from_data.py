@@ -18,7 +18,7 @@ with gzip.open('mnist.pkl.gz', 'rb') as f:
 # test_set[1] is the expected output
 
 #test_image = 99
-for test_image in range(100):
+for test_image in range(16):
     image_vector = np.empty(784, dtype=int)
     for i in range(784):
         if test_set[0][test_image][i] >= 0.6: # colors are not linear
@@ -36,3 +36,4 @@ for test_image in range(100):
         print('')
     #        print("{}/{} correct images".format(correct_images, test_image+1))
     print("This is supposed to be an ", test_set[1][test_image])
+    print("This is image number ", test_image)

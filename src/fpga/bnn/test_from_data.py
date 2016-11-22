@@ -20,7 +20,7 @@ with gzip.open('../../prototyping/bnn/mnist.pkl.gz', 'rb') as f:
 test_file = open('test_values.csv', 'w')
 
 for test_image in range(1):
-    test_image = 0
+    test_image = 15
     image_vector = np.empty(784, dtype=int)
     for i in range(784):
         if test_set[0][test_image][i] >= 0.6:

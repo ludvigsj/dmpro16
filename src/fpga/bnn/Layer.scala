@@ -3,6 +3,16 @@ package SudoKu.bnn
 import Chisel._
 import Array._
 
+object isVerilog {
+  def apply(): Boolean = {
+    if(Driver.backend != null) {
+      return (Driver.backend.getClass().getSimpleName() == "VerilogBackend")
+    }
+    else {return false}
+  }
+}
+
+
 class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   val io = new Bundle {
     val input = Bits(INPUT, width=1)
@@ -21,10 +31,18 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
   val delayed_input = Reg(next=io.input)
   val last_input = Bool(Mux(Bool(counter>=UInt(input_count)), Bool(true), Bool(false)))
 
+  val weightsC = Vec.tabulate(input_count) { i => Reg(init=Weights.w(layer)(i) ) }
+  val weightsV = Vec.tabulate(input_count) { i => Weights.w(layer)(i) }
 
-  // Length of this thould be 784
-  val weights = Vec.tabulate(input_count) { i => Reg(next = Weights.w(layer)(i) ) }
-  val current_weights = weights(count_signal)
+  def getCurW(): Bits = {
+    if (isVerilog()) {
+      Reg( next=weightsV(count_signal) )
+    } else {
+      Reg( next=weightsC(count_signal) )
+    }
+  }
+
+  val current_weights = getCurW()
 
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)

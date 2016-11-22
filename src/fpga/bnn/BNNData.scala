@@ -47,7 +47,8 @@ object Weights {
             //.map(x => Reg(init=(x)))
 
 
-      var bits:Bits = Bits(0, width=256)
+      val bitswidth = row.length
+      var bits:Bits = Bits(0, width=bitswidth)
       for( x <- row) {
          bits << Bits(1)
          bits = bits + x
