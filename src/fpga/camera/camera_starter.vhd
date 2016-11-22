@@ -2,6 +2,8 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.std_logic_unsigned.all;
 use IEEE.numeric_std.all;
+library unisim;
+use unisim.vcomponents.all;
 
 entity camera_starter is
 PORT(
@@ -13,7 +15,11 @@ PORT(
     ;   cam_clk   : OUT     STD_LOGIC
     ;   cam1_cp   : IN     STD_LOGIC
     ;   cam1_cn   : IN     STD_LOGIC
+    ;   cam1_dn0  : IN      STD_LOGIC
+    ;   cam1_dp0  : IN      STD_LOGIC
     
+    ;   cam1_dn0_out    : out std_logic
+    ;   cam1_dp0_out    : out std_logic
     ;   sda_out     : OUT   STD_LOGIC
     ;   scl_out     : OUT   STD_LOGIC
     ;   cam1_cp_out   : OUT     STD_LOGIC
@@ -30,9 +36,9 @@ architecture Behavioral of camera_starter is
         rw      : std_logic; -- '1' is read
     end record;
     
-    constant NUM_MESSAGES : integer := 649;
+    constant NUM_MESSAGES : integer := 255;
     constant NUM_WAITS : integer := 6;
-    constant NUM_CSI_MESSAGES : integer := 22;
+    constant NUM_CSI_MESSAGES : integer := 121;
     
     type wait_sequence_t is array (0 to NUM_WAITS-1) of std_logic_vector(31 downto 0);
     constant WAIT_SEQUENCE : wait_sequence_t := (
@@ -43,6 +49,8 @@ architecture Behavioral of camera_starter is
         x"00036EE8",
         x"003010B0"
     );
+    
+    
     
     type csi_message_t is
     record
@@ -58,8 +66,8 @@ architecture Behavioral of camera_starter is
         (x"6C", x"01", x"03", x"01"),
         (x"6C", x"01", x"00", x"00"),
         (x"6c", x"30", x"34", x"1A"),
-        (x"6c", x"30", x"35", x"21"),
-        (x"6c", x"30", x"36", x"62"),
+        (x"6c", x"30", x"35", x"AA"),
+        (x"6c", x"30", x"36", x"05"),
         (x"6c", x"30", x"3C", x"11"),
         (x"6c", x"31", x"06", x"F5"),
         (x"6c", x"38", x"21", x"01"),
@@ -68,6 +76,9 @@ architecture Behavioral of camera_starter is
         (x"6c", x"37", x"0C", x"03"),
         (x"6c", x"36", x"12", x"59"),
         (x"6c", x"36", x"18", x"00"),
+        
+        (x"6c", x"50", x"3D", x"01"), -- test pattern
+        
         (x"6c", x"50", x"00", x"06"),
         (x"6c", x"50", x"02", x"40"),
         (x"6c", x"50", x"03", x"08"),
@@ -75,513 +86,120 @@ architecture Behavioral of camera_starter is
         (x"6c", x"30", x"00", x"00"),
         (x"6c", x"30", x"01", x"00"),
         (x"6c", x"30", x"02", x"00"),
-        (x"6c", x"30", x"16", x"08")
+        (x"6c", x"30", x"16", x"08"),
+        (x"6c", x"30", x"17", x"E0"),
+        (x"6c", x"30", x"18", x"44"),
+        (x"6c", x"30", x"1C", x"F8"),
+        (x"6c", x"30", x"1D", x"F0"),
+        (x"6c", x"3A", x"18", x"00"),
+        (x"6c", x"3A", x"19", x"F8"),
+        (x"6c", x"3C", x"01", x"80"),
+        (x"6c", x"3B", x"07", x"0C"),
+        (x"6c", x"38", x"00", x"00"),
+        (x"6c", x"38", x"01", x"00"),
+        (x"6c", x"38", x"02", x"00"),
+        (x"6c", x"38", x"03", x"00"),
+        (x"6c", x"38", x"04", x"0A"),
+        (x"6c", x"38", x"05", x"3F"),
+        (x"6c", x"38", x"06", x"07"),
+        (x"6c", x"38", x"07", x"A3"),
+        (x"6c", x"38", x"08", x"05"),
+        (x"6c", x"38", x"09", x"10"),
+        (x"6c", x"38", x"0A", x"03"),
+        (x"6c", x"38", x"0B", x"CC"),
+        (x"6c", x"38", x"0C", x"07"),
+        (x"6c", x"38", x"0D", x"68"),
+        (x"6c", x"38", x"0E", x"04"),
+        (x"6c", x"38", x"0F", x"50"),
+        (x"6c", x"38", x"11", x"10"),
+        (x"6c", x"38", x"13", x"06"),
+        (x"6c", x"38", x"14", x"31"),
+        (x"6c", x"38", x"15", x"31"),
+        (x"6c", x"36", x"30", x"2E"),
+        (x"6c", x"36", x"32", x"E2"),
+        (x"6c", x"36", x"33", x"23"),
+        (x"6c", x"36", x"34", x"44"),
+        (x"6c", x"36", x"36", x"06"),
+        (x"6c", x"36", x"20", x"64"),
+        (x"6c", x"36", x"21", x"E0"),
+        (x"6c", x"36", x"00", x"37"),
+        (x"6c", x"37", x"04", x"A0"),
+        (x"6c", x"37", x"03", x"5A"),
+        (x"6c", x"37", x"15", x"78"),
+        (x"6c", x"37", x"17", x"01"),
+        (x"6c", x"37", x"31", x"02"),
+        (x"6c", x"37", x"0B", x"60"),
+        (x"6c", x"37", x"05", x"1A"),
+        (x"6c", x"3F", x"05", x"02"),
+        (x"6c", x"3F", x"06", x"10"),
+        (x"6c", x"3F", x"01", x"0A"),
+        (x"6c", x"3A", x"08", x"01"),
+        (x"6c", x"3A", x"09", x"28"),
+        (x"6c", x"3A", x"0A", x"00"),
+        (x"6c", x"3A", x"0B", x"F6"),
+        (x"6c", x"3A", x"0D", x"08"),
+        (x"6c", x"3A", x"0E", x"06"),
+        (x"6c", x"3A", x"0F", x"58"),
+        (x"6c", x"3A", x"10", x"50"),
+        (x"6c", x"3A", x"1B", x"58"),
+        (x"6c", x"3A", x"1E", x"50"),
+        (x"6c", x"3A", x"11", x"60"),
+        (x"6c", x"3A", x"1F", x"28"),
+        (x"6c", x"40", x"01", x"02"),
+        (x"6c", x"40", x"04", x"04"),
+        (x"6c", x"40", x"00", x"09"),
+        (x"6c", x"48", x"37", x"16"),
+        (x"6c", x"48", x"00", x"24"),
+        (x"6c", x"35", x"03", x"03"),
+        (x"6c", x"48", x"20", x"41"),
+        (x"6c", x"38", x"21", x"01"),
+        (x"6c", x"38", x"20", x"41"),
+        (x"6c", x"38", x"21", x"03"),
+        (x"6c", x"35", x"0A", x"00"),
+        (x"6c", x"35", x"0B", x"10"),
+        (x"6c", x"32", x"12", x"00"),
+        (x"6c", x"38", x"0E", x"05"), -- ?? should be 2 data bits /o\
+        
+               
+     --    (x"6C", x"38", '0'), -- TIMING VTS
+     --    (x"6C", x"0E", '0'),
+     --    (x"6C", x"05", '0'),
+     --    (x"6C", x"9B", '0'),
+     --    (x"FF", x"FF", '1'),
+     
+     
+        (x"6c", x"35", x"00", x"00"),
+        (x"6c", x"35", x"01", x"1A"),
+        (x"6c", x"35", x"02", x"F0"),
+        (x"6c", x"32", x"12", x"A0"),
+        (x"6c", x"35", x"0A", x"00"),
+        (x"6c", x"35", x"0B", x"10"),
+        (x"6c", x"35", x"0A", x"00"),
+        (x"6c", x"35", x"0B", x"10"),
+        (x"6c", x"32", x"12", x"00"),
+        (x"6c", x"35", x"00", x"00"),
+        (x"6c", x"35", x"01", x"1A"),
+        (x"6c", x"35", x"02", x"F0"),
+        (x"6c", x"32", x"12", x"10"),
+        (x"6c", x"32", x"12", x"A0"),
+        (x"6c", x"01", x"00", x"01"),
+        (x"6c", x"35", x"0A", x"FF"),
+        (x"6c", x"35", x"0B", x"10"),
+        (x"6c", x"32", x"12", x"00"),
+        (x"6c", x"35", x"00", x"00"),
+        (x"6c", x"35", x"01", x"1A"),
+        (x"6c", x"35", x"02", x"F0"),
+        (x"6c", x"32", x"12", x"10"),
+        (x"6c", x"32", x"12", x"A0"),
+        (x"6c", x"35", x"0A", x"00"),
+        (x"6c", x"35", x"0B", x"0B"),
+        (x"6c", x"32", x"12", x"00")
     );
     
     type i2c_sequence is array (0 to NUM_MESSAGES-1) of i2c_message_t;
     constant SEQUENCE : i2c_sequence := (
         
         
-        
-        
-        
-        (x"6C", x"30", '0'), -- SC_CMMN_MIPI_PHY, default 0x10
-        (x"6C", x"17", '0'), -- pgm_vcm = 0b11
-        (x"6C", x"E0", '0'), -- pgm_lptx = 0b10
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"30", '0'), -- SC_CMMN_MIPI_SC_CTRL0, default 0x58
-        (x"6C", x"18", '0'), -- MIPI enable set to high
-        (x"6C", x"44", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"30", '0'), -- ???
-        (x"6C", x"1C", '0'),
-        (x"6C", x"F8", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"30", '0'), -- ???
-        (x"6C", x"1D", '0'),
-        (x"6C", x"F0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- AEC GAIN CEILING, default 0x00
-        (x"6C", x"18", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- AEC GAIN CEILING, default 0x7C
-        (x"6C", x"19", '0'), -- ???
-        (x"6C", x"F8", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3C", '0'), -- 50/60 HZ DETECTION CTRL01, default 0x00
-        (x"6C", x"01", '0'), -- manual mode enabled
-        (x"6C", x"80", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3B", '0'), -- TIMING_Y_ADDR_END, default 0xA3
-        (x"6C", x"07", '0'),
-        (x"6C", x"0C", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_ADDR_START, defailt 0x00
-        (x"6C", x"00", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_ADDR_START, default 0x0C
-        (x"6C", x"01", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_ADDR_START, default 0x00
-        (x"6C", x"02", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_ADDR_START, default 0x04
-        (x"6C", x"03", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_ADDR_END, default, 0x0A
-        (x"6C", x"04", '0'),
-        (x"6C", x"0A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_ADDR_END, default 0x33
-        (x"6C", x"05", '0'), 
-        (x"6C", x"3F", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_ADDR_END, default 0x07
-        (x"6C", x"06", '0'),
-        (x"6C", x"07", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_ADDR_END, default 0xA3
-        (x"6C", x"07", '0'),
-        (x"6C", x"A3", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_OUTPUT_SIZE, default 0x0A
-        (x"6C", x"08", '0'),
-        (x"6C", x"05", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_OUTPUT_SIZE, default 0x20
-        (x"6C", x"09", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_OUTPUT_SIZE, default 0x07
-        (x"6C", x"0A", '0'),
-        (x"6C", x"03", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_OUTPUT_SIZE, default 0x98
-        (x"6C", x"0B", '0'),
-        (x"6C", x"CC", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_HTS, default 0x0A
-        (x"6C", x"0C", '0'),
-        (x"6C", x"07", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_HTS
-        (x"6C", x"0D", '0'),
-        (x"6C", x"68", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_VTS
-        (x"6C", x"0E", '0'),
-        (x"6C", x"04", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_VTS
-        (x"6C", x"0F", '0'),
-        (x"6C", x"50", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_ISP_X_WIN
-        (x"6C", x"11", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_ISP_Y_WIN
-        (x"6C", x"13", '0'),
-        (x"6C", x"06", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_X_INC
-        (x"6C", x"14", '0'),
-        (x"6C", x"31", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_Y_INC
-        (x"6C", x"15", '0'),
-        (x"6C", x"31", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"30", '0'),
-        (x"6C", x"2E", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"32", '0'),
-        (x"6C", x"E2", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"33", '0'),
-        (x"6C", x"23", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"34", '0'),
-        (x"6C", x"44", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"36", '0'),
-        (x"6C", x"06", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"20", '0'),
-        (x"6C", x"64", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"21", '0'),
-        (x"6C", x"E0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"36", '0'), -- ???
-        (x"6C", x"00", '0'),
-        (x"6C", x"37", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"04", '0'),
-        (x"6C", x"A0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"03", '0'),
-        (x"6C", x"5A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"15", '0'),
-        (x"6C", x"78", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"17", '0'),
-        (x"6C", x"01", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"31", '0'),
-        (x"6C", x"02", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"0B", '0'),
-        (x"6C", x"60", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"37", '0'), -- ???
-        (x"6C", x"05", '0'),
-        (x"6C", x"1A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3F", '0'), -- ???
-        (x"6C", x"05", '0'),
-        (x"6C", x"02", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3F", '0'), -- ???
-        (x"6C", x"06", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3F", '0'), -- ???
-        (x"6C", x"01", '0'),
-        (x"6C", x"0A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B50_STEP
-        (x"6C", x"08", '0'),
-        (x"6C", x"01", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B50_STEP
-        (x"6C", x"09", '0'),
-        (x"6C", x"28", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B60_STEP
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B60_STEP
-        (x"6C", x"0B", '0'),
-        (x"6C", x"F6", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B60_MAX
-        (x"6C", x"0D", '0'),
-        (x"6C", x"08", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- B50_MAX
-        (x"6C", x"0E", '0'),
-        (x"6C", x"06", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- WPT
-        (x"6C", x"0F", '0'), -- stable range high limit (enter)
-        (x"6C", x"58", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- BPT
-        (x"6C", x"10", '0'), -- stable range low limit (enter)
-        (x"6C", x"50", '0'),
-        (x"FF", x"FF", '1'),
-        
-        
-        (x"6C", x"3A", '0'), -- WPT2
-        (x"6C", x"1B", '0'), -- stable range high limit (go out)
-        (x"6C", x"58", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- BPT2
-        (x"6C", x"1E", '0'), -- stable range low limit (go out)
-        (x"6C", x"50", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- HIGH VPT
-        (x"6C", x"11", '0'),
-        (x"6C", x"60", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"3A", '0'), -- LOW VPT
-        (x"6C", x"1F", '0'),
-        (x"6C", x"28", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"40", '0'), -- BLC_CTRL01
-        (x"6C", x"01", '0'),
-        (x"6C", x"02", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"40", '0'), -- BLC_CTRL04
-        (x"6C", x"04", '0'),
-        (x"6C", x"04", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"40", '0'), -- BLC_CTRL00
-        (x"6C", x"00", '0'),
-        (x"6C", x"09", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"48", '0'), -- PCLK_PERIOD
-        (x"6C", x"37", '0'),
-        (x"6C", x"16", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"48", '0'), -- MIPI CTRL 00
-        (x"6C", x"00", '0'), -- mipi bus will be LP11 when no packet to transmitt
-        (x"6C", x"24", '0'), -- gate clock lane when no packet to transmit
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- MANUAL CTRL
-        (x"6C", x"03", '0'), -- AGC manual and AEC manual
-        (x"6C", x"03", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_TC_REG20, rpi does something weird here, maybe it matters?
-        (x"6C", x"20", '0'),
-        (x"6D", x"41", '1'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_TC_REG21, weird stuff here as well, maybe sequential write for 1 byte?
-        (x"6C", x"21", '0'),  
-        (x"6D", x"01", '1'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- same as two commands up
-        (x"6C", x"20", '0'),
-        (x"6C", x"41", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING_TC_REG21
-        (x"6C", x"21", '0'),
-        (x"6C", x"03", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- AGC
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- AGC
-        (x"6C", x"0B", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ???
-        (x"6C", x"12", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"38", '0'), -- TIMING VTS
-        (x"6C", x"0E", '0'),
-        (x"6C", x"05", '0'),
-        (x"6C", x"9B", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"00", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"01", '0'),
-        (x"6C", x"1A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"02", '0'),
-        (x"6C", x"F0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ???
-        (x"6C", x"12", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ??
-        (x"6C", x"12", '0'),
-        (x"6C", x"A0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- AGC
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), --  AGC
-        (x"6C", x"0B", '0'),
-        (x"6C", x"10", '0'),
-        (x"FE", x"FF", '1'),
-        
-        -- Really long wait from rpi
-        
-        (x"6C", x"35", '0'), -- AGC
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- AGC
-        (x"6C", x"0B", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ???
-        (x"6C", x"12", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"00", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"01", '0'),
-        (x"6C", x"1A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'), -- EXPOSURE
-        (x"6C", x"02", '0'),
-        (x"6C", x"F0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ????
-        (x"6C", x"12", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'), -- ????
-        (x"6C", x"12", '0'),
-        (x"6C", x"A0", '0'),
-        (x"FE", x"FF", '1'),
-        
-        -- small pause
-        
-        (x"6C", x"01", '0'),
-        (x"6C", x"00", '0'),
-        (x"6C", x"01", '0'),
-        (x"FE", x"FF", '1'),
-        
-        -- small pause
-        
-        (x"6C", x"35", '0'), -- 
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'),
-        (x"6C", x"0B", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'),
-        (x"6C", x"12", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'),
-        (x"6C", x"00", '0'),
-        (x"6C", x"00", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'),
-        (x"6C", x"01", '0'),
-        (x"6C", x"1A", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"35", '0'),
-        (x"6C", x"02", '0'),
-        (x"6C", x"F0", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'),
-        (x"6C", x"12", '0'),
-        (x"6C", x"10", '0'),
-        (x"FF", x"FF", '1'),
-        
-        (x"6C", x"32", '0'),
-        (x"6C", x"12", '0'),
-        (x"6C", x"A0", '0'),
-        (x"FE", x"FF", '1'),
-        
-        (x"6C", x"35", '0'),
-        (x"6C", x"0A", '0'),
-        (x"6C", x"00", '0'),
-        (x"6C", x"35", '0'),
-        (x"6C", x"0B", '0'),
-        (x"6C", x"13", '0'),
-        (x"6C", x"32", '0'),
-        (x"6C", x"12", '0'),
-        (x"6C", x"00", '0'),
         (x"6C", x"35", '0'),
         (x"6C", x"00", '0'),
         (x"6C", x"00", '0'),
@@ -849,6 +467,7 @@ architecture Behavioral of camera_starter is
     signal i2c_reset_n      : std_logic := '1';
     signal i2c_rep_start    : std_logic := '0';
     signal busy_prev        : std_logic := '0';
+    signal pclk             : std_logic;
     
     type state_t is (READY, PASSING_MESSAGE, I2C_TRANSMITTING, DONE, PAUSE, RESET_I2C);
     signal state : state_t := READY;
@@ -858,6 +477,8 @@ begin
     scl_out <= '0' when scl = '0' else '1';
     cam1_cp_out <= cam1_cp;
     cam1_cn_out <= cam1_cn;
+    cam1_dp0_out <= cam1_dp0;
+    cam1_dn0_out <= cam1_dn0;
         
     i2c : entity work.i2c_master
     generic map(
@@ -878,6 +499,18 @@ begin
         sda         => sda,
         scl         => scl
     );
+    
+    --IBUFDS_inst : IBUFDS
+    --generic map (
+      --  diff_term => true,
+     --   ibuf_low_pwr => true,
+     --   iostandard => "default"
+    --)
+    --port map (
+    --    O => pclk,
+    --    I => cam1_cp,
+    --    IB => cam1_cn
+    --);
     
     process(clk, i2c_busy, reset) is
         variable c : integer := 0;
