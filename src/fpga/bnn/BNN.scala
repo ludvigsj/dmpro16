@@ -5,11 +5,18 @@ import Array._
 
 class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) extends Module {
   val io = new Bundle {
-    val input = Bits(INPUT, width=1)
-    val enable = Bool(INPUT)
-    val output = Bits(OUTPUT, width=10)
-    val done = Bool(OUTPUT)
+    val trans_data = Bits(INPUT, width=1)
+    val trans_empty = Bool(INPUT)
+    val trans_read = Bool(OUTPUT)
+    val spi_data = Bits(OUTPUT, width=10)
+    val spi_write = Bool(OUTPUT)
+    val spi_full = Bool(INPUT)
   }
+
+  // TODO: Funker dette? Eller må enable forbli høy når den først er høy?
+  var enable = Bool()
+  enable := !io.trans_empty
+  io.trans_read := Bool(true) // Vi kan alltid akseptere data, sant?
 
   var layers:Array[Layer] = ofDim(num_layers)
   var enable_regs = Vec.fill(num_layers){ Reg(init=Bool(false)) }
@@ -17,7 +24,7 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
   for (layer <- 0 until num_layers) {
     layers(layer) = Module( new Layer(layer, layers_input(layer), layers_output(layer)) )
     if(layer == 0) {
-      layers(layer).io.input := io.input
+      layers(layer).io.input := io.trans_data
       // The code below is only needed if enable is only true for one cycle
       /*
       val images_started = Reg(init=UInt(0, width=7))
@@ -51,7 +58,14 @@ class BNN(num_layers: Int, layers_input: List[Int], layers_output: List[Int]) ex
       }
     }
   }
-  io.output := layers(num_layers-1).io.output
+  io.spi_data := layers(num_layers-1).io.output
+  io.spi_write := layers(num_layers-1).io.layer_done
+  // TODO: Stemmer det at denne --->------->--^
+  // er høy i bare én sykel?
+  // Hvis ikke må man endre ting her
+
+  // TODO: Implementere støtte for at FIFOen er full
+  // (altså signalet io.spi_full)
 }
 
 class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
@@ -89,7 +103,7 @@ class BNNTest(bnn: BNN, num_layers: Int) extends Tester(bnn, _base=10) {
 
   poke(bnn.io.enable, true)
   for (i <- 0 until 784) {
-    poke(bnn.io.input, inputs(i))
+    poke(bnn.io.trans_data, inputs(i))
     printSometimes()
     step(1)
   }

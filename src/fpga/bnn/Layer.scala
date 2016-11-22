@@ -23,10 +23,12 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
 
 
   // Length of this thould be 784
-  val weights = Vec.tabulate(input_count) { i => Reg(next = Weights.w(layer)(i) ) }
+  val weights = Vec.tabulate(input_count){i => Reg(next=Weights.w(layer)(i)) }
   val current_weights = weights(count_signal)
 
   val out_vec = Vec.fill(neuron_count){UInt(0, width=1)}.toBits
+  // TODO: Forklar Ludvig hvorfor man må ha toBits her?  ^^^^^^
+  // (han merker at det dør om man ikke har det, forstår bare ikke hvorfor)
   var neurons:Array[Neuron] = ofDim[Neuron](neuron_count)
   for (neuron <- 0 until neuron_count) {
     neurons(neuron) = Module( new Neuron(layer, neuron) )
@@ -42,7 +44,7 @@ class Layer(layer: Int, input_count: Int, neuron_count: Int) extends Module {
 
     out_vec(neuron) := neurons(neuron).io.output
   }
-  io.output := out_vec
+  io.output := out_vec.toBits
   io.layer_done := neurons(0).io.done
 
   // The first layer runs always, and has no time to reset to 0
