@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{User Manual for Energy Efficiency Group}
+\date{November 2016}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\begin{document}
+
+\maketitle
+
+\section*{Repo}
+Github repo: \url{https://github.com/ludvigsj/dmpro16}
+
+\section*{Setup}
+
+\begin{enumerate}
+    \item Aquire a working SudoKu and a printed completed sudoku board(found in \url{https://github.com/ludvigsj/dmpro16/blob/master/test_images/foto2.jpg}).
+    \item Download the bitfile needed to flash the FPGA.
+    \item Connect JTAG cables to pins indicated in image \ref{}.
+    \item Short pins X and Y to indicated FPGA configuration from JTAG.
+    \item Set 3.3 volt on pins indicated in image \ref{}. \newline
+          FPGA and MCU now boots.
+\end{enumerate}
+
+\section*{Operation}
+\begin{enumerate}
+    \item Point camera on the printed sudoku board.
+    \item Press the button.
+    \item Observe the sudoku flashing on the e-ink screen.
+\end{enumerate}
+
+\section*{Things that don't work}
+\begin{itemize}
+    \item Camera input
+    \item Binary Neural Network
+\end{itemize}
+These points all needs to be fixed before SudoKu can be fully functional.
+
+\end{document}
